@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "chats": {
+      "$chatId": {
+        // chatId is uid1__uid2 (sorted). Both participants can read/write.
+        ".read":  "auth != null && ($chatId.contains(auth.uid))",
+        ".write": "auth != null && ($chatId.contains(auth.uid))",
+        "messages": {
+          "$msgId": {
+            ".validate": "newData.hasChildren(['senderUid','text','timestamp'])
+              && newData.child('text').isString()
+              && newData.child('text').val().length <= 2000
+              && newData.child('senderUid').val() === auth.uid"
+          }
+        },
+        "meta": {
+          ".validate": "newData.hasChildren(['lastMessage','lastSender','lastTimestamp'])"
+        }
+      }
+    }
+  }
+}

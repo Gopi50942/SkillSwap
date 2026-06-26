@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SkillSwap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --transition:0.45s cubic-bezier(.4,0,.2,1);
+  --blur:saturate(180%) blur(20px);
+  --blur-heavy:saturate(200%) blur(32px);
+  --radius-pill:100px;--radius-card:22px;--radius-card-sm:16px;--radius-inner:12px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+body.light{
+  --bg-a:#e8edf5;--bg-b:#dce4f0;--bg-c:#d0daea;
+  --mesh1:rgba(120,100,255,0.18);--mesh2:rgba(52,199,89,0.14);--mesh3:rgba(0,122,255,0.12);
+  --glass:rgba(255,255,255,0.55);--glass2:rgba(255,255,255,0.72);--glass3:rgba(255,255,255,0.85);
+  --glass-nav:rgba(242,244,248,0.75);
+  --border:rgba(255,255,255,0.70);--border2:rgba(200,210,230,0.60);--border3:rgba(180,195,220,0.45);
+  --text:#0d1117;--text2:#3a4455;--text3:#6b7a96;--text4:#9aaabe;
+  --p:#5856d6;--p2:#7b79e8;--p3:rgba(88,86,214,0.18);
+  --t:#34c759;--t2:#2da84a;--t3:rgba(52,199,89,0.16);
+  --a:#ff9500;--a2:#ffad33;--a3:rgba(255,149,0,0.15);
+  --r:#ff3b30;--r2:#ff6b63;--r3:rgba(255,59,48,0.14);
+  --b:#007aff;--b2:#3395ff;--b3:rgba(0,122,255,0.14);
+  --score-hi-bg:rgba(52,199,89,0.15);--score-hi-c:#1a7a32;--score-hi-b:rgba(52,199,89,0.35);
+  --score-md-bg:rgba(255,149,0,0.14);--score-md-c:#8a5000;--score-md-b:rgba(255,149,0,0.35);
+  --nav-tab-active:rgba(88,86,214,0.14);
+  --shadow:0 2px 24px rgba(100,120,180,0.10);--shadow2:0 8px 40px rgba(80,100,160,0.15);
+  --card:rgba(255,255,255,0.9);
+}
+body.dark{
+  --bg-a:#0a0b14;--bg-b:#0d0f1e;--bg-c:#10132a;
+  --mesh1:rgba(120,80,255,0.22);--mesh2:rgba(20,180,100,0.16);--mesh3:rgba(30,100,255,0.14);
+  --glass:rgba(255,255,255,0.05);--glass2:rgba(255,255,255,0.09);--glass3:rgba(255,255,255,0.14);
+  --glass-nav:rgba(10,11,20,0.72);
+  --border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.16);--border3:rgba(255,255,255,0.22);
+  --text:#f0f4ff;--text2:#c8d0e8;--text3:#8090b4;--text4:#4a5878;
+  --p:#a78bfa;--p2:#c4b5fd;--p3:rgba(167,139,250,0.18);
+  --t:#34d399;--t2:#6ee7b7;--t3:rgba(52,211,153,0.16);
+  --a:#fbbf24;--a2:#fde68a;--a3:rgba(251,191,36,0.14);
+  --r:#f87171;--r2:#fca5a5;--r3:rgba(248,113,113,0.14);
+  --b:#60a5fa;--b2:#93c5fd;--b3:rgba(96,165,250,0.14);
+  --score-hi-bg:rgba(52,211,153,0.12);--score-hi-c:#6ee7b7;--score-hi-b:rgba(52,211,153,0.30);
+  --score-md-bg:rgba(251,191,36,0.10);--score-md-c:#fde68a;--score-md-b:rgba(251,191,36,0.28);
+  --nav-tab-active:rgba(167,139,250,0.16);
+  --shadow:0 2px 24px rgba(0,0,0,0.40);--shadow2:0 8px 40px rgba(0,0,0,0.60);
+  --card:rgba(20,22,40,0.95);
+}
+html,body{height:100%;overflow:hidden;transition:background var(--transition)}
+body{font-family:var(--font);font-size:13px;line-height:1.5;color:var(--text);
+  display:flex;flex-direction:column;position:relative;
+  background:linear-gradient(135deg,var(--bg-a),var(--bg-b) 50%,var(--bg-c));}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 60% at 15% 15%,var(--mesh1) 0%,transparent 60%),
+    radial-gradient(ellipse 55% 70% at 85% 80%,var(--mesh2) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 45% at 55% 45%,var(--mesh3) 0%,transparent 70%);
+  transition:background var(--transition)}
+.theme-switch-wrap{display:flex;align-items:center;gap:8px}
+.switch-lbl{font-size:10px;font-weight:600;letter-spacing:.5px;color:var(--text3);text-transform:uppercase}
+.switch-track{width:58px;height:28px;border-radius:14px;background:var(--glass2);border:1px solid var(--border2);
+  cursor:pointer;position:relative;backdrop-filter:var(--blur);transition:all var(--transition)}
+.switch-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:11px;
+  background:linear-gradient(135deg,var(--p),var(--b));box-shadow:var(--shadow);
+  transition:transform var(--transition),background var(--transition);cursor:grab}
+.switch-thumb.right{transform:translateX(30px)}
+.switch-icons{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 7px;pointer-events:none}
+.switch-icons i{font-size:11px;transition:color var(--transition)}
+nav{position:relative;z-index:20;height:52px;display:flex;align-items:center;padding:0 16px;flex-shrink:0;
+  background:var(--glass-nav);backdrop-filter:var(--blur-heavy);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+.logo{font-size:15px;font-weight:700;margin-right:20px;display:flex;align-items:center;gap:7px;color:var(--p)}
+.logo-gem{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--p),var(--t2));
+  display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:var(--shadow)}
+.nt{height:52px;padding:0 11px;display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;
+  color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;user-select:none}
+.nt:hover{color:var(--text2)}
+.nt.active{color:var(--p);border-bottom-color:var(--p);background:var(--nav-tab-active)}
+.nt i{font-size:14px}
+.nav-r{margin-left:auto;display:flex;align-items:center;gap:7px}
+.nav-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--t2));
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;
+  cursor:pointer;border:1.5px solid var(--border2);color:#fff}
+.notif-btn{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:13px;color:var(--text3);position:relative;background:var(--glass2);border:1px solid var(--border)}
+.ndot{width:6px;height:6px;background:var(--r);border-radius:50%;position:absolute;top:5px;right:5px}
+main{flex:1;overflow:hidden;display:flex;position:relative;z-index:1}
+.page{display:none;flex:1;overflow-y:auto;padding:18px 20px;gap:14px;flex-direction:column}
+.page.active{display:flex}
+.page-chat-pg{padding:0!important;gap:0!important}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.gc{background:var(--glass);backdrop-filter:var(--blur);border:1px solid var(--border);
+  border-radius:var(--radius-card);padding:15px;box-shadow:var(--shadow)}
+.gc2{background:var(--glass2);backdrop-filter:var(--blur);border:1px solid var(--border2);
+  border-radius:var(--radius-card);padding:15px;box-shadow:var(--shadow)}
+.gc-inner{background:var(--glass2);border:1px solid var(--border);border-radius:var(--radius-inner);padding:10px}
+.stat-pill{background:var(--glass2);backdrop-filter:var(--blur);border:1px solid var(--border2);
+  border-radius:18px;padding:13px 15px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.stat-pill::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border3),transparent)}
+.stat-v{font-size:21px;font-weight:700;margin-bottom:1px}
+.stat-l{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.stat-s{font-size:10px;margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:var(--radius-pill);
+  font-size:10px;font-weight:600;white-space:nowrap}
+.pp{background:var(--p3);color:var(--p);border:1px solid rgba(88,86,214,0.25)}
+.pt{background:var(--t3);color:var(--t2);border:1px solid rgba(52,199,89,0.22)}
+.pa{background:var(--a3);color:var(--a);border:1px solid rgba(255,149,0,0.22)}
+.pr{background:var(--r3);color:var(--r);border:1px solid rgba(255,59,48,0.22)}
+.pb{background:var(--b3);color:var(--b);border:1px solid rgba(0,122,255,0.20)}
+.pgr{background:var(--glass2);color:var(--text3);border:1px solid var(--border)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:12px;
+  font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;border:none;outline:none;
+  user-select:none;font-family:var(--font)}
+.btn-p{background:var(--p);color:#fff;box-shadow:0 2px 12px var(--p3)}
+.btn-p:hover{filter:brightness(1.1)}
+.btn-t{background:var(--t3);color:var(--t2);border:1px solid rgba(52,199,89,0.3)}
+.btn-o{background:var(--glass2);color:var(--text2);border:1px solid var(--border2);backdrop-filter:var(--blur)}
+.btn-o:hover{border-color:var(--border3);color:var(--text)}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:10px}
+.btn-icon{width:28px;height:28px;padding:0;justify-content:center;border-radius:9px;
+  background:var(--glass2);border:1px solid var(--border);color:var(--text3)}
+.btn-icon:hover{border-color:var(--p);color:var(--p)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:600;flex-shrink:0;border:1.5px solid var(--border2)}
+.av-sm{width:32px;height:32px;font-size:11px}
+.av-md{width:42px;height:42px;font-size:14px}
+.av-xl{width:72px;height:72px;font-size:22px}
+.divider{height:1px;background:var(--border);margin:8px 0}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.prog{height:3px;background:var(--glass2);border-radius:2px;overflow:hidden;margin-top:3px}
+.prog-f{height:100%;border-radius:2px;transition:width .5s}
+.tag-row{display:flex;flex-wrap:wrap;gap:4px}
+.odot{width:8px;height:8px;background:var(--t);border-radius:50%;flex-shrink:0;border:1.5px solid var(--glass3)}
+h1{font-size:19px;font-weight:700;color:var(--text)}
+h2{font-size:13px;font-weight:600;color:var(--text)}
+p{color:var(--text2);font-size:12px}
+.mring{display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:11px;font-weight:700;border:2px solid;flex-shrink:0}
+.mring-hi{background:var(--score-hi-bg);color:var(--score-hi-c);border-color:var(--score-hi-b)}
+.mring-md{background:var(--score-md-bg);color:var(--score-md-c);border-color:var(--score-md-b)}
+.finp{background:var(--glass2);border:1px solid var(--border2);border-radius:11px;padding:8px 11px;
+  color:var(--text);font-size:12px;outline:none;width:100%;font-family:var(--font);transition:all .2s}
+.finp:focus{border-color:var(--p);background:var(--glass3)}
+.finp::placeholder{color:var(--text4)}
+select.finp{cursor:pointer;appearance:none}
+.fl{font-size:10px;font-weight:600;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.sbar{background:var(--glass2);border:1px solid var(--border2);border-radius:12px;padding:7px 11px;
+  display:flex;align-items:center;gap:7px;backdrop-filter:var(--blur)}
+.sbar input{background:transparent;border:none;outline:none;color:var(--text);font-size:12px;flex:1;font-family:var(--font)}
+.sbar input::placeholder{color:var(--text4)}
+.chat-wrap{display:flex;flex:1;min-height:0;overflow:hidden}
+.csb{width:210px;flex-shrink:0;border-right:1px solid var(--border);overflow-y:auto;
+  background:var(--glass-nav);backdrop-filter:var(--blur-heavy)}
+.cbody{flex:1;display:flex;flex-direction:column;min-width:0}
+.ci{padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;gap:8px;align-items:center;transition:background .15s}
+.ci:hover,.ci.active{background:var(--glass2)}
+.cprev{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chdr{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;
+  background:var(--glass-nav);backdrop-filter:var(--blur);flex-shrink:0}
+.cmsgs{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:66%;padding:9px 13px;border-radius:18px;font-size:12px;line-height:1.5}
+.msg-them{background:var(--glass3);border:1px solid var(--border2);color:var(--text);border-bottom-left-radius:5px;align-self:flex-start}
+.msg-me{background:var(--p);color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
+.msg-time{font-size:9px;margin-top:2px;opacity:0.65}
+.cinp-row{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:7px;
+  background:var(--glass-nav);backdrop-filter:var(--blur);flex-shrink:0}
+.cinp{flex:1;background:var(--glass2);border:1px solid var(--border2);border-radius:20px;
+  padding:7px 13px;color:var(--text);font-size:12px;outline:none;font-family:var(--font)}
+.cinp:focus{border-color:var(--p)}
+.cinp::placeholder{color:var(--text4)}
+.unread{width:7px;height:7px;background:var(--p);border-radius:50%;flex-shrink:0;margin-left:auto}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cday{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:9px;
+  font-size:11px;cursor:pointer;position:relative;transition:background .15s}
+.cday:hover{background:var(--glass2)}
+.cday.today{background:var(--p);color:#fff;font-weight:700}
+.cday.hase::after{content:'';width:4px;height:4px;background:var(--t);border-radius:50%;position:absolute;bottom:2px}
+.cday.other{color:var(--text4)}
+.cdhdr{font-size:9px;font-weight:600;color:var(--text4);text-align:center;padding:4px 0;text-transform:uppercase;letter-spacing:.4px}
+.sess{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius-card-sm);
+  padding:12px;display:flex;gap:12px;align-items:flex-start;box-shadow:var(--shadow)}
+.sess-t{background:var(--glass2);border:1px solid var(--border2);border-radius:10px;padding:7px 9px;text-align:center;flex-shrink:0;min-width:48px}
+.smo{font-size:9px;color:var(--text4);text-transform:uppercase;letter-spacing:.4px}
+.sd{font-size:18px;font-weight:700;line-height:1;color:var(--p)}
+.lbr{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:14px;
+  background:var(--glass);border:1px solid var(--border);margin-bottom:5px;backdrop-filter:var(--blur)}
+.bdg{background:var(--glass2);border:1px solid var(--border);border-radius:14px;padding:11px;text-align:center;cursor:default}
+.bdg:hover{background:var(--glass3);border-color:var(--a)}
+.bdg.lk{opacity:.3;filter:grayscale(1)}
+.bicon{font-size:22px;margin-bottom:4px}
+.bname{font-size:11px;font-weight:600;color:var(--text);margin-bottom:1px}
+.bdesc{font-size:9px;color:var(--text4)}
+.auth-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;
+  background:linear-gradient(135deg,var(--bg-a),var(--bg-b) 50%,var(--bg-c))}
+.auth-screen::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 15% 15%,var(--mesh1),transparent 60%),
+    radial-gradient(ellipse 55% 70% at 85% 80%,var(--mesh2),transparent 60%)}
+.auth-card{background:var(--glass2);backdrop-filter:var(--blur-heavy);border:1px solid var(--border2);
+  border-radius:28px;padding:28px;width:390px;max-width:95vw;position:relative;box-shadow:var(--shadow2)}
+.auth-card::after{content:'';position:absolute;inset:0;border-radius:28px;
+  background:linear-gradient(135deg,rgba(255,255,255,0.12) 0%,transparent 60%);pointer-events:none}
+.atab-row{display:flex;background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:3px;margin-bottom:16px;gap:2px}
+.atab{flex:1;padding:6px;text-align:center;border-radius:11px;cursor:pointer;font-size:12px;font-weight:500;color:var(--text3);transition:all .2s}
+.atab.active{background:var(--glass3);color:var(--p);box-shadow:var(--shadow);font-weight:600}
+#toast{position:fixed;bottom:18px;right:18px;background:var(--glass3);backdrop-filter:var(--blur-heavy);
+  border:1px solid var(--border2);border-radius:14px;padding:10px 14px;font-size:12px;font-weight:500;
+  z-index:9999;display:none;align-items:center;gap:7px;box-shadow:var(--shadow2);color:var(--text)}
+.sec-float{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px;padding-left:2px}
+.xflow{display:flex;align-items:center;gap:6px;background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:7px 10px}
+.xflow-arr{color:var(--text4);font-size:13px;flex-shrink:0}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-state i{font-size:36px;margin-bottom:10px;display:block;opacity:.4}
+.loading{text-align:center;padding:30px;color:var(--text3);font-size:12px}
+.skill-row{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+
+</style>
+</head>
+<body class="light">
+
+<!-- AUTH -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div style="text-align:center;margin-bottom:20px;position:relative;z-index:1">
+      <div style="width:52px;height:52px;background:linear-gradient(135deg,var(--p),var(--t2));border-radius:16px;
+        display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px;box-shadow:var(--shadow2)">⟳</div>
+      <div style="font-size:22px;font-weight:700;color:var(--p)">SkillSwap</div>
+      <p style="margin-top:3px;font-size:12px">Exchange knowledge. No money. Just skills.</p>
+    </div>
+    <div style="position:relative;z-index:1">
+      <div class="atab-row">
+        <div class="atab active" onclick="sat('l')">Sign in</div>
+        <div class="atab" onclick="sat('r')">Create account</div>
+      </div>
+      <div id="al">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div><div class="fl">Email</div><input id="login-email" class="finp" type="email" placeholder="you@example.com"></div>
+          <div><div class="fl">Password</div><input id="login-password" class="finp" type="password" placeholder="••••••••"></div>
+          <div id="login-error" style="color:#e53e3e;font-size:11px;display:none;margin-top:-4px"></div>
+          <button class="btn btn-p" style="width:100%;justify-content:center;margin-top:4px;padding:10px" onclick="doLogin()">
+            <i class="ti ti-login"></i>Sign in</button>
+          <div style="text-align:center;font-size:11px;color:var(--text3)">— or —</div>
+          <button class="btn btn-o" style="width:100%;justify-content:center" onclick="doGoogleLogin()">
+            <i class="ti ti-brand-google"></i>Continue with Google</button>
+        </div>
+      </div>
+      <div id="ar" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div><div class="fl">Full name</div><input id="reg-name" class="finp" placeholder="Your name"></div>
+          <div><div class="fl">College</div><input id="reg-college" class="finp" placeholder="Your college"></div>
+          <div><div class="fl">Email</div><input id="reg-email" class="finp" type="email" placeholder="you@example.com"></div>
+          <div><div class="fl">Password</div><input id="reg-password" class="finp" type="password" placeholder="min 6 chars"></div>
+          <div id="reg-error" style="color:#e53e3e;font-size:11px;display:none;margin-top:-4px"></div>
+          <button class="btn btn-p" style="width:100%;justify-content:center;margin-top:4px;padding:10px" onclick="doRegister()">
+            <i class="ti ti-user-plus"></i>Create account</button>
+          <button class="btn btn-o" style="width:100%;justify-content:center" onclick="doGoogleLogin()">
+            <i class="ti ti-brand-google"></i>Continue with Google</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="app-nav" style="display:none">
+  <div class="logo"><div class="logo-gem">⟳</div>SkillSwap</div>
+  <div class="nt active" data-p="home"><i class="ti ti-home"></i>Home</div>
+  <div class="nt" data-p="discover"><i class="ti ti-search"></i>Discover</div>
+  <div class="nt" data-p="matches"><i class="ti ti-arrows-exchange"></i>Matches</div>
+  <div class="nt" data-p="chat"><i class="ti ti-message-2"></i>Chat</div>
+  <div class="nt" data-p="schedule"><i class="ti ti-calendar"></i>Schedule</div>
+  <div class="nt" data-p="leaderboard"><i class="ti ti-trophy"></i>Leaderboard</div>
+  <div class="nt" data-p="profile"><i class="ti ti-user"></i>Profile</div>
+  <div class="nav-r">
+    <div class="theme-switch-wrap">
+      <span class="switch-lbl" id="sw-lbl">Light</span>
+      <div class="switch-track" onclick="toggleTheme()">
+        <div class="switch-icons">
+          <i class="ti ti-sun" id="sw-sun" style="color:var(--a)"></i>
+          <i class="ti ti-moon" id="sw-moon" style="color:var(--text4)"></i>
+        </div>
+        <div class="switch-thumb" id="sw-thumb"></div>
+      </div>
+    </div>
+    <div class="notif-btn" onclick="toggleNotifPanel()" id="notif-btn"><i class="ti ti-bell"></i><div class="ndot" id="notif-dot"></div></div>
+    <div id="nav-av" class="nav-av" onclick="goto('profile')">?</div>
+  </div>
+</nav>
+
+<main id="app-main" style="display:none">
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div>
+      <h1>Welcome back, <span id="home-name">there</span> 👋</h1>
+      <p id="home-sub" style="margin-top:2px">Loading your data…</p>
+    </div>
+    <button class="btn btn-p btn-sm" onclick="goto('matches')"><i class="ti ti-arrows-exchange"></i>View Matches</button>
+  </div>
+  <div id="home-stats" style="display:none" class="g4">
+    <div class="stat-pill"><div class="stat-v" id="hs-sessions" style="color:var(--p)">0</div><div class="stat-l">Sessions</div></div>
+    <div class="stat-pill"><div class="stat-v" id="hs-rating" style="color:var(--t2)">—</div><div class="stat-l">Avg Rating</div></div>
+    <div class="stat-pill"><div class="stat-v" id="hs-badges" style="color:var(--a)">0</div><div class="stat-l">Badges</div></div>
+    <div class="stat-pill"><div class="stat-v" id="hs-matches" style="color:var(--r)">0</div><div class="stat-l">Matches</div></div>
+  </div>
+  <div class="g2">
+    <div class="gc2" id="home-session-card">
+      <div class="sh"><h2>Today's session</h2></div>
+      <div class="loading"><i class="ti ti-loader"></i> Loading…</div>
+    </div>
+    <div class="gc" id="home-matches-card">
+      <div class="sh"><h2>Top matches</h2><button class="btn btn-o btn-sm" onclick="goto('matches')">See all</button></div>
+      <div class="loading"><i class="ti ti-loader"></i> Loading…</div>
+    </div>
+  </div>
+  <div class="gc" id="home-skills-card">
+    <div class="sh"><h2>My skills overview</h2><button class="btn btn-o btn-sm" onclick="goto('profile')">Edit</button></div>
+    <div class="loading"><i class="ti ti-loader"></i> Loading…</div>
+  </div>
+</div>
+
+<!-- DISCOVER -->
+<div class="page" id="page-discover">
+  <div><h1>Discover skills</h1><p style="margin-top:2px">Browse the community skill marketplace</p></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <div class="sbar" style="flex:1;min-width:160px">
+      <i class="ti ti-search" style="color:var(--text4);font-size:13px"></i>
+      <input placeholder="Search skills, people, colleges…" id="dsearch" oninput="filterDiscover()">
+    </div>
+  </div>
+  <div class="g2" id="disc-grid"><div class="loading"><i class="ti ti-loader"></i> Loading users…</div></div>
+</div>
+
+<!-- MATCHES -->
+<div class="page" id="page-matches">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div><h1>Your matches</h1><p style="margin-top:2px">Smart-paired by skill compatibility</p></div>
+    <button class="btn btn-o btn-sm" onclick="loadMatches()"><i class="ti ti-refresh"></i>Refresh</button>
+  </div>
+  <div class="sec-float">Suggested for you</div>
+  <div id="match-list"><div class="loading"><i class="ti ti-loader"></i> Loading matches…</div></div>
+</div>
+
+<!-- CHAT -->
+<div class="page page-chat-pg" id="page-chat">
+  <div class="chat-wrap">
+    <div class="csb">
+      <div style="padding:9px 11px;border-bottom:1px solid var(--border)">
+        <div class="sbar"><i class="ti ti-search" style="color:var(--text4);font-size:12px"></i><input placeholder="Search…"></div>
+      </div>
+      <div id="chat-list"><div class="loading" style="font-size:11px">No chats yet</div></div>
+    </div>
+    <div class="cbody">
+      <div class="chdr" id="chat-header">
+        <div style="flex:1;color:var(--text3);font-size:12px">Select a conversation</div>
+      </div>
+      <div class="cmsgs" id="chat-msgs"></div>
+      <div class="cinp-row">
+        <input class="cinp" placeholder="Message…" id="chat-inp" onkeydown="if(event.key==='Enter')sendMsg()">
+        <button class="btn btn-p btn-sm" onclick="sendMsg()"><i class="ti ti-send"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="page" id="page-schedule">
+  <div><h1>Session schedule</h1><p style="margin-top:2px">Manage and book learning sessions</p></div>
+  <div class="g2">
+    <div class="gc">
+      <div class="sh">
+        <h2 id="cal-lbl">June 2026</h2>
+        <div style="display:flex;gap:4px">
+          <button class="btn-icon btn btn-sm" onclick="calNav(-1)"><i class="ti ti-chevron-left" style="font-size:11px"></i></button>
+          <button class="btn-icon btn btn-sm" onclick="calNav(1)"><i class="ti ti-chevron-right" style="font-size:11px"></i></button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+    <div>
+      <div class="sh">
+        <h2>Upcoming sessions</h2>
+        <button class="btn btn-p btn-sm" onclick="toggleNS()"><i class="ti ti-plus"></i>New</button>
+      </div>
+      <div id="sessions-list"><div class="loading"><i class="ti ti-loader"></i> Loading…</div></div>
+    </div>
+  </div>
+  <div id="ns-form" class="gc2" style="display:none;border-color:var(--p)">
+    <div class="sh"><h2>Schedule new session</h2><button class="btn-icon btn" onclick="toggleNS()"><i class="ti ti-x" style="font-size:12px"></i></button></div>
+    <div class="g2" style="gap:10px;margin-top:8px">
+      <div><div class="fl">Partner UID</div><input id="ns-partner" class="finp" placeholder="Partner's user ID"></div>
+      <div><div class="fl">Topic</div><input id="ns-topic" class="finp" placeholder="e.g. Python Pandas basics"></div>
+      <div><div class="fl">Date & Time</div><input id="ns-datetime" class="finp" type="datetime-local"></div>
+      <div><div class="fl">Duration</div><select id="ns-duration" class="finp"><option>30 minutes</option><option>45 minutes</option><option selected>60 minutes</option><option>90 minutes</option></select></div>
+      <div><div class="fl">Meet link</div><input id="ns-link" class="finp" type="url" placeholder="https://meet.google.com/…"></div>
+    </div>
+    <div style="display:flex;gap:7px;justify-content:flex-end;margin-top:12px">
+      <button class="btn btn-o btn-sm" onclick="toggleNS()">Cancel</button>
+      <button class="btn btn-p btn-sm" onclick="confirmSess()"><i class="ti ti-calendar-check"></i>Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="page" id="page-leaderboard">
+  <div><h1>Community leaderboard</h1><p style="margin-top:2px">Top contributors</p></div>
+  <div class="g3" id="lb-stats">
+    <div class="stat-pill"><div class="stat-v" id="lb-total-users" style="color:var(--p)">—</div><div class="stat-l">Total users</div></div>
+    <div class="stat-pill"><div class="stat-v" id="lb-total-sessions" style="color:var(--t2)">—</div><div class="stat-l">Sessions done</div></div>
+    <div class="stat-pill"><div class="stat-v" id="lb-avg-rating" style="color:var(--a)">—</div><div class="stat-l">Avg rating</div></div>
+  </div>
+  <div class="g2">
+    <div><div class="sec-float" style="margin-bottom:8px">🏆 Top by sessions</div><div id="lb-sess"><div class="loading"><i class="ti ti-loader"></i> Loading…</div></div></div>
+    <div><div class="sec-float" style="margin-bottom:8px">⭐ Top rated</div><div id="lb-rate"><div class="loading"><i class="ti ti-loader"></i> Loading…</div></div></div>
+  </div>
+  <div class="gc2" id="lb-me-card" style="display:none;border-color:var(--p)">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div id="lb-me-av" class="av av-md" style="background:linear-gradient(135deg,var(--p),var(--t2));color:#fff">?</div>
+      <div style="flex:1">
+        <div id="lb-me-name" style="font-weight:600;font-size:13px">You</div>
+        <div id="lb-me-college" style="font-size:11px;color:var(--text3)"></div>
+      </div>
+      <div style="text-align:right"><div id="lb-me-sessions" style="font-size:18px;font-weight:700;color:var(--t2)">0</div><div style="font-size:9px;color:var(--text4)">sessions</div></div>
+      <div style="text-align:right"><div id="lb-me-rating" style="font-size:18px;font-weight:700;color:var(--a)">—</div><div style="font-size:9px;color:var(--text4)">rating</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="page" id="page-profile">
+  <div class="g2" style="align-items:start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="gc2">
+        <div style="display:flex;gap:13px;align-items:flex-start">
+          <div id="profile-av" class="av av-xl" style="background:linear-gradient(135deg,var(--p),var(--t2));color:#fff;box-shadow:var(--shadow2)">?</div>
+          <div style="flex:1">
+            <div id="profile-name" style="font-size:17px;font-weight:700;margin-bottom:2px">Loading…</div>
+            <div id="profile-college" style="font-size:11px;color:var(--text3);margin-bottom:5px"></div>
+            <p id="profile-bio" style="font-size:12px;margin-bottom:8px"></p>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-p btn-sm" onclick="openEditProfile()"><i class="ti ti-edit"></i>Edit</button>
+              <button class="btn btn-o btn-sm" onclick="doLogout()"><i class="ti ti-logout"></i>Logout</button>
+            </div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="g4" style="gap:7px" id="profile-stats-grid" style="display:none"></div>
+      </div>
+
+      <!-- Skills card -->
+      <div class="gc">
+        <div class="sh"><h2>Skills I teach</h2>
+          <button class="btn-icon btn" onclick="openAddSkill('teach')" title="Add skill"><i class="ti ti-plus" style="font-size:12px"></i></button>
+        </div>
+        <div id="teach-skills-list"><div class="loading" style="font-size:11px">No skills added yet</div></div>
+        <div class="divider"></div>
+        <div class="sh"><h2>Skills I want to learn</h2>
+          <button class="btn-icon btn" onclick="openAddSkill('learn')" title="Add skill"><i class="ti ti-plus" style="font-size:12px"></i></button>
+        </div>
+        <div id="learn-skills-list" class="tag-row"><div class="loading" style="font-size:11px">No skills added yet</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="gc">
+        <h2 style="margin-bottom:10px">Reviews received</h2>
+        <div id="reviews-list"><div class="loading"><i class="ti ti-loader"></i> Loading…</div></div>
+      </div>
+      <div class="gc">
+        <h2 style="margin-bottom:10px">Badges</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px" id="badges-list">
+          <div class="bdg lk"><div class="bicon">⚡</div><div class="bname">Quick Starter</div><div class="bdesc">1st session</div></div>
+          <div class="bdg lk"><div class="bicon">⭐</div><div class="bname">Top Rated</div><div class="bdesc">4.8+ avg</div></div>
+          <div class="bdg lk"><div class="bicon">🌟</div><div class="bname">Verified Mentor</div><div class="bdesc">10+ sessions</div></div>
+          <div class="bdg lk"><div class="bicon">🏆</div><div class="bname">Grand Mentor</div><div class="bdesc">20 sessions</div></div>
+          <div class="bdg lk"><div class="bicon">💎</div><div class="bname">Legend</div><div class="bdesc">50 sessions</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- NOTIFICATION PANEL -->
+<div id="notif-panel" style="display:none;position:fixed;top:58px;right:12px;width:300px;
+  background:var(--glass3);backdrop-filter:var(--blur-heavy);border:1px solid var(--border2);
+  border-radius:18px;padding:16px;z-index:500;box-shadow:var(--shadow2)">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <h2 style="font-size:13px">Notifications</h2>
+    <button class="btn-icon btn" onclick="clearNotifs()"><i class="ti ti-check" style="font-size:11px"></i></button>
+  </div>
+  <div id="notif-list">
+    <div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">
+      <i class="ti ti-bell-off" style="font-size:24px;display:block;margin-bottom:6px;opacity:.4"></i>
+      No new notifications
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────────
+const API = 'https://gizzard-line-trump.ngrok-free.dev/api/v1';
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let calY = 2026, calM = 5, isDark = false;
+let currentUser = null;
+let allUsers = []; // cache for discover/filter
+
+// ── HELPERS ──────────────────────────────────────────────────
+function avatarBg(name) {
+  const colors = ['linear-gradient(135deg,#7c3aed,#059669)','linear-gradient(135deg,#b45309,#d97706)',
+    'linear-gradient(135deg,#be185d,#7c3aed)','linear-gradient(135deg,#059669,#1d4ed8)',
+    'linear-gradient(135deg,#1d4ed8,#be185d)','linear-gradient(135deg,#b45309,#c2410c)'];
+  let h = 0; for (let c of (name||'?')) h = (h * 31 + c.charCodeAt(0)) % colors.length;
+  return colors[Math.abs(h)];
+}
+function initials(name) {
+  return (name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) || '?';
+}
+async function apiCall(path, method='GET', body=null) {
+  if (!currentUser) return null;
+  try {
+    const token = await currentUser.getIdToken();
+    const res = await fetch(API + path, {
+      method, headers: {'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body: body ? JSON.stringify(body) : null
+    });
+    if (!res.ok) { const t = await res.text(); console.error(path, res.status, t); return null; }
+    return await res.json();
+  } catch(e) { console.error('API error:', path, e); return null; }
+}
+function toast(msg, type='p') {
+  const t = document.getElementById('toast');
+  const c = type==='t'?'var(--t)':type==='p'?'var(--p)':'var(--a)';
+  t.innerHTML = `<i class="ti ti-check-circle" style="color:${c};font-size:15px"></i>${msg}`;
+  t.style.display = 'flex'; setTimeout(()=>t.style.display='none', 3000);
+}
+
+// ── THEME ────────────────────────────────────────────────────
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.className = isDark ? 'dark' : 'light';
+  document.getElementById('sw-thumb').className = 'switch-thumb' + (isDark?' right':'');
+  document.getElementById('sw-lbl').textContent = isDark ? 'Dark' : 'Light';
+  document.getElementById('sw-sun').style.color = isDark ? 'var(--text4)' : 'var(--a)';
+  document.getElementById('sw-moon').style.color = isDark ? 'var(--p2)' : 'var(--text4)';
+}
+
+// ── NAV ──────────────────────────────────────────────────────
+function goto(p) {
+
+  document.querySelectorAll('.page').forEach(el =>
+      el.classList.remove('active')
+  );
+
+  document.getElementById('page-'+p).classList.add('active');
+
+  document.querySelectorAll('.nt').forEach(t =>
+      t.classList.toggle('active', t.dataset.p===p)
+  );
+
+  if (p === 'discover') loadDiscover();
+
+  if (p === 'matches') loadMatches();
+
+  if (p === 'leaderboard') loadLeaderboard();
+
+  if (p === 'profile') loadProfile();
+
+  if (p === 'schedule') {
+      buildCal();
+      loadSessions();
+  }
+
+  // 🔥 NEW
+  if (p === 'chat') {
+      loadChatList();
+  }
+
+}
+document.querySelectorAll('.nt').forEach(t=>t.addEventListener('click',()=>goto(t.dataset.p)));
+
+// ── AUTH TABS ────────────────────────────────────────────────
+function sat(t) {
+  document.getElementById('al').style.display = t==='l' ? '' : 'none';
+  document.getElementById('ar').style.display = t==='r' ? '' : 'none';
+  document.querySelectorAll('.atab').forEach((e,i)=>e.classList.toggle('active',(t==='l'?i===0:i===1)));
+}
+
+// ── ENTER APP ────────────────────────────────────────────────
+async function enterApp(user) {
+  currentUser = user;
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-nav').style.display = 'flex';
+  document.getElementById('app-main').style.display = 'flex';
+  const name = user.displayName || user.email.split('@')[0];
+  const ini = initials(name);
+  document.getElementById('nav-av').textContent = ini;
+  document.getElementById('home-name').textContent = name.split(' ')[0];
+  // Create profile on backend if first time
+  await apiCall('/users/', 'POST', {
+    uid: user.uid, display_name: name, email: user.email,
+    college: '', bio: '', skills_teach: [], skills_learn: []
+  });
+  loadHome();
+  await loadNotifications();
+  toast('Welcome, ' + name.split(' ')[0] + '! 👋', 'p');
+}
+
+// ── LOAD HOME ────────────────────────────────────────────────
+async function loadHome() {
+  const profile = await apiCall('/users/me');
+  if (profile) {
+    const name = profile.display_name || currentUser.displayName || 'there';
+    document.getElementById('home-name').textContent = name.split(' ')[0];
+    document.getElementById('home-sub').textContent = profile.college || 'Welcome to SkillSwap!';
+    // Stats — only show if user has activity
+    const sessions = profile.sessions_count || 0;
+    const rating = profile.rating || 0;
+    const badges = (profile.badges || []).length;
+    if (sessions > 0 || badges > 0) {
+      document.getElementById('home-stats').style.display = 'grid';
+      document.getElementById('hs-sessions').textContent = sessions;
+      document.getElementById('hs-rating').textContent = rating > 0 ? rating.toFixed(1)+'★' : '—';
+      document.getElementById('hs-badges').textContent = badges;
+    }
+    // Skills overview
+    renderHomeSkills(profile);
+  }
+  // Top matches
+  const matches = await apiCall('/matches/suggested');
+  renderHomeMatches(matches);
+  // Today's session
+  const sessions = await apiCall('/sessions/');
+  renderHomeSession(sessions);
+  // Matches count for stats
+  if (matches && matches.length > 0) {
+    document.getElementById('home-stats').style.display = 'grid';
+    document.getElementById('hs-matches').textContent = matches.length;
+  }
+}
+
+function renderHomeSkills(profile) {
+  const card = document.getElementById('home-skills-card');
+  const teach = profile.skills_teach || [];
+  const learn = profile.skills_learn || [];
+  if (teach.length === 0 && learn.length === 0) {
+    card.innerHTML = `<div class="sh"><h2>My skills overview</h2><button class="btn btn-o btn-sm" onclick="goto('profile')">Add skills</button></div>
+      <div class="empty-state"><i class="ti ti-books"></i>No skills added yet.<br>Go to Profile to add your skills.</div>`;
+    return;
+  }
+  let html = `<div class="sh"><h2>My skills overview</h2><button class="btn btn-o btn-sm" onclick="goto('profile')">Edit</button></div><div class="g2"><div>`;
+  if (teach.length > 0) {
+    html += `<div class="sec-float">I can teach</div>`;
+    teach.slice(0,3).forEach(s => {
+      const name = skillName(s);
+      html += `<div style="margin-bottom:6px"><div style="font-size:11px;font-weight:500">${name}</div>
+        <div class="prog"><div class="prog-f" style="width:75%;background:var(--p)"></div></div></div>`;
+    });
+  }
+  html += `</div><div>`;
+  if (learn.length > 0) {
+    html += `<div class="sec-float">I want to learn</div><div class="tag-row">`;
+    learn.forEach(s => { html += `<span class="pill pa">${skillName(s)}</span>`; });
+    html += `</div>`;
+  }
+  html += `</div></div>`;
+  card.innerHTML = html;
+}
+
+function renderHomeMatches(matches) {
+  const card = document.getElementById('home-matches-card');
+  if (!matches || matches.length === 0) {
+    card.innerHTML = `<div class="sh"><h2>Top matches</h2><button class="btn btn-o btn-sm" onclick="goto('matches')">See all</button></div>
+      <div class="empty-state"><i class="ti ti-users"></i>No matches yet.<br>Add skills to find matches!</div>`;
+    return;
+  }
+  let html = `<div class="sh"><h2>Top matches</h2><button class="btn btn-o btn-sm" onclick="goto('matches')">See all</button></div>
+    <div style="display:flex;flex-direction:column;gap:6px">`;
+  matches.slice(0,3).forEach(u => {
+    const name = u.display_name || u.uid;
+    const ini = initials(name);
+    const bg = avatarBg(name);
+    const pct = u.match_pct || 0;
+    const teach = (u.skills_teach || [])
+    .map(s => typeof s === 'object' ? s.skill : s)
+    .slice(0,1)
+    .join('');
+
+  const learn = (u.skills_learn || [])
+    .map(s => typeof s === 'object' ? s.skill : s)
+    .slice(0,1)
+    .join('');
+    html += `<div class="gc-inner" style="display:flex;align-items:center;gap:8px">
+      <div class="av av-sm" style="background:${bg};color:#fff">${ini}</div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600">${name}</div>
+        <div style="display:flex;gap:4px;margin-top:2px">
+          <span class="pill pb" style="font-size:9px">${teach||'—'}</span>
+          <i class="ti ti-arrows-exchange" style="color:var(--text4);font-size:10px"></i>
+          <span class="pill pp" style="font-size:9px">${learn||'—'}</span>
+        </div>
+      </div>
+      <div class="mring ${pct>=85?'mring-hi':'mring-md'}" style="width:34px;height:34px">${pct}%</div>
+    </div>`;
+  });
+  html += `</div>`;
+  card.innerHTML = html;
+}
+
+function renderHomeSession(sessions) {
+  const card = document.getElementById('home-session-card');
+  const now = new Date();
+  const todaySess = (sessions||[]).find(s => {
+    const d = new Date(s.date_time);
+    return d.toDateString() === now.toDateString();
+  });
+  if (!todaySess) {
+    card.innerHTML = `<div class="sh"><h2>Today's session</h2></div>
+      <div class="empty-state"><i class="ti ti-calendar-off"></i>No session today.<br><button class="btn btn-p btn-sm" style="margin-top:8px" onclick="goto('schedule')"><i class="ti ti-plus"></i>Schedule one</button></div>`;
+    return;
+  }
+  const d = new Date(todaySess.date_time);
+  const mo = MONTHS[d.getMonth()].slice(0,3).toUpperCase();
+  const day = d.getDate();
+  const time = d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  card.innerHTML = `<div class="sh"><h2>Today's session</h2><span class="pill pt">● Live soon</span></div>
+    <div style="display:flex;gap:11px;align-items:flex-start;margin-bottom:12px">
+      <div class="sess-t"><div class="smo">${mo}</div><div class="sd">${day}</div><div style="font-size:9px;color:var(--text4);margin-top:1px">${time}</div></div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px">${todaySess.topic||'Session'}</div>
+        <div style="font-size:11px;color:var(--text3)">${todaySess.duration||'60 minutes'}</div>
+        ${todaySess.meet_link?`<div style="margin-top:7px"><a href="${todaySess.meet_link}" target="_blank" style="font-size:11px;color:var(--b);text-decoration:none"><i class="ti ti-video"></i> Join meeting</a></div>`:''}
+      </div>
+    </div>
+    <div style="display:flex;gap:6px">
+      ${todaySess.meet_link?`<a href="${todaySess.meet_link}" target="_blank" class="btn btn-t btn-sm"><i class="ti ti-video"></i>Join session</a>`:''}
+    </div>`;
+}
+
+// ── DISCOVER ─────────────────────────────────────────────────
+async function loadDiscover() {
+  const grid = document.getElementById('disc-grid');
+  grid.innerHTML = '<div class="loading"><i class="ti ti-loader"></i> Loading users…</div>';
+  const users = await apiCall('/users/');
+  if (!users || users.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-users"></i>No other users yet.<br>Invite friends to join!</div>';
+    return;
+  }
+  allUsers = users.filter(u => u.uid !== currentUser.uid);
+  renderDiscover(allUsers);
+}
+function renderDiscover(list) {
+  const g = document.getElementById('disc-grid');
+  if (!list || list.length === 0) {
+    g.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-search-off"></i>No users match your search.</div>';
+    return;
+  }
+  g.innerHTML = list.map(u => {
+    const name = u.display_name || u.uid;
+    const ini = initials(name);
+    const bg = avatarBg(name);
+    const teach = (u.skills_teach || [])
+    .map(s => typeof s === 'object' ? s.skill : s)
+    .slice(0,2)
+    .join(', ') || '—';
+
+  const learn = (u.skills_learn || [])
+    .map(s => typeof s === 'object' ? s.skill : s)
+    .slice(0,2)
+    .join(', ') || '—';
+    const rating = u.rating ? u.rating.toFixed(1) : '—';
+    const sessions = u.sessions_count || 0;
+    return `<div class="gc" style="cursor:default;transition:border-color .2s"
+        onmouseover="this.style.borderColor='var(--p)'" onmouseout="this.style.borderColor=''">
+      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px">
+        <div class="av av-md" style="background:${bg};color:#fff">${ini}</div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:13px">${name}</div>
+          <div style="font-size:11px;color:var(--text3)">${u.college||''}</div>
+          <div style="font-size:11px;color:var(--a);margin-top:2px">
+            ${rating!=='—'?'★ '+rating:'No rating yet'}
+            <span style="color:var(--text4);margin-left:3px">${sessions} sessions</span>
+          </div>
+        </div>
+      </div>
+      <div class="gc-inner" style="margin-bottom:10px">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:5px;font-weight:500">Skill exchange</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span class="pill pb">${teach}</span>
+          <i class="ti ti-arrows-exchange" style="color:var(--text4);font-size:12px"></i>
+          <span class="pill pp">${learn}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-p btn-sm" style="flex:1" onclick="connectUser('${u.uid}','${name}')">
+          <i class="ti ti-arrows-exchange"></i>Connect</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function filterDiscover() {
+  const q = (document.getElementById('dsearch')?.value||'').toLowerCase();
+  const filtered = allUsers.filter(u =>
+    (u.display_name||'').toLowerCase().includes(q) ||
+    (u.college||'').toLowerCase().includes(q) ||
+    (u.skills_teach||[]).join(' ').toLowerCase().includes(q) ||
+    (u.skills_learn||[]).join(' ').toLowerCase().includes(q)
+  );
+  renderDiscover(filtered);
+}
+async function connectUser(uid, name) {
+
+    const btn = event?.target;
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = "Connecting...";
+    }
+
+    const res = await apiCall(
+        "/matches/",
+        "POST",
+        {
+            target_uid: uid
+        }
+    );
+
+    if (res) {
+
+        toast(`Connection request sent to ${name}! 🎉`, "t");
+
+        // Refresh all related pages
+        await loadHome();
+        await loadMatches();
+        await loadNotifications();
+
+    } else {
+
+        toast("Unable to send connection request.", "a");
+
+    }
+
+    if (btn) {
+        btn.disabled = false;
+        btn.innerText = "Connect";
+    }
+
+}
+
+// ── MATCHES ──────────────────────────────────────────────────
+async function loadMatches() {
+  const el = document.getElementById('match-list');
+  el.innerHTML = '<div class="loading"><i class="ti ti-loader"></i> Loading matches…</div>';
+  const matches = await apiCall('/matches/suggested');
+  if (!matches || matches.length === 0) {
+    el.innerHTML = '<div class="empty-state"><i class="ti ti-users"></i>No matches yet.<br>Add skills to your profile to get matched!</div>';
+    return;
+  }
+  el.innerHTML = matches.map(u => {
+    const name = u.display_name || u.uid;
+    const ini = initials(name);
+    const bg = avatarBg(name);
+    const pct = u.match_pct || 0;
+    const teach = (u.skills_teach || [])
+    .map(s => typeof s === 'object' ? s.skill : s)
+    .slice(0,2)
+    .join(', ') || '—';
+
+  const learn = (u.skills_learn || [])
+    .map(s => typeof s === 'object' ? s.skill : s)
+    .slice(0,2)
+    .join(', ') || '—';
+    const rating = u.rating ? u.rating.toFixed(1)+'★' : '—';
+    return `<div class="gc" style="display:flex;gap:12px;align-items:center">
+      <div class="av av-md" style="background:${bg};color:#fff">${ini}</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:13px;margin-bottom:2px">${name}</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:5px">${u.college||''} · ${rating} · ${u.sessions_count||0} sessions</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <span class="pill pb" style="font-size:9px">${teach}</span>
+          <i class="ti ti-arrows-exchange" style="color:var(--text4);font-size:10px"></i>
+          <span class="pill pp" style="font-size:9px">${learn}</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px">
+        <div class="mring ${pct>=85?'mring-hi':'mring-md'}" style="width:40px;height:40px;font-size:12px">${pct}%</div>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-p btn-sm" onclick="connectUser('${u.uid}','${name}')"><i class="ti ti-check"></i>Connect</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── SESSIONS ─────────────────────────────────────────────────
+async function loadSessions() {
+  const el = document.getElementById('sessions-list');
+  el.innerHTML = '<div class="loading"><i class="ti ti-loader"></i> Loading…</div>';
+  const sessions = await apiCall('/sessions/');
+  if (!sessions || sessions.length === 0) {
+    el.innerHTML = '<div class="empty-state"><i class="ti ti-calendar-off"></i>No sessions yet.<br>Click + New to schedule one!</div>';
+    return;
+  }
+  const now = new Date();
+  el.innerHTML = sessions.map(s => {
+    const d = new Date(s.date_time);
+    const mo = MONTHS[d.getMonth()].slice(0,3).toUpperCase();
+    const day = d.getDate();
+    const time = d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    const isToday = d.toDateString() === now.toDateString();
+    const isPast = d < now;
+    return `<div class="sess">
+      <div class="sess-t"><div class="smo">${mo}</div><div class="sd">${day}</div><div style="font-size:9px;color:var(--text4);margin-top:1px">${time}</div></div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600;margin-bottom:2px">${s.topic||'Session'}</div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:5px">${s.duration||'60 minutes'}</div>
+        <div style="display:flex;gap:5px;align-items:center">
+          <span class="pill ${isToday?'pt':'pgr'}" style="font-size:9px">${isToday?'Today':isPast?'Done':d.toLocaleDateString([],{weekday:'short'})}</span>
+          ${s.meet_link&&!isPast?`<a href="${s.meet_link}" target="_blank" class="btn btn-t btn-sm" style="font-size:10px;padding:3px 8px"><i class="ti ti-video"></i>Join</a>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleNS(){const f=document.getElementById('ns-form');f.style.display=f.style.display==='none'?'':'none';}
+async function confirmSess() {
+  const partner = document.getElementById('ns-partner').value.trim();
+  const topic = document.getElementById('ns-topic').value.trim();
+  const dt = document.getElementById('ns-datetime').value;
+  const duration = document.getElementById('ns-duration').value;
+  const link = document.getElementById('ns-link').value.trim();
+  if (!partner || !topic || !dt) { toast('Fill in all required fields', 'a'); return; }
+  const res = await apiCall('/sessions/', 'POST', {
+    partner_uid: partner, topic, date_time: dt, duration, meet_link: link
+  });
+  if (res) { toggleNS(); toast('Session scheduled! 🗓️', 't'); loadSessions(); }
+  else toast('Failed to schedule. Check partner UID.', 'a');
+}
+
+// ── LEADERBOARD ──────────────────────────────────────────────
+async function loadLeaderboard() {
+  const [bySess, byRating, stats] = await Promise.all([
+    apiCall('/leaderboard/sessions'),
+    apiCall('/leaderboard/rating'),
+    apiCall('/leaderboard/stats')
+  ]);
+  if (stats) {
+    document.getElementById('lb-total-users').textContent = stats.total_users || 0;
+    document.getElementById('lb-total-sessions').textContent = stats.total_sessions || 0;
+    document.getElementById('lb-avg-rating').textContent = stats.avg_rating ? stats.avg_rating.toFixed(1)+'★' : '—';
+  }
+  const renderRow = (u, i, val) => {
+    const name = u.display_name || u.uid;
+    const ini = initials(name);
+    const bg = avatarBg(name);
+    const medals = ['🥇','🥈','🥉'];
+    return `<div class="lbr">
+      <div style="font-size:12px;font-weight:700;width:18px;text-align:center;color:${i<3?['#ffd700','#c0c0c0','#cd7f32'][i]:'var(--text4)'}">${i<3?medals[i]:i+1}</div>
+      <div class="av av-sm" style="background:${bg};color:#fff">${ini}</div>
+      <div style="flex:1"><div style="font-size:12px;font-weight:600">${name}</div><div style="font-size:10px;color:var(--text4)">${u.college||''}</div></div>
+      <div style="font-size:12px;font-weight:700;color:var(--t2)">${val}</div>
+    </div>`;
+  };
+  document.getElementById('lb-sess').innerHTML = bySess && bySess.length
+    ? bySess.map((u,i)=>renderRow(u,i,(u.sessions_count||0)+' sessions')).join('')
+    : '<div class="empty-state"><i class="ti ti-trophy"></i>No data yet</div>';
+  document.getElementById('lb-rate').innerHTML = byRating && byRating.length
+    ? byRating.map((u,i)=>renderRow(u,i,(u.rating||0).toFixed(1)+'★')).join('')
+    : '<div class="empty-state"><i class="ti ti-star"></i>No data yet</div>';
+  // Show current user card
+  const me = await apiCall('/users/me');
+  if (me) {
+    const name = me.display_name || currentUser.displayName || 'You';
+    document.getElementById('lb-me-card').style.display = 'block';
+    document.getElementById('lb-me-av').textContent = initials(name);
+    document.getElementById('lb-me-name').textContent = name + ' (You)';
+    document.getElementById('lb-me-college').textContent = me.college || '';
+    document.getElementById('lb-me-sessions').textContent = me.sessions_count || 0;
+    document.getElementById('lb-me-rating').textContent = me.rating ? me.rating.toFixed(1)+'★' : '—';
+  }
+}
+
+// ── PROFILE ──────────────────────────────────────────────────
+async function loadProfile() {
+  const profile = await apiCall('/users/me');
+  if (!profile) return;
+  const name = profile.display_name || currentUser.displayName || '';
+  const ini = initials(name);
+  document.getElementById('profile-av').textContent = ini;
+  document.getElementById('nav-av').textContent = ini;
+  document.getElementById('profile-name').textContent = name;
+  document.getElementById('profile-college').textContent = profile.college || '';
+  document.getElementById('profile-bio').textContent = profile.bio || '';
+  // Stats
+  const sessions = profile.sessions_count || 0;
+  const rating = profile.rating || 0;
+  const badges = profile.badges || [];
+  const statsGrid = document.getElementById('profile-stats-grid');
+  statsGrid.innerHTML = `
+    <div style="text-align:center;background:var(--glass2);border:1px solid var(--border);border-radius:12px;padding:9px 5px">
+      <div style="font-size:17px;font-weight:700;color:var(--p)">${sessions}</div>
+      <div style="font-size:9px;color:var(--text4);text-transform:uppercase;letter-spacing:.4px">Sessions</div>
+    </div>
+    <div style="text-align:center;background:var(--glass2);border:1px solid var(--border);border-radius:12px;padding:9px 5px">
+      <div style="font-size:17px;font-weight:700;color:var(--t2)">${rating>0?rating.toFixed(1)+'★':'—'}</div>
+      <div style="font-size:9px;color:var(--text4);text-transform:uppercase;letter-spacing:.4px">Rating</div>
+    </div>
+    <div style="text-align:center;background:var(--glass2);border:1px solid var(--border);border-radius:12px;padding:9px 5px">
+      <div style="font-size:17px;font-weight:700;color:var(--a)">${badges.length}</div>
+      <div style="font-size:9px;color:var(--text4);text-transform:uppercase;letter-spacing:.4px">Badges</div>
+    </div>
+    <div style="text-align:center;background:var(--glass2);border:1px solid var(--border);border-radius:12px;padding:9px 5px">
+      <div style="font-size:17px;font-weight:700;color:var(--r)">${profile.rating_count||0}</div>
+      <div style="font-size:9px;color:var(--text4);text-transform:uppercase;letter-spacing:.4px">Reviews</div>
+    </div>`;
+  statsGrid.style.display = 'grid';
+  // Skills
+  renderTeachSkills(profile.skills_teach || []);
+  renderLearnSkills(profile.skills_learn || []);
+  // Badges
+  renderBadges(badges);
+  // Reviews
+  loadReviews();
+}
+
+function skillName(s) {
+  if (!s) return '';
+  if (typeof s === 'string') return s;
+  if (typeof s === 'object') return s.skill || s.name || '';
+  return String(s);
+}
+
+function renderTeachSkills(skills) {
+  const el = document.getElementById('teach-skills-list');
+  if (!skills || skills.length === 0) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:6px 0">No teach skills yet. Click + to add.</div>';
+    return;
+  }
+  el.innerHTML = skills.map(s => {
+    const name = skillName(s);
+    return `<div class="skill-row">
+      <span class="pill pt" style="min-width:100px;justify-content:center;font-size:10px">${name}</span>
+      <div class="prog" style="flex:1"><div class="prog-f" style="width:75%;background:var(--p)"></div></div>
+      <button class="btn-icon btn" style="width:22px;height:22px" onclick="removeSkill('teach','${name}')">
+        <i class="ti ti-trash" style="font-size:10px"></i></button>
+    </div>`;
+  }).join('');
+}
+
+function renderLearnSkills(skills) {
+  const el = document.getElementById('learn-skills-list');
+  if (!skills || skills.length === 0) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:6px 0">No learn skills yet. Click + to add.</div>';
+    return;
+  }
+  el.innerHTML = skills.map(s => {
+    const name = skillName(s);
+    return `<span class="pill pa" style="cursor:pointer" onclick="removeSkill('learn','${name}')">${name} ×</span>`;
+  }).join('');
+}
+
+function renderBadges(earnedBadges) {
+  const allBadges = [
+    {id:'quick_starter',icon:'⚡',name:'Quick Starter',desc:'1st session'},
+    {id:'top_rated',icon:'⭐',name:'Top Rated',desc:'4.8+ avg, 5+ reviews'},
+    {id:'verified_mentor',icon:'🌟',name:'Verified Mentor',desc:'10+ sessions'},
+    {id:'grand_mentor',icon:'🏆',name:'Grand Mentor',desc:'20 sessions'},
+    {id:'legend',icon:'💎',name:'Legend',desc:'50 sessions'},
+  ];
+  document.getElementById('badges-list').innerHTML = allBadges.map(b => {
+    const earned = earnedBadges.includes(b.id);
+    return `<div class="bdg${earned?'':' lk'}">
+      <div class="bicon">${b.icon}</div>
+      <div class="bname">${b.name}</div>
+      <div class="bdesc">${b.desc}</div>
+    </div>`;
+  }).join('');
+}
+
+async function loadReviews() {
+  const reviews = await apiCall('/reviews/' + currentUser.uid);
+  const el = document.getElementById('reviews-list');
+  if (!reviews || reviews.length === 0) {
+    el.innerHTML = '<div class="empty-state"><i class="ti ti-message-circle"></i>No reviews yet.</div>';
+    return;
+  }
+  el.innerHTML = reviews.map(r => {
+    const stars = '★'.repeat(r.rating) + '<span style="color:var(--border2)">' + '★'.repeat(5-r.rating) + '</span>';
+    return `<div class="gc-inner" style="margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <div class="av av-sm" style="background:${avatarBg(r.from_name||'?')};color:#fff">${initials(r.from_name||'?')}</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:600">${r.from_name||'Anonymous'}</div>
+          <div style="font-size:9px;color:var(--text4)">${new Date(r.created_at).toLocaleDateString()}</div></div>
+        <div style="color:var(--a);font-size:12px">${stars}</div>
+      </div>
+      <p style="font-size:11px;line-height:1.5;font-style:italic">"${r.text}"</p>
+    </div>`;
+  }).join('');
+}
+
+// ── SKILL MANAGEMENT ─────────────────────────────────────────
+function openAddSkill(type) {
+  const existing = document.getElementById('skill-modal');
+  if (existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.id = 'skill-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;box-sizing:border-box';
+  const label = type === 'teach' ? 'Skill I can teach' : 'Skill I want to learn';
+  modal.innerHTML = `
+    <div style="background:var(--card);border-radius:18px;padding:24px;width:100%;max-width:360px;border:1px solid var(--border2);box-shadow:var(--shadow2)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="font-size:15px;font-weight:600">Add skill</h2>
+        <button class="btn-icon btn" onclick="document.getElementById('skill-modal').remove()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="fl">${label}</div>
+      <input id="skill-input" class="finp" placeholder="e.g. Python, UI/UX Design, React" style="margin-bottom:12px;margin-top:4px">
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
+        ${['Python','JavaScript','React','Machine Learning','UI/UX Design','SQL','FastAPI','DSA','Data Science','Flutter']
+          .map(s=>`<span class="pill pgr" style="cursor:pointer" onclick="document.getElementById('skill-input').value='${s}'">${s}</span>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-o btn-sm" onclick="document.getElementById('skill-modal').remove()">Cancel</button>
+        <button class="btn btn-p btn-sm" onclick="addSkill('${type}')"><i class="ti ti-plus"></i>Add</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('skill-input').focus();
+}
+
+async function addSkill(type) {
+  const skill = document.getElementById('skill-input').value.trim();
+  if (!skill) return;
+  const endpoint = type === 'teach' ? '/users/me/skills/teach' : '/users/me/skills/learn';
+  const res = await apiCall(endpoint, 'POST', {skill});
+  if (res) {
+    document.getElementById('skill-modal').remove();
+    toast('Skill added! ✅', 't');
+    loadProfile();
+    loadHome();
+  } else {
+    toast('Failed to add skill. Try again.', 'a');
+  }
+}
+
+async function removeSkill(type, skill) {
+  const endpoint = type === 'teach'
+    ? `/users/me/skills/teach/${encodeURIComponent(skill)}`
+    : `/users/me/skills/learn/${encodeURIComponent(skill)}`;
+  const res = await apiCall(endpoint, 'DELETE');
+  if (res !== null) {
+    toast('Skill removed', 'p');
+    loadProfile();
+    loadHome();
+  } else {
+    toast('Failed to remove skill', 'a');
+  }
+}
+
+// ── EDIT PROFILE ─────────────────────────────────────────────
+function openEditProfile() {
+  const existing = document.getElementById('edit-modal');
+  if (existing) existing.remove();
+  const name = document.getElementById('profile-name').textContent;
+  const college = document.getElementById('profile-college').textContent;
+  const bio = document.getElementById('profile-bio').textContent;
+  const modal = document.createElement('div');
+  modal.id = 'edit-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;box-sizing:border-box';
+  modal.innerHTML = `
+    <div style="background:var(--card);border-radius:18px;padding:24px;width:100%;max-width:400px;border:1px solid var(--border2);box-shadow:var(--shadow2)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="font-size:15px;font-weight:600">Edit Profile</h2>
+        <button class="btn-icon btn" onclick="document.getElementById('edit-modal').remove()"><i class="ti ti-x"></i></button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div><div class="fl">Full name</div><input id="ep-name" class="finp" value="${name}"></div>
+        <div><div class="fl">College / University</div><input id="ep-college" class="finp" value="${college}"></div>
+        <div><div class="fl">Bio</div><textarea id="ep-bio" class="finp" rows="2" style="resize:none">${bio}</textarea></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-o btn-sm" onclick="document.getElementById('edit-modal').remove()">Cancel</button>
+        <button class="btn btn-p btn-sm" onclick="saveProfile()"><i class="ti ti-check"></i>Save</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+async function saveProfile() {
+  const name = document.getElementById('ep-name').value.trim();
+  const college = document.getElementById('ep-college').value.trim();
+  const bio = document.getElementById('ep-bio').value.trim();
+  try { await currentUser.updateProfile({displayName: name}); } catch(e) {}
+  const res = await apiCall('/users/me', 'PUT', {display_name: name, college, bio});
+  if (res !== null) {
+    document.getElementById('profile-name').textContent = name;
+    document.getElementById('profile-college').textContent = college;
+    document.getElementById('profile-bio').textContent = bio;
+    const ini = initials(name);
+    document.getElementById('nav-av').textContent = ini;
+    document.getElementById('profile-av').textContent = ini;
+    document.getElementById('home-name').textContent = name.split(' ')[0];
+    document.getElementById('edit-modal').remove();
+    toast('Profile updated! ✅', 'p');
+  } else toast('Failed to update profile', 'a');
+}
+
+// ── CHAT (UI only — real chat needs Firebase Realtime DB) ────
+async function sendMsg(){
+
+    if(!currentChatId)return;
+
+    const input=document.getElementById("chat-inp");
+
+    const text=input.value.trim();
+
+    if(!text)return;
+
+    const res=await apiCall(
+
+        "/chat/send",
+
+        "POST",
+
+        {
+
+            chat_id:currentChatId,
+
+            text:text
+
+        }
+
+    );
+
+    if(res){
+
+        input.value="";
+
+    }
+
+}
+// ── CALENDAR ─────────────────────────────────────────────────
+function buildCal() {
+  const lbl = document.getElementById('cal-lbl'), grid = document.getElementById('cal-grid');
+  if (!lbl||!grid) return;
+  lbl.textContent = MONTHS[calM] + ' ' + calY;
+  const now = new Date();
+  grid.innerHTML = ['S','M','T','W','T','F','S'].map(d=>`<div class="cdhdr">${d}</div>`).join('');
+  const first = new Date(calY,calM,1).getDay(), last = new Date(calY,calM+1,0).getDate(), prev = new Date(calY,calM,0).getDate();
+  for (let i=0;i<first;i++) grid.innerHTML += `<div class="cday other">${prev-first+1+i}</div>`;
+  for (let d=1;d<=last;d++) {
+    const isToday = (calY===now.getFullYear()&&calM===now.getMonth()&&d===now.getDate());
+    grid.innerHTML += `<div class="cday${isToday?' today':''}">${d}</div>`;
+  }
+  const rem = 42-(first+last);
+  for (let i=1;i<=rem;i++) grid.innerHTML += `<div class="cday other">${i}</div>`;
+}
+function calNav(dir){calM+=dir;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}buildCal();}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────
+let notifOpen = false;
+let notifications = [];
+
+async function toggleNotifPanel() {
+  notifOpen = !notifOpen;
+  document.getElementById('notif-panel').style.display = notifOpen ? 'block' : 'none';
+  if (notifOpen){ 
+    await loadNotifications();
+  }
+}
+
+// Close panel when clicking outside
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('notif-panel');
+  const btn = document.getElementById('notif-btn');
+  if (notifOpen && panel && !panel.contains(e.target) && !btn.contains(e.target)) {
+    notifOpen = false;
+    panel.style.display = 'none';
+  }
+});
+
+async function loadNotifications() {
+
+    const panel = document.getElementById("notif-list");
+    const dot = document.getElementById("notif-dot");
+
+    panel.innerHTML = `
+        <div class="loading">
+            Loading...
+        </div>
+    `;
+
+    const matches = await apiCall("/matches/");
+    console.log(matches);
+
+    if (!matches) {
+        panel.innerHTML = `
+            <div class="empty-state">
+                Failed to load notifications
+            </div>
+        `;
+        return;
+    }
+
+    console.log("Matches:", matches);
+
+const pending = matches;
+
+console.log("Pending:", pending);
+
+    dot.style.display = pending.length ? "block" : "none";
+
+    if (pending.length === 0) {
+
+        panel.innerHTML = `
+            <div class="empty-state">
+                <i class="ti ti-bell-off"></i>
+                <br>
+                No new notifications
+            </div>
+        `;
+
+        return;
+    }
+
+    panel.innerHTML = "";
+    pending.forEach(match => {
+
+        panel.innerHTML += `
+
+        <div class="gc" style="margin-bottom:10px">
+
+            <div style="font-weight:600">
+
+                ${match.partner_name}
+
+            </div>
+
+            <div style="font-size:11px;color:var(--text3);margin:6px 0">
+
+                wants to connect with you.
+
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center">
+
+                <span class="pill pt">
+
+                    ${match.score}% Match
+
+                </span>
+
+                <div>
+
+                    <button
+                        class="btn btn-t btn-sm"
+                        onclick="acceptRequest('${match.match_id}')">
+
+                        Accept
+
+                    </button>
+
+                    <button
+                        class="btn btn-o btn-sm"
+                        onclick="rejectRequest('${match.match_id}')">
+
+                        Reject
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+async function acceptRequest(matchId){
+    const res = await apiCall(
+        `/matches/${matchId}/status`,
+        "PATCH",
+        {
+            status:"accepted"
+        }
+    );
+    if(!res){
+        toast("Unable to accept request","a");
+        return;
+    }
+    toast("Connection Accepted","t");
+    await loadNotifications();
+    await loadMatches();
+    goto("chat");
+
+    setTimeout(()=>{
+
+        loadChatList();
+
+    },500);
+}
+async function rejectRequest(matchId){
+    const res = await apiCall(
+        `/matches/${matchId}/status`,
+        "PATCH",
+        {
+            status:"rejected"
+        }
+  );
+    if(!res){
+        toast("Unable to reject","a");
+        return;
+    }
+    toast("Request Rejected","p");
+    await loadNotifications();
+}
+function clearNotifs() {
+  notifications = [];
+  const dot = document.getElementById('notif-dot');
+  if (dot) dot.style.display = 'none';
+  renderNotifs();
+  toast('Notifications cleared', 'p');
+}
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCvd5DOzO3Si2fal-3vbwFLvjjGnSyjCXo",
+  authDomain: "skillswap-app-b8b51.firebaseapp.com",
+  databaseURL: "https://skillswap-app-b8b51-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "skillswap-app-b8b51",
+  storageBucket: "skillswap-app-b8b51.firebasestorage.app",
+  messagingSenderId: "429281346166",
+  appId: "1:429281346166:web:3fdd7656284cde07871557"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const auth = firebase.auth();
+let currentChatId = null;
+let unsubscribeChat = null;
+
+auth.onAuthStateChanged(user => {
+  if (user) { enterApp(user); }
+  else {
+    currentUser = null;
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app-nav').style.display = 'none';
+    document.getElementById('app-main').style.display = 'none';
+  }
+});
+async function openChat(chatId, partnerName){
+
+    currentChatId = chatId;
+
+    document.getElementById("chat-header").innerHTML = `
+
+        <div style="font-weight:600">
+
+            ${partnerName}
+
+        </div>
+
+    `;
+
+    const msgs=document.getElementById("chat-msgs");
+
+    msgs.innerHTML="";
+
+    firebase.database()
+
+    .ref("chats/"+chatId+"/messages")
+
+    .off();
+
+    firebase.database()
+
+    .ref("chats/"+chatId+"/messages")
+
+    .on("value",(snap)=>{
+
+        msgs.innerHTML="";
+
+        const data=snap.val();
+
+        if(!data)return;
+
+        Object.values(data).forEach(msg=>{
+
+            const mine=msg.senderUid===currentUser.uid;
+
+            msgs.innerHTML+=`
+
+            <div style="display:flex;justify-content:${mine?"flex-end":"flex-start"};margin:8px">
+
+                <div style="
+                background:${mine?"#5B5CE2":"#ECECEC"};
+                color:${mine?"white":"black"};
+                padding:10px 14px;
+                border-radius:18px;
+                max-width:70%;
+                word-break:break-word">
+
+                    ${msg.text}
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+        msgs.scrollTop=msgs.scrollHeight;
+
+    });
+
+}
+async function loadChatList() {
+
+    const chats = await apiCall("/chat/my");
+
+    const list = document.getElementById("chat-list");
+
+    list.innerHTML = "";
+
+    if (!chats || chats.length === 0) {
+
+        list.innerHTML = `
+        <div class="loading">
+            No chats yet
+        </div>
+        `;
+
+        return;
+
+    }
+
+    chats.forEach(chat => {
+
+        list.innerHTML += `
+
+        <div class="gc"
+             style="cursor:pointer;margin:8px"
+             onclick="openChat('${chat.chat_id}','${chat.partner_name}')">
+
+            <div style="font-weight:600">
+
+                ${chat.partner_name}
+
+            </div>
+
+            <div style="font-size:11px;color:var(--text3)">
+
+                ${chat.last_message || "Start chatting..."}
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  if (!email||!password){errEl.textContent='Please enter email and password.';errEl.style.display='block';return;}
+  try { await auth.signInWithEmailAndPassword(email, password); }
+  catch(e) {
+    errEl.textContent = e.code==='auth/invalid-credential'?'Wrong email or password.':
+      e.code==='auth/user-not-found'?'No account with this email.':
+      e.code==='auth/wrong-password'?'Incorrect password.':e.message;
+    errEl.style.display='block';
+  }
+}
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const college = document.getElementById('reg-college').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const errEl = document.getElementById('reg-error');
+  errEl.style.display='none';
+  if (!name||!email||!password){errEl.textContent='Please fill in all fields.';errEl.style.display='block';return;}
+  if (password.length<6){errEl.textContent='Password must be at least 6 characters.';errEl.style.display='block';return;}
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, password);
+    await cred.user.updateProfile({displayName: name});
+    // Store college immediately after register
+    setTimeout(async () => {
+      await apiCall('/users/me', 'PUT', {display_name: name, college, bio: ''});
+      document.getElementById('profile-college').textContent = college;
+    }, 1500);
+  } catch(e) {
+    errEl.textContent = e.code==='auth/email-already-in-use'?'An account with this email already exists.':
+      e.code==='auth/invalid-email'?'Invalid email address.':e.message;
+    errEl.style.display='block';
+  }
+}
+
+let googlePopupOpen = false;
+async function doGoogleLogin() {
+  if (googlePopupOpen) return;
+  googlePopupOpen = true;
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({prompt:'select_account'});
+    await auth.signInWithPopup(provider);
+  } catch(e) {
+    if (e.code!=='auth/cancelled-popup-request'&&e.code!=='auth/popup-closed-by-user') {
+      const errEl = document.getElementById('login-error')||document.getElementById('reg-error');
+      if (errEl){errEl.textContent=e.message;errEl.style.display='block';}
+    }
+  } finally { googlePopupOpen = false; }
+}
+
+function doLogout() { auth.signOut(); }
+function sat(t) {
+  document.getElementById('al').style.display=t==='l'?'':'none';
+  document.getElementById('ar').style.display=t==='r'?'':'none';
+  document.querySelectorAll('.atab').forEach((e,i)=>e.classList.toggle('active',(t==='l'?i===0:i===1)));
+}
+</script>
+</body>
+</html>
