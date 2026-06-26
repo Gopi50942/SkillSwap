@@ -8,7 +8,6 @@ from app.config import get_settings
 
 _initialized = False
 
-
 def init_firebase():
     global _initialized
 
@@ -19,9 +18,15 @@ def init_firebase():
 
     firebase_creds = os.getenv("FIREBASE_CREDENTIALS_JSON")
 
+    print("ENV FOUND:", firebase_creds is not None)
+
     if firebase_creds:
-        cred = credentials.Certificate(json.loads(firebase_creds))
+        data = json.loads(firebase_creds)
+        print("Project ID:", data.get("project_id"))
+        print("Client Email:", data.get("client_email"))
+        cred = credentials.Certificate(data)
     else:
+        print("Using local serviceAccountKey.json")
         cred = credentials.Certificate(settings.firebase_credentials_path)
 
     firebase_admin.initialize_app(
@@ -32,7 +37,6 @@ def init_firebase():
     )
 
     _initialized = True
-
 
 def get_firestore():
     init_firebase()
