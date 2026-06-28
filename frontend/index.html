@@ -396,8 +396,7 @@ select.finp{cursor:pointer;appearance:none}
   <div id="ns-form" class="gc2" style="display:none;border-color:var(--p)">
     <div class="sh"><h2>Schedule new session</h2><button class="btn-icon btn" onclick="toggleNS()"><i class="ti ti-x" style="font-size:12px"></i></button></div>
     <div class="g2" style="gap:10px;margin-top:8px">
-      <div><div class="fl">Partner UID</div><input id="ns-partner" class="finp" placeholder="Partner's user ID"></div>
-      <div><div class="fl">Topic</div><input id="ns-topic" class="finp" placeholder="e.g. Python Pandas basics"></div>
+      <div><div class="fl">Partner</div><select id="ns-partner" class="finp"><option value="">Select a partner...</option></select></div>      <div><div class="fl">Topic</div><input id="ns-topic" class="finp" placeholder="e.g. Python Pandas basics"></div>
       <div><div class="fl">Date & Time</div><input id="ns-datetime" class="finp" type="datetime-local"></div>
       <div><div class="fl">Duration</div><select id="ns-duration" class="finp"><option>30 minutes</option><option>45 minutes</option><option selected>60 minutes</option><option>90 minutes</option></select></div>
       <div><div class="fl">Meet link</div><input id="ns-link" class="finp" type="url" placeholder="https://meet.google.com/…"></div>
@@ -933,7 +932,22 @@ async function loadSessions() {
     </div>`;
   }).join('');
 }
-function toggleNS(){const f=document.getElementById('ns-form');f.style.display=f.style.display==='none'?'':'none';}
+async function toggleNS(){
+  const f=document.getElementById('ns-form');
+  const isHidden = f.style.display==='none';
+  f.style.display=isHidden?'':'none';
+  if(isHidden){
+    // Populate partner dropdown from active matches
+    const matches = await apiCall('/matches/');
+    const sel = document.getElementById('ns-partner');
+    sel.innerHTML = '<option value="">Select a partner...</option>';
+    if(matches){
+      matches.filter(m=>m.status==='accepted'||m.status==='active').forEach(m=>{
+        sel.innerHTML += `<option value="${m.partner_uid}">${m.partner_name}</option>`;
+      });
+    }
+  }
+}
 async function confirmSess() {
   const partner = document.getElementById('ns-partner').value.trim();
   const topic = document.getElementById('ns-topic').value.trim();
@@ -1314,7 +1328,9 @@ async function loadNotifications() {
 
     console.log("Matches:", matches);
 
-const pending = matches;
+const pending = matches.filter(m => 
+  m.status === 'pending' && m.sender_uid && m.sender_uid !== currentUser.uid
+);
 
 console.log("Pending:", pending);
 
@@ -1465,118 +1481,103 @@ auth.onAuthStateChanged(user => {
   }
 });
 async function openChat(chatId, partnerName){
-
     currentChatId = chatId;
-
+    const ini = initials(partnerName);
+    const bg = avatarBg(partnerName);
     document.getElementById("chat-header").innerHTML = `
-
-        <div style="font-weight:600">
-
-            ${partnerName}
-
+        <div class="av av-sm" style="background:${bg};color:#fff;position:relative">
+            ${ini}
+            <div class="odot" style="position:absolute;bottom:0;right:0"></div>
         </div>
-
+        <div style="flex:1">
+            <div style="font-weight:600;font-size:13px">${partnerName}</div>
+            <div style="font-size:10px;color:var(--t2)">● Online</div>
+        </div>
+        <button class="btn btn-p btn-sm" onclick="goto('schedule')">
+            <i class="ti ti-calendar"></i>Schedule
+        </button>
     `;
-
     const msgs=document.getElementById("chat-msgs");
-
     msgs.innerHTML="";
-
-    firebase.database()
-
-    .ref("chats/"+chatId+"/messages")
-
-    .off();
-
-    firebase.database()
-
-    .ref("chats/"+chatId+"/messages")
-
+    firebase.database().ref("chats/"+chatId+"/messages").off();
+    firebase.database().ref("chats/"+chatId+"/messages")
+    .orderByChild("timestamp")
     .on("value",(snap)=>{
-
         msgs.innerHTML="";
-
         const data=snap.val();
-
-        if(!data)return;
-
-        Object.values(data).forEach(msg=>{
-
+        if(!data){
+            msgs.innerHTML=`<div style="text-align:center;padding:30px;color:var(--text3);font-size:12px">
+                <i class="ti ti-message-circle" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
+                Say hello to ${partnerName}! 👋</div>`;
+            return;
+        }
+        const msgList = Object.entries(data).sort((a,b)=>a[1].timestamp-b[1].timestamp);
+        let lastDate = '';
+        msgList.forEach(([key, msg])=>{
             const mine=msg.senderUid===currentUser.uid;
-
+            const d = new Date(msg.timestamp);
+            const dateStr = d.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'});
+            const timeStr = d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            if(dateStr !== lastDate){
+                msgs.innerHTML+=`<div style="text-align:center;margin:8px 0">
+                    <span style="font-size:9px;color:var(--text4);background:var(--glass2);
+                    padding:3px 12px;border-radius:100px;border:1px solid var(--border)">${dateStr}</span></div>`;
+                lastDate = dateStr;
+            }
             msgs.innerHTML+=`
-
-            <div style="display:flex;justify-content:${mine?"flex-end":"flex-start"};margin:8px">
-
-                <div style="
-                background:${mine?"#5B5CE2":"#ECECEC"};
-                color:${mine?"white":"black"};
-                padding:10px 14px;
-                border-radius:18px;
-                max-width:70%;
-                word-break:break-word">
-
-                    ${msg.text}
-
+            <div style="display:flex;justify-content:${mine?"flex-end":"flex-start"};margin:3px 8px;align-items:flex-end;gap:6px">
+                ${!mine?`<div class="av av-xs" style="background:${bg};color:#fff;flex-shrink:0">${ini}</div>`:''}
+                <div style="max-width:68%">
+                    <div style="background:${mine?"var(--p)":"var(--glass3)"};
+                        color:${mine?"#fff":"var(--text)"};
+                        padding:9px 13px;border-radius:18px;
+                        ${mine?"border-bottom-right-radius:4px":"border-bottom-left-radius:4px"};
+                        border:${mine?"none":"1px solid var(--border2)"};
+                        word-break:break-word;font-size:12px;line-height:1.5">
+                        ${msg.text}
+                    </div>
+                    <div style="font-size:9px;color:var(--text4);margin-top:2px;
+                        text-align:${mine?"right":"left"};padding:0 4px">
+                        ${timeStr}${mine?' · <span style="color:var(--t2)">✓✓</span>':''}
+                    </div>
                 </div>
-
-            </div>
-
-            `;
-
+                ${mine?`<div class="av av-xs" style="background:linear-gradient(135deg,var(--p),var(--t2));color:#fff;flex-shrink:0">${initials(currentUser.displayName||'Me')}</div>`:''}
+            </div>`;
         });
-
         msgs.scrollTop=msgs.scrollHeight;
-
     });
-
 }
 async function loadChatList() {
-
     const chats = await apiCall("/chat/my");
-
     const list = document.getElementById("chat-list");
-
     list.innerHTML = "";
-
     if (!chats || chats.length === 0) {
-
-        list.innerHTML = `
-        <div class="loading">
-            No chats yet
-        </div>
-        `;
-
+        list.innerHTML = `<div style="padding:16px;text-align:center;font-size:11px;color:var(--text3)">
+            <i class="ti ti-message-circle" style="font-size:22px;display:block;margin-bottom:6px;opacity:.4"></i>
+            No chats yet.<br>Accept a connection to start!</div>`;
         return;
-
     }
-
     chats.forEach(chat => {
-
+        const ini = initials(chat.partner_name);
+        const bg = avatarBg(chat.partner_name);
+        const isActive = currentChatId === chat.chat_id;
         list.innerHTML += `
-
-        <div class="gc"
-             style="cursor:pointer;margin:8px"
+        <div class="ci${isActive?' active':''}"
              onclick="openChat('${chat.chat_id}','${chat.partner_name}')">
-
-            <div style="font-weight:600">
-
-                ${chat.partner_name}
-
+            <div style="position:relative">
+                <div class="av av-sm" style="background:${bg};color:#fff">${ini}</div>
+                <div class="odot" style="position:absolute;bottom:0;right:0"></div>
             </div>
-
-            <div style="font-size:11px;color:var(--text3)">
-
-                ${chat.last_message || "Start chatting..."}
-
+            <div style="flex:1;min-width:0">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <span style="font-size:12px;font-weight:600">${chat.partner_name}</span>
+                    <span style="font-size:9px;color:var(--text4)">${chat.last_time ? new Date(chat.last_time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                </div>
+                <div class="cprev">${chat.last_message || 'Tap to chat'}</div>
             </div>
-
-        </div>
-
-        `;
-
+            ${chat.unread > 0 && !isActive ? `<div class="unread" style="background:var(--p);color:#fff;font-size:9px;width:16px;height:16px;display:flex;align-items:center;justify-content:center;border-radius:50%">${chat.unread}</div>` : ''}
+        </div>`;
     });
-
 }
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
