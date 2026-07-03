@@ -34,6 +34,11 @@ body.light{
   --shadow:0 2px 24px rgba(100,120,180,0.10);--shadow2:0 8px 40px rgba(80,100,160,0.15);
   --card:rgba(255,255,255,0.9);
 }
+@keyframes bounce {
+  0%,60%,100%{transform:translateY(0)}
+  30%{transform:translateY(-4px)}
+}
+.av-xs{width:22px;height:22px;font-size:8px}
 body.dark{
   --bg-a:#0a0b14;--bg-b:#0d0f1e;--bg-c:#10132a;
   --mesh1:rgba(120,80,255,0.22);--mesh2:rgba(20,180,100,0.16);--mesh3:rgba(30,100,255,0.14);
@@ -312,7 +317,7 @@ select.finp{cursor:pointer;appearance:none}
     border-radius:14px !important;
   }
 }
-
+.level-btn.selected{background:var(--p)!important;color:#fff!important;border-color:var(--p)!important;}
 </style>
 </head>
 <body class="light">
@@ -344,6 +349,10 @@ select.finp{cursor:pointer;appearance:none}
         </div>
       </div>
       <div id="ar" style="display:none">
+        <div style="text-align:center;margin-bottom:14px">
+        <div id="ep-photo-preview" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--t2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;margin:0 auto 8px;cursor:pointer;overflow:hidden;border:3px solid var(--border2)" onclick="document.getElementById('photo-input').click()"></div>
+        <div style="font-size:11px;color:var(--text3)">Tap to change photo</div>
+      </div>
         <div style="display:flex;flex-direction:column;gap:10px">
           <div><div class="fl">Full name</div><input id="reg-name" class="finp" placeholder="Your name"></div>
           <div><div class="fl">College</div><input id="reg-college" class="finp" placeholder="Your college"></div>
@@ -456,7 +465,7 @@ select.finp{cursor:pointer;appearance:none}
       </div>
       <div class="cmsgs" id="chat-msgs"></div>
       <div class="cinp-row">
-        <input class="cinp" placeholder="Message…" id="chat-inp" onkeydown="if(event.key==='Enter')sendMsg()">
+        <input class="cinp" placeholder="Message…" id="chat-inp" onkeydown="if(event.key==='Enter')sendMsg()" oninput="handleTyping()">
         <button class="btn btn-p btn-sm" onclick="sendMsg()"><i class="ti ti-send"></i></button>
       </div>
     </div>
@@ -531,7 +540,13 @@ select.finp{cursor:pointer;appearance:none}
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="gc2">
         <div style="display:flex;gap:13px;align-items:flex-start">
-          <div id="profile-av" class="av av-xl" style="background:linear-gradient(135deg,var(--p),var(--t2));color:#fff;box-shadow:var(--shadow2)">?</div>
+          <div style="position:relative;width:72px;height:72px;flex-shrink:0">
+            <div id="profile-av" class="av av-xl" style="background:linear-gradient(135deg,var(--p),var(--t2));color:#fff;box-shadow:var(--shadow2);width:72px;height:72px;cursor:pointer" onclick="document.getElementById('photo-input').click()">?</div>
+            <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;background:var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--glass3)" onclick="document.getElementById('photo-input').click()">
+                <i class="ti ti-camera" style="font-size:10px;color:#fff"></i>
+            </div>
+            <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="uploadPhoto(this)">
+          </div>
           <div style="flex:1">
             <div id="profile-name" style="font-size:17px;font-weight:700;margin-bottom:2px">Loading…</div>
             <div id="profile-college" style="font-size:11px;color:var(--text3);margin-bottom:5px"></div>
@@ -1104,6 +1119,14 @@ async function loadProfile() {
   const name = profile.display_name || currentUser.displayName || '';
   const ini = initials(name);
   document.getElementById('profile-av').textContent = ini;
+  if (profile.photo_url || currentUser.photoURL) {
+  const url = profile.photo_url || currentUser.photoURL;
+  const avEl = document.getElementById('profile-av');
+  avEl.innerHTML = '';
+  avEl.style.backgroundImage = `url(${url})`;
+  avEl.style.backgroundSize = 'cover';
+  avEl.style.backgroundPosition = 'center';
+}
   document.getElementById('nav-av').textContent = ini;
   document.getElementById('profile-name').textContent = name;
   document.getElementById('profile-college').textContent = profile.college || '';
@@ -1155,9 +1178,12 @@ function renderTeachSkills(skills) {
   }
   el.innerHTML = skills.map(s => {
     const name = skillName(s);
+    const level = typeof s === 'object' ? (s.level || 'Intermediate') : 'Intermediate';
+    const pct = {Beginner:30, Intermediate:55, Advanced:78, Expert:95}[level] || 60;
     return `<div class="skill-row">
-      <span class="pill pt" style="min-width:100px;justify-content:center;font-size:10px">${name}</span>
-      <div class="prog" style="flex:1"><div class="prog-f" style="width:75%;background:var(--p)"></div></div>
+      <span class="pill pt" style="min-width:85px;justify-content:center;font-size:10px">${name}</span>
+      <div class="prog" style="flex:1"><div class="prog-f" style="width:${pct}%;background:var(--p)"></div></div>
+      <span style="font-size:9px;color:var(--text3);min-width:65px">${level}</span>
       <button class="btn-icon btn" style="width:22px;height:22px" onclick="removeSkill('teach','${name}')">
         <i class="ti ti-trash" style="font-size:10px"></i></button>
     </div>`;
@@ -1230,10 +1256,21 @@ function openAddSkill(type) {
         <button class="btn-icon btn" onclick="document.getElementById('skill-modal').remove()"><i class="ti ti-x"></i></button>
       </div>
       <div class="fl">${label}</div>
-      <input id="skill-input" class="finp" placeholder="e.g. Python, UI/UX Design, React" style="margin-bottom:12px;margin-top:4px">
+      <input id="skill-input" class="finp" placeholder="e.g. Python, UI/UX Design, React" style="margin-bottom:8px;margin-top:4px">
+      <div id="level-selector" style="display:none;margin-bottom:12px">
+        <div class="fl" style="margin-bottom:6px">Skill level</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${['Beginner','Intermediate','Advanced','Expert'].map(l=>`
+            <div class="level-btn" onclick="selectLevel('${l}')"
+              style="flex:1;text-align:center;padding:6px;border-radius:10px;cursor:pointer;
+              font-size:11px;font-weight:500;border:1px solid var(--border2);
+              background:var(--glass2);color:var(--text3);transition:all .2s">${l}</div>`).join('')}
+        </div>
+        <input type="hidden" id="skill-level" value="Intermediate">
+      </div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
         ${['Python','JavaScript','React','Machine Learning','UI/UX Design','SQL','FastAPI','DSA','Data Science','Flutter']
-          .map(s=>`<span class="pill pgr" style="cursor:pointer" onclick="document.getElementById('skill-input').value='${s}'">${s}</span>`).join('')}
+          .map(s=>`<span class="pill pgr" style="cursor:pointer" onclick="document.getElementById('skill-input').value='${s}';document.getElementById('level-selector').style.display='block';selectLevel('Intermediate')">${s}</span>`).join('')}
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn btn-o btn-sm" onclick="document.getElementById('skill-modal').remove()">Cancel</button>
@@ -1248,7 +1285,8 @@ async function addSkill(type) {
   const skill = document.getElementById('skill-input').value.trim();
   if (!skill) return;
   const endpoint = type === 'teach' ? '/users/me/skills/teach' : '/users/me/skills/learn';
-  const res = await apiCall(endpoint, 'POST', {skill});
+  const level = document.getElementById('skill-level')?.value || 'Intermediate';
+  const res = await apiCall(endpoint, 'POST', {skill, level});
   if (res) {
     document.getElementById('skill-modal').remove();
     toast('Skill added! ✅', 't');
@@ -1320,7 +1358,37 @@ async function saveProfile() {
     toast('Profile updated! ✅', 'p');
   } else toast('Failed to update profile', 'a');
 }
-
+async function uploadPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { toast('Photo must be under 2MB', 'a'); return; }
+  toast('Uploading photo...', 'p');
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64 = e.target.result;
+    // Show preview immediately
+    const avEl = document.getElementById('profile-av');
+    avEl.innerHTML = '';
+    avEl.style.backgroundImage = `url(${base64})`;
+    avEl.style.backgroundSize = 'cover';
+    avEl.style.backgroundPosition = 'center';
+    // Update nav avatar
+    const navAv = document.getElementById('nav-av');
+    navAv.innerHTML = '';
+    navAv.style.backgroundImage = `url(${base64})`;
+    navAv.style.backgroundSize = 'cover';
+    navAv.style.backgroundPosition = 'center';
+    // Save to Firebase Storage via user profile update
+    try {
+      await currentUser.updateProfile({ photoURL: base64 });
+      await apiCall('/users/me', 'PUT', { photo_url: base64 });
+      toast('Photo updated! ✅', 't');
+    } catch(e) {
+      toast('Photo saved locally only', 'p');
+    }
+  };
+  reader.readAsDataURL(file);
+}
 // ── CHAT (UI only — real chat needs Firebase Realtime DB) ────
 async function sendMsg(){
 
@@ -1535,11 +1603,16 @@ async function rejectRequest(matchId){
     toast("Request Rejected","p");
     await loadNotifications();
 }
+function renderNotifs() {
+  loadNotifications();
+}
 function clearNotifs() {
-  notifications = [];
   const dot = document.getElementById('notif-dot');
   if (dot) dot.style.display = 'none';
-  renderNotifs();
+  document.getElementById('notif-list').innerHTML = `
+    <div class="empty-state">
+      <i class="ti ti-bell-off"></i><br>No new notifications
+    </div>`;
   toast('Notifications cleared', 'p');
 }
 </script>
@@ -1637,6 +1710,28 @@ async function openChat(chatId, partnerName){
             </div>`;
         });
         msgs.scrollTop=msgs.scrollHeight;
+        // Typing indicator
+        db.ref(`chats/${chatId}/typing`).off();
+        db.ref(`chats/${chatId}/typing`).on('value', snap => {
+          const data = snap.val() || {};
+          const someoneTyping = Object.entries(data).some(([uid, val]) => uid !== currentUser.uid && val === true);
+          let typingEl = document.getElementById('typing-indicator');
+          if (someoneTyping) {
+            if (!typingEl) {
+              typingEl = document.createElement('div');
+              typingEl.id = 'typing-indicator';
+              typingEl.style.cssText = 'padding:4px 13px;font-size:11px;color:var(--text3);font-style:italic;display:flex;align-items:center;gap:6px';
+              typingEl.innerHTML = `<div style="display:flex;gap:3px">
+                <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite"></span>
+                <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite .2s"></span>
+                <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite .4s"></span>
+              </div> ${partnerName} is typing...`;
+              document.getElementById('chat-msgs').after(typingEl);
+            }
+          } else {
+            if (typingEl) typingEl.remove();
+          }
+        });
     });
 }
 async function loadChatList() {
@@ -1725,13 +1820,37 @@ async function doGoogleLogin() {
     }
   } finally { googlePopupOpen = false; }
 }
-
+let typingTimeout = null;
+function handleTyping() {
+  if (!currentChatId || !currentUser) return;
+  db.ref(`chats/${currentChatId}/typing/${currentUser.uid}`).set(true);
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    db.ref(`chats/${currentChatId}/typing/${currentUser.uid}`).set(false);
+  }, 2000);
+}
 function doLogout() { auth.signOut(); }
 function sat(t) {
   document.getElementById('al').style.display=t==='l'?'':'none';
   document.getElementById('ar').style.display=t==='r'?'':'none';
   document.querySelectorAll('.atab').forEach((e,i)=>e.classList.toggle('active',(t==='l'?i===0:i===1)));
 }
+function selectLevel(level) {
+  document.getElementById('skill-level').value = level;
+  document.querySelectorAll('.level-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.textContent === level);
+  });
+}
+
+// Show level selector when skill is typed
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'skill-input') {
+    const lvl = document.getElementById('level-selector');
+    if (lvl) lvl.style.display = e.target.value.trim() ? 'block' : 'none';
+    // Auto-select Intermediate by default
+    selectLevel('Intermediate');
+  }
+});
 </script>
 </body>
 </html>
