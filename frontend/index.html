@@ -410,7 +410,7 @@ select.finp{cursor:pointer;appearance:none}
     <div class="stat-pill"><div class="stat-v" id="hs-sessions" style="color:var(--p)">0</div><div class="stat-l">Sessions</div></div>
     <div class="stat-pill"><div class="stat-v" id="hs-rating" style="color:var(--t2)">—</div><div class="stat-l">Avg Rating</div></div>
     <div class="stat-pill"><div class="stat-v" id="hs-badges" style="color:var(--a)">0</div><div class="stat-l">Badges</div></div>
-    <div class="stat-pill"><div class="stat-v" id="hs-matches" style="color:var(--r)">0</div><div class="stat-l">Matches</div></div>
+    <div class="stat-pill"><div class="stat-v" id="hs-matches" style="color:var(--r)">0</div><div class="stat-l" id="hs-matches-label">Matches</div></div>
   </div>
   <div class="g2">
     <div class="gc2" id="home-session-card">
@@ -421,6 +421,10 @@ select.finp{cursor:pointer;appearance:none}
       <div class="sh"><h2>Top matches</h2><button class="btn btn-o btn-sm" onclick="goto('matches')">See all</button></div>
       <div class="loading"><i class="ti ti-loader"></i> Loading…</div>
     </div>
+  </div>
+  <div class="gc" id="challenges-card">
+    <div class="sh"><h2>🎯 Weekly challenges</h2><span class="pill pgr" style="font-size:9px">Resets Sunday</span></div>
+    <div id="challenges-list"><div class="loading">Loading…</div></div>
   </div>
   <div class="gc" id="home-skills-card">
     <div class="sh"><h2>My skills overview</h2><button class="btn btn-o btn-sm" onclick="goto('profile')">Edit</button></div>
@@ -436,6 +440,22 @@ select.finp{cursor:pointer;appearance:none}
       <i class="ti ti-search" style="color:var(--text4);font-size:13px"></i>
       <input placeholder="Search skills, people, colleges…" id="dsearch" oninput="filterDiscover()">
     </div>
+    <select class="finp" style="width:130px" id="d-college" onchange="filterDiscover()">
+      <option value="">All colleges</option>
+    </select>
+    <select class="finp" style="width:120px" id="d-level" onchange="filterDiscover()">
+      <option value="">Any level</option>
+      <option>Beginner</option>
+      <option>Intermediate</option>
+      <option>Advanced</option>
+      <option>Expert</option>
+    </select>
+    <select class="finp" style="width:110px" id="d-rating" onchange="filterDiscover()">
+      <option value="">Any rating</option>
+      <option value="4">4★ & above</option>
+      <option value="3">3★ & above</option>
+    </select>
+    <button class="btn btn-o btn-sm" onclick="clearDiscoverFilters()"><i class="ti ti-x"></i>Clear</button>
   </div>
   <div class="g2" id="disc-grid"><div class="loading"><i class="ti ti-loader"></i> Loading users…</div></div>
 </div>
@@ -618,7 +638,9 @@ select.finp{cursor:pointer;appearance:none}
 // ── CONFIG ───────────────────────────────────────────────────
 const API = 'https://skillswap-backend-3j6g.onrender.com/api/v1';
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-let calY = 2026, calM = 5, isDark = false;
+let calY = 2026, calM = 5;
+let isDark = localStorage.getItem('skillswap-theme') === 'dark';
+document.body.className = isDark ? 'dark' : 'light';
 let currentUser = null;
 let allUsers = []; // cache for discover/filter
 
@@ -655,6 +677,10 @@ function toast(msg, type='p') {
 // ── THEME ────────────────────────────────────────────────────
 function toggleTheme() {
   isDark = !isDark;
+  applyTheme();
+  localStorage.setItem('skillswap-theme', isDark ? 'dark' : 'light');
+}
+function applyTheme() {
   document.body.className = isDark ? 'dark' : 'light';
   document.getElementById('sw-thumb').className = 'switch-thumb' + (isDark?' right':'');
   document.getElementById('sw-lbl').textContent = isDark ? 'Dark' : 'Light';
@@ -695,6 +721,7 @@ function goto(p) {
 
 }
 document.querySelectorAll('.nt').forEach(t=>t.addEventListener('click',()=>goto(t.dataset.p)));
+applyTheme();
 
 // ── AUTH TABS ────────────────────────────────────────────────
 function sat(t) {
@@ -742,6 +769,16 @@ async function loadHome() {
     }
     // Skills overview
     renderHomeSkills(profile);
+    loadChallenges();
+  }
+  // Streak
+  const allSessForStreak = await apiCall('/sessions/');
+  const streak = calculateStreak(allSessForStreak||[]);
+  if (streak > 0) {
+    document.getElementById('home-stats').style.display = 'grid';
+    document.getElementById('hs-matches').textContent = streak + '🔥';
+    const lbl = document.getElementById('hs-matches-label');
+    if (lbl) lbl.textContent = 'Week Streak';
   }
   // Top matches
   const matches = await apiCall('/matches/suggested');
@@ -864,6 +901,10 @@ async function loadDiscover() {
     return;
   }
   allUsers = users.filter(u => u.uid !== currentUser.uid);
+  const colleges = [...new Set(allUsers.map(u => u.college).filter(Boolean))];
+  const colSel = document.getElementById('d-college');
+  colSel.innerHTML = '<option value="">All colleges</option>';
+  colleges.forEach(c2 => colSel.innerHTML += `<option value="${c2}">${c2}</option>`);
   renderDiscover(allUsers);
 }
 function renderDiscover(list) {
@@ -917,13 +958,28 @@ function renderDiscover(list) {
 }
 function filterDiscover() {
   const q = (document.getElementById('dsearch')?.value||'').toLowerCase();
-  const filtered = allUsers.filter(u =>
-    (u.display_name||'').toLowerCase().includes(q) ||
-    (u.college||'').toLowerCase().includes(q) ||
-    (u.skills_teach||[]).join(' ').toLowerCase().includes(q) ||
-    (u.skills_learn||[]).join(' ').toLowerCase().includes(q)
-  );
+  const college = (document.getElementById('d-college')?.value||'').toLowerCase();
+  const level = (document.getElementById('d-level')?.value||'').toLowerCase();
+  const rating = parseFloat(document.getElementById('d-rating')?.value||'0');
+  const filtered = allUsers.filter(u => {
+    const matchQ = !q || (u.display_name||'').toLowerCase().includes(q) ||
+      (u.college||'').toLowerCase().includes(q) ||
+      (u.skills_teach||[]).map(s=>skillName(s)).join(' ').toLowerCase().includes(q) ||
+      (u.skills_learn||[]).map(s=>skillName(s)).join(' ').toLowerCase().includes(q);
+    const matchCollege = !college || (u.college||'').toLowerCase().includes(college);
+    const matchLevel = !level || (u.skills_teach||[]).some(s =>
+      typeof s === 'object' ? (s.level||'').toLowerCase() === level : false);
+    const matchRating = !rating || (u.rating||0) >= rating;
+    return matchQ && matchCollege && matchLevel && matchRating;
+  });
   renderDiscover(filtered);
+}
+function clearDiscoverFilters() {
+  document.getElementById('dsearch').value = '';
+  document.getElementById('d-college').value = '';
+  document.getElementById('d-level').value = '';
+  document.getElementById('d-rating').value = '';
+  renderDiscover(allUsers);
 }
 async function connectUser(uid, name) {
 
@@ -1034,6 +1090,7 @@ async function loadSessions() {
         <div style="display:flex;gap:5px;align-items:center">
           <span class="pill ${isToday?'pt':'pgr'}" style="font-size:9px">${isToday?'Today':isPast?'Done':d.toLocaleDateString([],{weekday:'short'})}</span>
           ${s.meet_link&&!isPast?`<a href="${s.meet_link}" target="_blank" class="btn btn-t btn-sm" style="font-size:10px;padding:3px 8px"><i class="ti ti-video"></i>Join</a>`:''}
+          ${isPast&&s.status!=='rated'?`<button class="btn btn-o btn-sm" style="font-size:10px;padding:3px 8px;color:var(--a);border-color:var(--a)" onclick="openRatingModal('${s.session_id}','${s.partner_name||'Partner'}','${s.partner_uid}')"><i class="ti ti-star"></i>Rate</button>`:''}
         </div>
       </div>
     </div>`;
@@ -1423,6 +1480,113 @@ async function sendMsg(){
     }
 
 }
+
+// ── RATING MODAL ─────────────────────────────────────────────
+function openRatingModal(sessionId, partnerName, partnerUid) {
+  const existing = document.getElementById('rating-modal');
+  if (existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.id = 'rating-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;box-sizing:border-box';
+  modal.innerHTML = `
+    <div style="background:var(--card);border-radius:18px;padding:24px;width:100%;max-width:380px;border:1px solid var(--border2);box-shadow:var(--shadow2)">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:28px;margin-bottom:8px">⭐</div>
+        <h2 style="font-size:15px;font-weight:600">Rate your session with ${partnerName}</h2>
+        <p style="font-size:12px;margin-top:4px">How was the experience?</p>
+      </div>
+      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:16px" id="star-row">
+        ${[1,2,3,4,5].map(i=>`<span style="font-size:32px;cursor:pointer;opacity:.3;transition:opacity .15s"
+          id="star-${i}" onclick="selectStar(${i})">★</span>`).join('')}
+      </div>
+      <textarea id="rating-text" class="finp" rows="3" placeholder="Share your experience (optional)..." style="resize:none;margin-bottom:12px"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-o btn-sm" onclick="document.getElementById('rating-modal').remove()">Skip</button>
+        <button class="btn btn-p btn-sm" onclick="submitRating('${sessionId}','${partnerUid}')"><i class="ti ti-star"></i>Submit</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
+let selectedStar = 0;
+function selectStar(n) {
+  selectedStar = n;
+  for (let i=1;i<=5;i++) {
+    document.getElementById('star-'+i).style.opacity = i<=n ? '1' : '0.3';
+  }
+}
+async function submitRating(sessionId, partnerUid) {
+  if (!selectedStar) { toast('Please select a star rating', 'a'); return; }
+  const text = document.getElementById('rating-text').value.trim() || 'Great session!';
+  const res = await apiCall('/reviews/', 'POST', {
+    to_uid: partnerUid, session_id: sessionId, rating: selectedStar, text
+  });
+  if (res) {
+    document.getElementById('rating-modal').remove();
+    toast('Rating submitted! ⭐', 't');
+    selectedStar = 0;
+    loadSessions();
+  } else toast('Failed to submit rating', 'a');
+}
+
+// ── WEEKLY CHALLENGES ────────────────────────────────────────
+async function loadChallenges() {
+  const [sessions, matches] = await Promise.all([
+    apiCall('/sessions/'),
+    apiCall('/matches/')
+  ]);
+  const now = new Date();
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - now.getDay());
+  weekStart.setHours(0,0,0,0);
+  const sessThisWeek = (sessions||[]).filter(s => {
+    const d = new Date(s.date_time);
+    return d >= weekStart && d <= now;
+  }).length;
+  const activeMatches = (matches||[]).filter(m =>
+    m.status === 'accepted' || m.status === 'active').length;
+  const pastSessions = (sessions||[]).filter(s => new Date(s.date_time) < now);
+  const hasReviewed = pastSessions.length > 0;
+  const challenges = [
+    {icon:'📅', title:'Complete 2 sessions this week', current: sessThisWeek, target: 2, color:'var(--p)'},
+    {icon:'🤝', title:'Make 3 connections', current: activeMatches, target: 3, color:'var(--t2)'},
+    {icon:'⭐', title:'Complete a past session', current: pastSessions.length > 0 ? 1 : 0, target: 1, color:'var(--a)'},
+  ];
+  const el = document.getElementById('challenges-list');
+  if (!el) return;
+  el.innerHTML = challenges.map(ch => {
+    const pct = Math.min(Math.round((ch.current/ch.target)*100), 100);
+    const done = pct >= 100;
+    return `<div style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <span style="font-size:16px">${ch.icon}</span>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:500;color:var(--text)">${ch.title}</div>
+          <div style="font-size:10px;color:var(--text3)">${ch.current}/${ch.target}${done?' ✅ Complete!':''}</div>
+        </div>
+        <span style="font-size:11px;font-weight:600;color:${ch.color}">${pct}%</span>
+      </div>
+      <div class="prog"><div class="prog-f" style="width:${pct}%;background:${ch.color}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── STREAK COUNTER ───────────────────────────────────────────
+function calculateStreak(sessions) {
+  if (!sessions || sessions.length === 0) return 0;
+  const now = new Date();
+  const getWeek = d => Math.floor(d.getTime() / (7*24*60*60*1000));
+  const thisWeek = getWeek(now);
+  const weeks = [...new Set(sessions
+    .filter(s => new Date(s.date_time) <= now)
+    .map(s => getWeek(new Date(s.date_time))))].sort((a,b)=>b-a);
+  let streak = 0, expected = thisWeek;
+  for (const w of weeks) {
+    if (w >= expected - 1 && w <= expected) { streak++; expected = w - 1; }
+    else break;
+  }
+  return streak;
+}
+
 // ── CALENDAR ─────────────────────────────────────────────────
 function buildCal() {
   const lbl = document.getElementById('cal-lbl'), grid = document.getElementById('cal-grid');
