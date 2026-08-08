@@ -426,6 +426,10 @@ select.finp{cursor:pointer;appearance:none}
     <div class="sh"><h2>My skills overview</h2><button class="btn btn-o btn-sm" onclick="goto('profile')">Edit</button></div>
     <div class="loading"><i class="ti ti-loader"></i> Loading…</div>
   </div>
+  <div class="gc" id="home-activity-card">
+    <div class="sh"><h2>Activity feed</h2></div>
+    <div id="activity-list"><div class="loading"><i class="ti ti-loader"></i> Loading…</div></div>
+  </div>
 </div>
 
 <!-- DISCOVER -->
@@ -664,6 +668,8 @@ function toggleTheme() {
   document.getElementById('sw-sun').style.color = isDark ? 'var(--text4)' : 'var(--a)';
   document.getElementById('sw-moon').style.color = isDark ? 'var(--p2)' : 'var(--text4)';
   localStorage.setItem('skillswap-theme', isDark ? 'dark' : 'light');
+  const accentName = localStorage.getItem('skillswap-accent') || 'Purple';
+  applyThemeBackground(accentName, isDark ? 'dark' : 'light');
 }
 
 // ── NAV ──────────────────────────────────────────────────────
@@ -1505,6 +1511,44 @@ async function loadAnalytics() {
 
 // ── THEME PICKER ─────────────────────────────────────────────
 const THEMES=[{name:'Purple',p:'#5856d6',t:'#34c759',label:'Default'},{name:'Blue',p:'#007aff',t:'#34c759',label:'Ocean'},{name:'Rose',p:'#f43f5e',t:'#fb923c',label:'Sunset'},{name:'Teal',p:'#0d9488',t:'#84cc16',label:'Forest'},{name:'Amber',p:'#d97706',t:'#059669',label:'Desert'},{name:'Indigo',p:'#6366f1',t:'#8b5cf6',label:'Galaxy'}];
+// Per-theme background palettes for light/dark mode
+const THEME_BG={
+  Purple:{
+    light:{a:'#e8edf5',b:'#dce4f0',c:'#d0daea',m1:'rgba(120,100,255,0.18)',m2:'rgba(52,199,89,0.14)',m3:'rgba(0,122,255,0.12)'},
+    dark:{a:'#0a0b14',b:'#0d0f1e',c:'#10132a',m1:'rgba(120,80,255,0.22)',m2:'rgba(20,180,100,0.16)',m3:'rgba(30,100,255,0.14)'}
+  },
+  Blue:{
+    light:{a:'#e6f0fb',b:'#d7e8f7',c:'#c7dcf2',m1:'rgba(0,122,255,0.20)',m2:'rgba(0,180,220,0.14)',m3:'rgba(52,199,89,0.10)'},
+    dark:{a:'#050b16',b:'#071021',c:'#081633',m1:'rgba(0,122,255,0.26)',m2:'rgba(0,200,220,0.16)',m3:'rgba(30,140,255,0.14)'}
+  },
+  Rose:{
+    light:{a:'#fdeef1',b:'#fbe3e8',c:'#f8d6dd',m1:'rgba(244,63,94,0.16)',m2:'rgba(251,146,60,0.16)',m3:'rgba(255,150,180,0.12)'},
+    dark:{a:'#160a0e',b:'#1e0c12',c:'#280f18',m1:'rgba(244,63,94,0.22)',m2:'rgba(251,146,60,0.18)',m3:'rgba(255,120,160,0.14)'}
+  },
+  Teal:{
+    light:{a:'#e6f5f2',b:'#d9f0e6',c:'#cbe9da',m1:'rgba(13,148,136,0.18)',m2:'rgba(132,204,22,0.14)',m3:'rgba(20,180,140,0.10)'},
+    dark:{a:'#05130f',b:'#071a15',c:'#0a2119',m1:'rgba(13,180,160,0.22)',m2:'rgba(140,220,30,0.14)',m3:'rgba(20,200,150,0.14)'}
+  },
+  Amber:{
+    light:{a:'#fbf1e2',b:'#f7e6cc',c:'#f2dab3',m1:'rgba(217,119,6,0.18)',m2:'rgba(5,150,105,0.12)',m3:'rgba(250,180,80,0.14)'},
+    dark:{a:'#170f04',b:'#1f1405',c:'#291a06',m1:'rgba(217,140,6,0.24)',m2:'rgba(5,180,120,0.14)',m3:'rgba(250,190,80,0.16)'}
+  },
+  Indigo:{
+    light:{a:'#eceafc',b:'#e0defa',c:'#d3d0f5',m1:'rgba(99,102,241,0.20)',m2:'rgba(139,92,246,0.16)',m3:'rgba(80,90,255,0.12)'},
+    dark:{a:'#08071a',b:'#0b0a24',c:'#0f0d30',m1:'rgba(99,102,241,0.26)',m2:'rgba(139,92,246,0.20)',m3:'rgba(90,100,255,0.16)'}
+  }
+};
+function applyThemeBackground(name, mode){
+  const set = THEME_BG[name] || THEME_BG.Purple;
+  const bg = mode==='dark' ? set.dark : set.light;
+  const root = document.documentElement.style;
+  root.setProperty('--bg-a',bg.a);
+  root.setProperty('--bg-b',bg.b);
+  root.setProperty('--bg-c',bg.c);
+  root.setProperty('--mesh1',bg.m1);
+  root.setProperty('--mesh2',bg.m2);
+  root.setProperty('--mesh3',bg.m3);
+}
 function openThemePicker(){
   const existing=document.getElementById('theme-modal');if(existing)existing.remove();
   const saved=localStorage.getItem('skillswap-accent')||'Purple';
@@ -1536,12 +1580,14 @@ function applyAccentTheme(name,primary,secondary){
   localStorage.setItem('skillswap-accent',name);
   localStorage.setItem('skillswap-accent-p',primary);
   localStorage.setItem('skillswap-accent-t',secondary);
+  applyThemeBackground(name, isDark?'dark':'light');
   const m=document.getElementById('theme-modal');if(m)m.remove();
   toast('Theme applied! 🎨','t');
 }
 function loadSavedAccentTheme(){
   const p=localStorage.getItem('skillswap-accent-p');
   const t2=localStorage.getItem('skillswap-accent-t');
+  const name=localStorage.getItem('skillswap-accent')||'Purple';
   if(p&&t2){
     document.documentElement.style.setProperty('--p',p);
     document.documentElement.style.setProperty('--p2',p+'cc');
@@ -1549,6 +1595,7 @@ function loadSavedAccentTheme(){
     document.documentElement.style.setProperty('--t2',t2);
     document.documentElement.style.setProperty('--t3',t2+'25');
   }
+  applyThemeBackground(name, isDark?'dark':'light');
 }
 
 // ── SHARE PROFILE ────────────────────────────────────────────
@@ -1904,6 +1951,7 @@ function clearNotifs() {
 (function(){
   const isDarkSaved = localStorage.getItem('skillswap-theme') === 'dark';
   if(isDarkSaved) document.body.className = 'dark';
+  isDark = isDarkSaved;
   const p = localStorage.getItem('skillswap-accent-p');
   const t2 = localStorage.getItem('skillswap-accent-t');
   if(p && t2){
@@ -1912,6 +1960,10 @@ function clearNotifs() {
     document.documentElement.style.setProperty('--p3', p+'30');
     document.documentElement.style.setProperty('--t2', t2);
     document.documentElement.style.setProperty('--t3', t2+'25');
+  }
+  const accentName = localStorage.getItem('skillswap-accent') || 'Purple';
+  if (typeof applyThemeBackground === 'function') {
+    applyThemeBackground(accentName, isDarkSaved ? 'dark' : 'light');
   }
 })();
 
