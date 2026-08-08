@@ -7,10 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#5856d6">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="SkillSwap">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -394,14 +390,6 @@ select.finp{cursor:pointer;appearance:none}
         <div class="switch-thumb" id="sw-thumb"></div>
       </div>
     </div>
-    <div id="nav-search-wrap" style="position:relative;display:none;align-items:center">
-      <div class="sbar" style="width:180px;padding:4px 10px">
-        <i class="ti ti-search" style="color:var(--text4);font-size:12px"></i>
-        <input id="nav-search-input" placeholder="Search users…" style="background:transparent;border:none;outline:none;color:var(--text);font-size:12px;width:100%;font-family:var(--font)" oninput="navSearch(this.value)" onkeydown="if(event.key==='Escape')closeNavSearch()">
-      </div>
-      <div id="nav-search-results" style="display:none;position:absolute;top:38px;right:0;width:280px;background:var(--glass3);backdrop-filter:var(--blur-heavy);border:1px solid var(--border2);border-radius:14px;padding:8px;z-index:999;box-shadow:var(--shadow2)"></div>
-    </div>
-    <div class="btn-icon btn" onclick="toggleNavSearch()" style="font-size:13px"><i class="ti ti-search"></i></div>
     <div class="notif-btn" onclick="toggleNotifPanel()" id="notif-btn"><i class="ti ti-bell"></i><div class="ndot" id="notif-dot"></div></div>
     <div id="nav-av" class="nav-av" onclick="goto('profile')">?</div>
   </div>
@@ -433,10 +421,6 @@ select.finp{cursor:pointer;appearance:none}
       <div class="sh"><h2>Top matches</h2><button class="btn btn-o btn-sm" onclick="goto('matches')">See all</button></div>
       <div class="loading"><i class="ti ti-loader"></i> Loading…</div>
     </div>
-  </div>
-  <div class="gc" id="activity-feed-card">
-    <div class="sh"><h2>📢 Activity feed</h2><span class="pill pgr" style="font-size:9px">Live</span></div>
-    <div id="activity-list"><div class="loading">Loading…</div></div>
   </div>
   <div class="gc" id="home-skills-card">
     <div class="sh"><h2>My skills overview</h2><button class="btn btn-o btn-sm" onclick="goto('profile')">Edit</button></div>
@@ -569,9 +553,6 @@ select.finp{cursor:pointer;appearance:none}
             <p id="profile-bio" style="font-size:12px;margin-bottom:8px"></p>
             <div style="display:flex;gap:6px">
               <button class="btn btn-p btn-sm" onclick="openEditProfile()"><i class="ti ti-edit"></i>Edit</button>
-              <button class="btn btn-o btn-sm" onclick="openThemePicker()"><i class="ti ti-palette"></i>Theme</button>
-              <button class="btn btn-o btn-sm" onclick="shareProfile()"><i class="ti ti-share"></i>Share</button>
-              <button class="btn btn-o btn-sm" onclick="openLangPicker()"><i class="ti ti-language"></i>Lang</button>
               <button class="btn btn-o btn-sm" onclick="doLogout()"><i class="ti ti-logout"></i>Logout</button>
             </div>
           </div>
@@ -595,10 +576,6 @@ select.finp{cursor:pointer;appearance:none}
     </div>
 
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div class="gc">
-        <div class="sh"><h2>📊 Analytics</h2></div>
-        <div id="analytics-chart" style="padding:8px 0"></div>
-      </div>
       <div class="gc">
         <h2 style="margin-bottom:10px">Reviews received</h2>
         <div id="reviews-list"><div class="loading"><i class="ti ti-loader"></i> Loading…</div></div>
@@ -683,6 +660,7 @@ function toggleTheme() {
   document.getElementById('sw-lbl').textContent = isDark ? 'Dark' : 'Light';
   document.getElementById('sw-sun').style.color = isDark ? 'var(--text4)' : 'var(--a)';
   document.getElementById('sw-moon').style.color = isDark ? 'var(--p2)' : 'var(--text4)';
+  localStorage.setItem('skillswap-theme', isDark ? 'dark' : 'light');
 }
 
 // ── NAV ──────────────────────────────────────────────────────
@@ -743,9 +721,9 @@ async function enterApp(user) {
   });
   loadHome();
   loadActivityFeed();
-  await loadNotifications();
   loadSavedAccentTheme();
   requestPushPermission();
+  await loadNotifications();
   toast('Welcome, ' + name.split(' ')[0] + '! 👋', 'p');
 }
 
@@ -1145,14 +1123,9 @@ async function loadProfile() {
   const name = profile.display_name || currentUser.displayName || '';
   const ini = initials(name);
   document.getElementById('profile-av').textContent = ini;
-  if (profile.photo_url || currentUser.photoURL) {
-  const url = profile.photo_url || currentUser.photoURL;
-  const avEl = document.getElementById('profile-av');
-  avEl.innerHTML = '';
-  avEl.style.backgroundImage = `url(${url})`;
-  avEl.style.backgroundSize = 'cover';
-  avEl.style.backgroundPosition = 'center';
-}
+  const savedPhoto = localStorage.getItem('skillswap-photo-' + currentUser.uid);
+  const photoUrl = savedPhoto || profile.photo_url || currentUser.photoURL;
+  if (photoUrl) applyPhoto(photoUrl);
   document.getElementById('nav-av').textContent = ini;
   document.getElementById('profile-name').textContent = name;
   document.getElementById('profile-college').textContent = profile.college || '';
@@ -1388,33 +1361,49 @@ async function saveProfile() {
 async function uploadPhoto(input) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { toast('Photo must be under 2MB', 'a'); return; }
-  toast('Uploading photo...', 'p');
+  toast('Processing photo...', 'p');
+  // Resize image to max 150x150 to keep it small enough for Firestore
+  const img = new Image();
   const reader = new FileReader();
-  reader.onload = async function(e) {
-    const base64 = e.target.result;
-    // Show preview immediately
-    const avEl = document.getElementById('profile-av');
-    avEl.innerHTML = '';
-    avEl.style.backgroundImage = `url(${base64})`;
-    avEl.style.backgroundSize = 'cover';
-    avEl.style.backgroundPosition = 'center';
-    // Update nav avatar
-    const navAv = document.getElementById('nav-av');
-    navAv.innerHTML = '';
-    navAv.style.backgroundImage = `url(${base64})`;
-    navAv.style.backgroundSize = 'cover';
-    navAv.style.backgroundPosition = 'center';
-    // Save to Firebase Storage via user profile update
-    try {
-      await currentUser.updateProfile({ photoURL: base64 });
-      await apiCall('/users/me', 'PUT', { photo_url: base64 });
-      toast('Photo updated! ✅', 't');
-    } catch(e) {
-      toast('Photo saved locally only', 'p');
-    }
+  reader.onload = function(e) {
+    img.onload = async function() {
+      const canvas = document.createElement('canvas');
+      const MAX = 150;
+      let w = img.width, h = img.height;
+      if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+      else { w = Math.round(w * MAX / h); h = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const base64 = canvas.toDataURL('image/jpeg', 0.7);
+      // Apply photo immediately
+      applyPhoto(base64);
+      // Save to localStorage as backup
+      try { localStorage.setItem('skillswap-photo-' + currentUser.uid, base64); } catch(e) {}
+      // Save to backend
+      try {
+        await currentUser.updateProfile({ photoURL: base64 });
+        await apiCall('/users/me', 'PUT', { photo_url: base64 });
+        toast('Photo updated! ✅', 't');
+      } catch(err) {
+        toast('Photo saved locally ✅', 't');
+      }
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+function applyPhoto(url) {
+  if (!url) return;
+  ['profile-av', 'nav-av'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.innerHTML = '';
+      el.style.backgroundImage = `url(${url})`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+    }
+  });
 }
 // ── CHAT (UI only — real chat needs Firebase Realtime DB) ────
 async function sendMsg(){
@@ -1451,6 +1440,192 @@ async function sendMsg(){
 
 }
 
+// ── ACTIVITY FEED ────────────────────────────────────────────
+async function loadActivityFeed() {
+  const el = document.getElementById('activity-list');
+  if (!el) return;
+  const [matches, users] = await Promise.all([apiCall('/matches/'), apiCall('/users/')]);
+  const feed = [];
+  if (matches) {
+    matches.filter(m => m.status==='accepted'||m.status==='active').slice(0,3).forEach(m => {
+      feed.push({icon:'🤝', text:`You connected with ${m.partner_name}`});
+    });
+  }
+  if (users) {
+    users.filter(u => u.uid !== currentUser?.uid).slice(0,3).forEach(u => {
+      feed.push({icon:'🎉', text:`${u.display_name||'Someone'} joined SkillSwap`});
+    });
+  }
+  feed.push({icon:'💡', text:'Tip: Add more skills to get better matches!'});
+  if (!feed.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:20px"><i class="ti ti-activity" style="font-size:24px;display:block;margin-bottom:8px;opacity:.4"></i>No activity yet</div>';
+    return;
+  }
+  el.innerHTML = feed.slice(0,6).map(item => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="width:32px;height:32px;border-radius:10px;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${item.icon}</div>
+      <div style="flex:1;font-size:12px;color:var(--text)">${item.text}</div>
+    </div>`).join('');
+}
+
+// ── ANALYTICS ────────────────────────────────────────────────
+async function loadAnalytics() {
+  const el = document.getElementById('analytics-chart');
+  if (!el) return;
+  const sessions = await apiCall('/sessions/');
+  if (!sessions || sessions.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px"><i class="ti ti-chart-bar" style="font-size:24px;display:block;margin-bottom:6px;opacity:.4"></i>No session data yet</div>';
+    return;
+  }
+  const months = {};
+  sessions.forEach(s => {
+    const d = new Date(s.date_time);
+    const key = MONTHS[d.getMonth()].slice(0,3);
+    months[key] = (months[key]||0) + 1;
+  });
+  const entries = Object.entries(months).slice(-6);
+  const max = Math.max(...entries.map(([,v])=>v), 1);
+  el.innerHTML = `<div style="display:flex;gap:8px;align-items:flex-end;height:80px;padding:0 4px">
+    ${entries.map(([mo,count]) => {
+      const pct = Math.round((count/max)*100);
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
+        <div style="font-size:10px;font-weight:600;color:var(--p)">${count}</div>
+        <div style="width:100%;background:var(--glass2);border-radius:6px;overflow:hidden;height:60px;display:flex;align-items:flex-end">
+          <div style="width:100%;height:${pct}%;background:linear-gradient(180deg,var(--p),var(--b));border-radius:6px"></div>
+        </div>
+        <div style="font-size:9px;color:var(--text4)">${mo}</div>
+      </div>`;
+    }).join('')}
+  </div>
+  <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:8px">Sessions per month</div>`;
+}
+
+// ── THEME PICKER ─────────────────────────────────────────────
+const THEMES=[{name:'Purple',p:'#5856d6',t:'#34c759',label:'Default'},{name:'Blue',p:'#007aff',t:'#34c759',label:'Ocean'},{name:'Rose',p:'#f43f5e',t:'#fb923c',label:'Sunset'},{name:'Teal',p:'#0d9488',t:'#84cc16',label:'Forest'},{name:'Amber',p:'#d97706',t:'#059669',label:'Desert'},{name:'Indigo',p:'#6366f1',t:'#8b5cf6',label:'Galaxy'}];
+function openThemePicker(){
+  const existing=document.getElementById('theme-modal');if(existing)existing.remove();
+  const saved=localStorage.getItem('skillswap-accent')||'Purple';
+  const modal=document.createElement('div');modal.id='theme-modal';
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;box-sizing:border-box';
+  modal.innerHTML=`<div style="background:var(--card);border-radius:18px;padding:24px;width:100%;max-width:360px;border:1px solid var(--border2);box-shadow:var(--shadow2)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-size:15px;font-weight:600">🎨 Choose theme</h2>
+      <button class="btn-icon btn" onclick="document.getElementById('theme-modal').remove()"><i class="ti ti-x"></i></button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+      ${THEMES.map(t=>`<div onclick="applyAccentTheme('${t.name}','${t.p}','${t.t}')"
+        style="padding:12px;border-radius:14px;cursor:pointer;text-align:center;
+        border:2px solid ${t.name===saved?t.p:'var(--border2)'};background:var(--glass2);transition:all .2s">
+        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,${t.p},${t.t});margin:0 auto 6px"></div>
+        <div style="font-size:11px;font-weight:500;color:var(--text)">${t.label}</div>
+      </div>`).join('')}
+    </div>
+    <button class="btn btn-o btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('theme-modal').remove()">Close</button>
+  </div>`;
+  document.body.appendChild(modal);
+}
+function applyAccentTheme(name,primary,secondary){
+  document.documentElement.style.setProperty('--p',primary);
+  document.documentElement.style.setProperty('--p2',primary+'cc');
+  document.documentElement.style.setProperty('--p3',primary+'30');
+  document.documentElement.style.setProperty('--t2',secondary);
+  document.documentElement.style.setProperty('--t3',secondary+'25');
+  localStorage.setItem('skillswap-accent',name);
+  localStorage.setItem('skillswap-accent-p',primary);
+  localStorage.setItem('skillswap-accent-t',secondary);
+  const m=document.getElementById('theme-modal');if(m)m.remove();
+  toast('Theme applied! 🎨','t');
+}
+function loadSavedAccentTheme(){
+  const p=localStorage.getItem('skillswap-accent-p');
+  const t2=localStorage.getItem('skillswap-accent-t');
+  if(p&&t2){
+    document.documentElement.style.setProperty('--p',p);
+    document.documentElement.style.setProperty('--p2',p+'cc');
+    document.documentElement.style.setProperty('--p3',p+'30');
+    document.documentElement.style.setProperty('--t2',t2);
+    document.documentElement.style.setProperty('--t3',t2+'25');
+  }
+}
+
+// ── SHARE PROFILE ────────────────────────────────────────────
+function shareProfile(){
+  if(!currentUser)return;
+  const url=window.location.origin+'?uid='+currentUser.uid;
+  if(navigator.share){navigator.share({title:'My SkillSwap Profile',text:'Connect with me on SkillSwap!',url}).catch(()=>{});}
+  else{navigator.clipboard.writeText(url).then(()=>toast('Profile link copied! 🔗','t')).catch(()=>toast(url,'p'));}
+}
+
+// ── MULTI-LANGUAGE ───────────────────────────────────────────
+const LANGS={
+  en:{home:'Home',discover:'Discover',matches:'Matches',chat:'Chat',schedule:'Schedule',leaderboard:'Leaderboard',profile:'Profile'},
+  ta:{home:'முகப்பு',discover:'கண்டறி',matches:'பொருத்தங்கள்',chat:'அரட்டை',schedule:'அட்டவணை',leaderboard:'தலைமை பட்டியல்',profile:'சுயவிவரம்'},
+  hi:{home:'होम',discover:'खोजें',matches:'मैच',chat:'चैट',schedule:'शेड्यूल',leaderboard:'लीडरबोर्ड',profile:'प्रोफ़ाइल'}
+};
+let currentLang = localStorage.getItem('skillswap-lang')||'en';
+function t(key){return(LANGS[currentLang]||LANGS.en)[key]||key;}
+
+function openLangPicker(){
+  const existing=document.getElementById('lang-modal');if(existing)existing.remove();
+  const modal=document.createElement('div');modal.id='lang-modal';
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;box-sizing:border-box';
+  modal.innerHTML=`<div style="background:var(--card);border-radius:18px;padding:24px;width:100%;max-width:300px;border:1px solid var(--border2);box-shadow:var(--shadow2)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-size:15px;font-weight:600">🌐 Language</h2>
+      <button class="btn-icon btn" onclick="document.getElementById('lang-modal').remove()"><i class="ti ti-x"></i></button>
+    </div>
+    ${[['en','🇬🇧 English'],['ta','🇮🇳 தமிழ்'],['hi','🇮🇳 हिन्दी']].map(([code,label])=>`
+      <div onclick="setLang('${code}')" style="padding:12px;border-radius:12px;cursor:pointer;
+        border:2px solid ${currentLang===code?'var(--p)':'var(--border2)'};
+        background:var(--glass2);margin-bottom:8px;font-size:13px;font-weight:500;transition:all .2s">${label}</div>
+    `).join('')}
+  </div>`;
+  document.body.appendChild(modal);
+}
+
+function setLang(code) {
+  currentLang = code;
+  localStorage.setItem('skillswap-lang', code);
+  document.getElementById('lang-modal').remove();
+  const LN = LANGS[code] || LANGS.en;
+  // Update nav tabs
+  document.querySelectorAll('.nt').forEach(el => {
+    const p = el.dataset.p;
+    if (p && LN[p]) {
+      const icon = el.querySelector('i').cloneNode(true);
+      el.innerHTML = ''; el.appendChild(icon);
+      el.appendChild(document.createTextNode(LN[p]));
+    }
+  });
+  // Update page h1 headings
+  const h1Map = {
+    'page-discover': {en:'Discover skills',ta:'திறன்களை கண்டறி',hi:'कौशल खोजें'},
+    'page-matches':  {en:'Your matches',ta:'உங்கள் பொருத்தங்கள்',hi:'आपके मैच'},
+    'page-schedule': {en:'Session schedule',ta:'அமர்வு அட்டவணை',hi:'सत्र अनुसूची'},
+    'page-leaderboard':{en:'Community leaderboard',ta:'சிறந்தோர் பட்டியல்',hi:'लीडरबोर्ड'},
+  };
+  Object.entries(h1Map).forEach(([pageId, labels]) => {
+    const page = document.getElementById(pageId);
+    if (page) { const h1 = page.querySelector('h1'); if (h1) h1.textContent = labels[code]||labels.en; }
+  });
+  toast('Language updated! 🌐', 't');
+  loadHome();
+}
+
+// ── PUSH NOTIFICATIONS ───────────────────────────────────────
+async function requestPushPermission(){
+  if(!('Notification'in window))return;
+  if(Notification.permission==='default'){await Notification.requestPermission();}
+  if(Notification.permission==='granted'){schedulePushCheck();}
+}
+function schedulePushCheck(){
+  setInterval(async()=>{
+    const matches=await apiCall('/matches/');if(!matches)return;
+    const pending=matches.filter(m=>m.status==='pending'&&m.sender_uid&&m.sender_uid!==currentUser?.uid);
+    if(pending.length>0){new Notification('SkillSwap 🎓',{body:`${pending[0].partner_name} wants to connect!`,tag:'skillswap-connect'});}
+  },2*60*1000);
+}
+
 // ── PWA ──────────────────────────────────────────────────────
 if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{});});}
 let deferredPrompt=null;
@@ -1460,34 +1635,69 @@ window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredP
 let navSearchTimeout=null;
 function toggleNavSearch(){const wrap=document.getElementById('nav-search-wrap');const isVisible=wrap.style.display==='flex';wrap.style.display=isVisible?'none':'flex';if(!isVisible)setTimeout(()=>document.getElementById('nav-search-input').focus(),50);}
 function closeNavSearch(){document.getElementById('nav-search-wrap').style.display='none';document.getElementById('nav-search-results').style.display='none';document.getElementById('nav-search-input').value='';}
-async function navSearch(q){clearTimeout(navSearchTimeout);const res=document.getElementById('nav-search-results');if(!q.trim()){res.style.display='none';return;}navSearchTimeout=setTimeout(async()=>{const users=await apiCall('/users/?search='+encodeURIComponent(q));res.style.display='block';if(!users||users.length===0){res.innerHTML='<div style="padding:12px;font-size:12px;color:var(--text3);text-align:center">No users found</div>';return;}res.innerHTML=users.slice(0,5).map(u=>{const name=u.display_name||u.uid;const ini=initials(name);const bg=avatarBg(name);return`<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div class="av av-sm" style="background:${bg};color:#fff">${ini}</div><div style="flex:1"><div style="font-size:12px;font-weight:600">${name}</div><div style="font-size:10px;color:var(--text3)">${u.college||''}</div></div><button class="btn btn-p btn-sm" style="font-size:10px;padding:3px 8px" onclick="connectUser('${u.uid}','${name}');closeNavSearch()">Connect</button></div>`;}).join('');},300);}
+async function navSearch(q){
+  clearTimeout(navSearchTimeout);
+  const res=document.getElementById('nav-search-results');
+  if(!q.trim()){res.style.display='none';return;}
+  navSearchTimeout=setTimeout(async()=>{
+    const users=await apiCall('/users/?search='+encodeURIComponent(q));
+    res.style.display='block';
+    if(!users||users.length===0){res.innerHTML='<div style="padding:12px;font-size:12px;color:var(--text3);text-align:center">No users found</div>';return;}
+    res.innerHTML=users.slice(0,5).map(u=>{
+      const name=u.display_name||u.uid;const ini=initials(name);const bg=avatarBg(name);
+      return`<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer"
+        onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''">
+        <div class="av av-sm" style="background:${bg};color:#fff">${ini}</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:600">${name}</div><div style="font-size:10px;color:var(--text3)">${u.college||''}</div></div>
+        <button class="btn btn-p btn-sm" style="font-size:10px;padding:3px 8px" onclick="connectUser('${u.uid}','${name}');closeNavSearch()">Connect</button>
+      </div>`;
+    }).join('');
+  },300);
+}
 document.addEventListener('click',e=>{const wrap=document.getElementById('nav-search-wrap');if(wrap&&wrap.style.display==='flex'&&!wrap.contains(e.target)&&!e.target.closest('.btn-icon'))closeNavSearch();});
 
-// ── ACTIVITY FEED ────────────────────────────────────────────
-async function loadActivityFeed(){const el=document.getElementById('activity-list');if(!el)return;const feed=await apiCall('/users/feed/activity');if(!feed||feed.length===0){el.innerHTML='<div class="empty-state" style="padding:20px"><i class="ti ti-activity" style="font-size:24px;display:block;margin-bottom:8px;opacity:.4"></i>No activity yet</div>';return;}el.innerHTML=feed.map(item=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="width:32px;height:32px;border-radius:10px;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${item.icon}</div><div style="flex:1;font-size:12px;color:var(--text)">${item.text}</div></div>`).join('');}
+// ── WEEKLY CHALLENGES ────────────────────────────────────────
+async function loadChallenges(){
+  const [sessions,matches]=await Promise.all([apiCall('/sessions/'),apiCall('/matches/')]);
+  const now=new Date();
+  const weekStart=new Date(now);weekStart.setDate(now.getDate()-now.getDay());weekStart.setHours(0,0,0,0);
+  const sessThisWeek=(sessions||[]).filter(s=>{const d=new Date(s.date_time);return d>=weekStart&&d<=now;}).length;
+  const activeMatches=(matches||[]).filter(m=>m.status==='accepted'||m.status==='active').length;
+  const pastSessions=(sessions||[]).filter(s=>new Date(s.date_time)<now);
+  const challenges=[
+    {icon:'📅',title:'Complete 2 sessions this week',current:sessThisWeek,target:2,color:'var(--p)'},
+    {icon:'🤝',title:'Make 3 connections',current:activeMatches,target:3,color:'var(--t2)'},
+    {icon:'⭐',title:'Complete a past session',current:pastSessions.length>0?1:0,target:1,color:'var(--a)'},
+  ];
+  const el=document.getElementById('challenges-list');if(!el)return;
+  el.innerHTML=challenges.map(ch=>{
+    const pct=Math.min(Math.round((ch.current/ch.target)*100),100);const done=pct>=100;
+    return`<div style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <span style="font-size:16px">${ch.icon}</span>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:500;color:var(--text)">${ch.title}</div>
+          <div style="font-size:10px;color:var(--text3)">${ch.current}/${ch.target}${done?' ✅ Complete!':''}</div>
+        </div>
+        <span style="font-size:11px;font-weight:600;color:${ch.color}">${pct}%</span>
+      </div>
+      <div class="prog"><div class="prog-f" style="width:${pct}%;background:${ch.color}"></div></div>
+    </div>`;
+  }).join('');
+}
 
-// ── ANALYTICS ────────────────────────────────────────────────
-async function loadAnalytics(){const el=document.getElementById('analytics-chart');if(!el)return;const sessions=await apiCall('/sessions/');if(!sessions||sessions.length===0){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px"><i class="ti ti-chart-bar" style="font-size:24px;display:block;margin-bottom:6px;opacity:.4"></i>No session data yet</div>';return;}const months={};sessions.forEach(s=>{const d=new Date(s.date_time);const key=MONTHS[d.getMonth()].slice(0,3);months[key]=(months[key]||0)+1;});const entries=Object.entries(months).slice(-6);const max=Math.max(...entries.map(([,v])=>v),1);el.innerHTML=`<div style="display:flex;gap:8px;align-items:flex-end;height:80px;padding:0 4px">${entries.map(([mo,count])=>{const pct=Math.round((count/max)*100);return`<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><div style="font-size:10px;font-weight:600;color:var(--p)">${count}</div><div style="width:100%;background:var(--glass2);border-radius:6px;overflow:hidden;height:60px;display:flex;align-items:flex-end"><div style="width:100%;height:${pct}%;background:linear-gradient(180deg,var(--p),var(--b));border-radius:6px"></div></div><div style="font-size:9px;color:var(--text4)">${mo}</div></div>`;}).join('')}</div><div style="font-size:10px;color:var(--text3);text-align:center;margin-top:8px">Sessions per month</div>`;}
+// ── STREAK ───────────────────────────────────────────────────
+function calculateStreak(sessions){
+  if(!sessions||sessions.length===0)return 0;
+  const now=new Date();
+  const getWeek=d=>Math.floor(d.getTime()/(7*24*60*60*1000));
+  const thisWeek=getWeek(now);
+  const weeks=[...new Set(sessions.filter(s=>new Date(s.date_time)<=now).map(s=>getWeek(new Date(s.date_time))))].sort((a,b)=>b-a);
+  let streak=0,expected=thisWeek;
+  for(const w of weeks){if(w>=expected-1&&w<=expected){streak++;expected=w-1;}else break;}
+  return streak;
+}
 
-// ── THEME PICKER ─────────────────────────────────────────────
-const THEMES=[{name:'Purple',p:'#5856d6',t:'#34c759',label:'Default'},{name:'Blue',p:'#007aff',t:'#34c759',label:'Ocean'},{name:'Rose',p:'#f43f5e',t:'#fb923c',label:'Sunset'},{name:'Teal',p:'#0d9488',t:'#84cc16',label:'Forest'},{name:'Amber',p:'#d97706',t:'#059669',label:'Desert'},{name:'Indigo',p:'#6366f1',t:'#8b5cf6',label:'Galaxy'}];
-function openThemePicker(){const existing=document.getElementById('theme-modal');if(existing)existing.remove();const saved=localStorage.getItem('skillswap-accent')||'Purple';const modal=document.createElement('div');modal.id='theme-modal';modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;box-sizing:border-box';modal.innerHTML=`<div style="background:var(--card);border-radius:18px;padding:24px;width:100%;max-width:360px;border:1px solid var(--border2);box-shadow:var(--shadow2)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:15px;font-weight:600">🎨 Choose theme</h2><button class="btn-icon btn" onclick="document.getElementById('theme-modal').remove()"><i class="ti ti-x"></i></button></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">${THEMES.map(t=>`<div onclick="applyAccentTheme('${t.name}','${t.p}','${t.t}')" style="padding:12px;border-radius:14px;cursor:pointer;text-align:center;border:2px solid ${t.name===saved?t.p:'var(--border2)'};background:var(--glass2);transition:all .2s"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,${t.p},${t.t});margin:0 auto 6px"></div><div style="font-size:11px;font-weight:500;color:var(--text)">${t.label}</div></div>`).join('')}</div><button class="btn btn-o btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('theme-modal').remove()">Close</button></div>`;document.body.appendChild(modal);}
-function applyAccentTheme(name,primary,secondary){document.documentElement.style.setProperty('--p',primary);document.documentElement.style.setProperty('--p2',primary+'cc');document.documentElement.style.setProperty('--p3',primary+'30');document.documentElement.style.setProperty('--t2',secondary);document.documentElement.style.setProperty('--t3',secondary+'25');localStorage.setItem('skillswap-accent',name);localStorage.setItem('skillswap-accent-p',primary);localStorage.setItem('skillswap-accent-t',secondary);const m=document.getElementById('theme-modal');if(m)m.remove();toast('Theme applied! 🎨','t');}
-function loadSavedAccentTheme(){const p=localStorage.getItem('skillswap-accent-p');const t2=localStorage.getItem('skillswap-accent-t');if(p&&t2){document.documentElement.style.setProperty('--p',p);document.documentElement.style.setProperty('--p2',p+'cc');document.documentElement.style.setProperty('--p3',p+'30');document.documentElement.style.setProperty('--t2',t2);document.documentElement.style.setProperty('--t3',t2+'25');}}
-
-// ── SHARE PROFILE ────────────────────────────────────────────
-function shareProfile(){if(!currentUser)return;const url=window.location.origin+'?uid='+currentUser.uid;if(navigator.share){navigator.share({title:'My SkillSwap Profile',text:'Connect with me on SkillSwap!',url}).catch(()=>{});}else{navigator.clipboard.writeText(url).then(()=>toast('Profile link copied! 🔗','t')).catch(()=>toast(url,'p'));}}
-
-// ── MULTI-LANGUAGE ───────────────────────────────────────────
-const LANGS={en:{home:'Home',discover:'Discover',matches:'Matches',chat:'Chat',schedule:'Schedule',leaderboard:'Leaderboard',profile:'Profile'},ta:{home:'முகப்பு',discover:'கண்டறி',matches:'பொருத்தங்கள்',chat:'அரட்டை',schedule:'அட்டவணை',leaderboard:'தலைமை பட்டியல்',profile:'சுயவிவரம்'},hi:{home:'होम',discover:'खोजें',matches:'मैच',chat:'चैट',schedule:'शेड्यूल',leaderboard:'लीडरबोर्ड',profile:'प्रोफ़ाइल'}};
-let currentLang=localStorage.getItem('skillswap-lang')||'en';
-function t(key){return(LANGS[currentLang]||LANGS.en)[key]||key;}
-function openLangPicker(){const existing=document.getElementById('lang-modal');if(existing)existing.remove();const modal=document.createElement('div');modal.id='lang-modal';modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;box-sizing:border-box';modal.innerHTML=`<div style="background:var(--card);border-radius:18px;padding:24px;width:100%;max-width:300px;border:1px solid var(--border2);box-shadow:var(--shadow2)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:15px;font-weight:600">🌐 Language</h2><button class="btn-icon btn" onclick="document.getElementById('lang-modal').remove()"><i class="ti ti-x"></i></button></div>${[['en','🇬🇧 English'],['ta','🇮🇳 தமிழ்'],['hi','🇮🇳 हिन्दी']].map(([code,label])=>`<div onclick="setLang('${code}')" style="padding:12px;border-radius:12px;cursor:pointer;border:2px solid ${currentLang===code?'var(--p)':'var(--border2)'};background:var(--glass2);margin-bottom:8px;font-size:13px;font-weight:500;transition:all .2s">${label}</div>`).join('')}</div>`;document.body.appendChild(modal);}
-function setLang(code){currentLang=code;localStorage.setItem('skillswap-lang',code);document.getElementById('lang-modal').remove();document.querySelectorAll('.nt').forEach(el=>{const p=el.dataset.p;if(p&&LANGS[code]&&LANGS[code][p]){const icon=el.querySelector('i').cloneNode(true);el.innerHTML='';el.appendChild(icon);el.appendChild(document.createTextNode(LANGS[code][p]));}});toast('Language updated! 🌐','t');}
-
-// ── PUSH NOTIFICATIONS ───────────────────────────────────────
-async function requestPushPermission(){if(!('Notification'in window))return;if(Notification.permission==='default'){await Notification.requestPermission();}if(Notification.permission==='granted'){schedulePushCheck();}}
-function schedulePushCheck(){setInterval(async()=>{const matches=await apiCall('/matches/');if(!matches)return;const pending=matches.filter(m=>m.status==='pending'&&m.sender_uid&&m.sender_uid!==currentUser?.uid);if(pending.length>0){new Notification('SkillSwap 🎓',{body:`${pending[0].partner_name} wants to connect with you!`,tag:'skillswap-connect'});}},2*60*1000);}
 
 // ── CALENDAR ─────────────────────────────────────────────────
 function buildCal() {
@@ -1687,6 +1897,21 @@ function clearNotifs() {
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
+// Load saved theme immediately on page load
+(function(){
+  const isDarkSaved = localStorage.getItem('skillswap-theme') === 'dark';
+  if(isDarkSaved) document.body.className = 'dark';
+  const p = localStorage.getItem('skillswap-accent-p');
+  const t2 = localStorage.getItem('skillswap-accent-t');
+  if(p && t2){
+    document.documentElement.style.setProperty('--p', p);
+    document.documentElement.style.setProperty('--p2', p+'cc');
+    document.documentElement.style.setProperty('--p3', p+'30');
+    document.documentElement.style.setProperty('--t2', t2);
+    document.documentElement.style.setProperty('--t3', t2+'25');
+  }
+})();
+
 const firebaseConfig = {
   apiKey: "AIzaSyCvd5DOzO3Si2fal-3vbwFLvjjGnSyjCXo",
   authDomain: "skillswap-app-b8b51.firebaseapp.com",
@@ -1776,28 +2001,28 @@ async function openChat(chatId, partnerName){
             </div>`;
         });
         msgs.scrollTop=msgs.scrollHeight;
-        // Typing indicator
-        db.ref(`chats/${chatId}/typing`).off();
-        db.ref(`chats/${chatId}/typing`).on('value', snap => {
-          const data = snap.val() || {};
-          const someoneTyping = Object.entries(data).some(([uid, val]) => uid !== currentUser.uid && val === true);
-          let typingEl = document.getElementById('typing-indicator');
-          if (someoneTyping) {
-            if (!typingEl) {
-              typingEl = document.createElement('div');
-              typingEl.id = 'typing-indicator';
-              typingEl.style.cssText = 'padding:4px 13px;font-size:11px;color:var(--text3);font-style:italic;display:flex;align-items:center;gap:6px';
-              typingEl.innerHTML = `<div style="display:flex;gap:3px">
-                <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite"></span>
-                <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite .2s"></span>
-                <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite .4s"></span>
-              </div> ${partnerName} is typing...`;
-              document.getElementById('chat-msgs').after(typingEl);
-            }
-          } else {
-            if (typingEl) typingEl.remove();
-          }
-        });
+    });
+    // Typing indicator — outside message listener
+    db.ref(`chats/${chatId}/typing`).off();
+    db.ref(`chats/${chatId}/typing`).on('value', snap => {
+      const tdata = snap.val() || {};
+      const someoneTyping = Object.entries(tdata).some(([uid, val]) => uid !== currentUser.uid && val === true);
+      let typingEl = document.getElementById('typing-indicator');
+      if (someoneTyping) {
+        if (!typingEl) {
+          typingEl = document.createElement('div');
+          typingEl.id = 'typing-indicator';
+          typingEl.style.cssText = 'padding:4px 13px;font-size:11px;color:var(--text3);font-style:italic;display:flex;align-items:center;gap:6px';
+          typingEl.innerHTML = `<div style="display:flex;gap:3px">
+            <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite"></span>
+            <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite .2s"></span>
+            <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite .4s"></span>
+          </div> ${partnerName} is typing...`;
+          document.getElementById('chat-msgs').after(typingEl);
+        }
+      } else {
+        if (typingEl) typingEl.remove();
+      }
     });
 }
 async function loadChatList() {
