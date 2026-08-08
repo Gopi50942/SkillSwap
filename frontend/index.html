@@ -422,6 +422,10 @@ select.finp{cursor:pointer;appearance:none}
       <div class="loading"><i class="ti ti-loader"></i> Loading…</div>
     </div>
   </div>
+  <div class="gc" id="activity-feed-card">
+    <div class="sh"><h2>📢 Activity feed</h2><span class="pill pgr" style="font-size:9px">Live</span></div>
+    <div id="activity-list"><div class="loading">Loading…</div></div>
+  </div>
   <div class="gc" id="home-skills-card">
     <div class="sh"><h2>My skills overview</h2><button class="btn btn-o btn-sm" onclick="goto('profile')">Edit</button></div>
     <div class="loading"><i class="ti ti-loader"></i> Loading…</div>
@@ -553,9 +557,6 @@ select.finp{cursor:pointer;appearance:none}
             <p id="profile-bio" style="font-size:12px;margin-bottom:8px"></p>
             <div style="display:flex;gap:6px">
               <button class="btn btn-p btn-sm" onclick="openEditProfile()"><i class="ti ti-edit"></i>Edit</button>
-              <button class="btn btn-o btn-sm" onclick="openThemePicker()"><i class="ti ti-palette"></i>Theme</button>
-              <button class="btn btn-o btn-sm" onclick="shareProfile()"><i class="ti ti-share"></i>Share</button>
-              <button class="btn btn-o btn-sm" onclick="openLangPicker()"><i class="ti ti-language"></i>Lang</button>
               <button class="btn btn-o btn-sm" onclick="doLogout()"><i class="ti ti-logout"></i>Logout</button>
             </div>
           </div>
@@ -664,6 +665,11 @@ function toggleTheme() {
   document.getElementById('sw-sun').style.color = isDark ? 'var(--text4)' : 'var(--a)';
   document.getElementById('sw-moon').style.color = isDark ? 'var(--p2)' : 'var(--text4)';
   localStorage.setItem('skillswap-theme', isDark ? 'dark' : 'light');
+  // Reapply accent theme with new dark/light background
+  const name = localStorage.getItem('skillswap-accent');
+  const p = localStorage.getItem('skillswap-accent-p');
+  const t2 = localStorage.getItem('skillswap-accent-t');
+  if(p && t2) applyAccentTheme(name||'Purple', p, t2);
 }
 
 // ── NAV ──────────────────────────────────────────────────────
@@ -1504,7 +1510,32 @@ async function loadAnalytics() {
 }
 
 // ── THEME PICKER ─────────────────────────────────────────────
-const THEMES=[{name:'Purple',p:'#5856d6',t:'#34c759',label:'Default'},{name:'Blue',p:'#007aff',t:'#34c759',label:'Ocean'},{name:'Rose',p:'#f43f5e',t:'#fb923c',label:'Sunset'},{name:'Teal',p:'#0d9488',t:'#84cc16',label:'Forest'},{name:'Amber',p:'#d97706',t:'#059669',label:'Desert'},{name:'Indigo',p:'#6366f1',t:'#8b5cf6',label:'Galaxy'}];
+const THEMES=[
+  {name:'Purple', p:'#5856d6',t:'#34c759',label:'Default',
+   bga:'#e8edf5',bgb:'#dce4f0',bgc:'#d0daea',
+   mesh1:'rgba(120,100,255,0.18)',mesh2:'rgba(52,199,89,0.14)',
+   dbga:'#0a0b14',dbgb:'#0d0f1e',dbgc:'#10132a'},
+  {name:'Blue',   p:'#007aff',t:'#34c759',label:'Ocean',
+   bga:'#e0eeff',bgb:'#d0e4ff',bgc:'#c0d8ff',
+   mesh1:'rgba(0,122,255,0.20)',mesh2:'rgba(52,199,89,0.14)',
+   dbga:'#000d1a',dbgb:'#001433',dbgc:'#001a40'},
+  {name:'Rose',   p:'#f43f5e',t:'#fb923c',label:'Sunset',
+   bga:'#ffeef0',bgb:'#ffdde2',bgc:'#ffd0d8',
+   mesh1:'rgba(244,63,94,0.20)',mesh2:'rgba(251,146,60,0.16)',
+   dbga:'#1a0008',dbgb:'#200010',dbgc:'#28001a'},
+  {name:'Teal',   p:'#0d9488',t:'#84cc16',label:'Forest',
+   bga:'#e0f5f4',bgb:'#d0efed',bgc:'#c0e8e5',
+   mesh1:'rgba(13,148,136,0.20)',mesh2:'rgba(132,204,22,0.16)',
+   dbga:'#000f0e',dbgb:'#001614',dbgc:'#001c1a'},
+  {name:'Amber',  p:'#d97706',t:'#059669',label:'Desert',
+   bga:'#fff8e8',bgb:'#fef3d0',bgc:'#fdedc0',
+   mesh1:'rgba(217,119,6,0.20)',mesh2:'rgba(5,150,105,0.16)',
+   dbga:'#1a1000',dbgb:'#201500',dbgc:'#281a00'},
+  {name:'Indigo', p:'#6366f1',t:'#8b5cf6',label:'Galaxy',
+   bga:'#eeeeff',bgb:'#e0e0ff',bgc:'#d4d4ff',
+   mesh1:'rgba(99,102,241,0.22)',mesh2:'rgba(139,92,246,0.18)',
+   dbga:'#05050f',dbgb:'#080820',dbgc:'#0a0a2a'},
+];
 function openThemePicker(){
   const existing=document.getElementById('theme-modal');if(existing)existing.remove();
   const saved=localStorage.getItem('skillswap-accent')||'Purple';
@@ -1528,26 +1559,38 @@ function openThemePicker(){
   document.body.appendChild(modal);
 }
 function applyAccentTheme(name,primary,secondary){
-  document.documentElement.style.setProperty('--p',primary);
-  document.documentElement.style.setProperty('--p2',primary+'cc');
-  document.documentElement.style.setProperty('--p3',primary+'30');
-  document.documentElement.style.setProperty('--t2',secondary);
-  document.documentElement.style.setProperty('--t3',secondary+'25');
-  localStorage.setItem('skillswap-accent',name);
-  localStorage.setItem('skillswap-accent-p',primary);
-  localStorage.setItem('skillswap-accent-t',secondary);
+  const theme = THEMES.find(t=>t.name===name) || THEMES[0];
+  const dark = document.body.classList.contains('dark');
+  // Accent colors
+  document.documentElement.style.setProperty('--p', primary);
+  document.documentElement.style.setProperty('--p2', primary+'cc');
+  document.documentElement.style.setProperty('--p3', primary+'30');
+  document.documentElement.style.setProperty('--t2', secondary);
+  document.documentElement.style.setProperty('--t3', secondary+'25');
+  // Background colors
+  const bga = dark ? theme.dbga : theme.bga;
+  const bgb = dark ? theme.dbgb : theme.bgb;
+  const bgc = dark ? theme.dbgc : theme.bgc;
+  document.documentElement.style.setProperty('--bg-a', bga);
+  document.documentElement.style.setProperty('--bg-b', bgb);
+  document.documentElement.style.setProperty('--bg-c', bgc);
+  document.documentElement.style.setProperty('--mesh1', theme.mesh1);
+  document.documentElement.style.setProperty('--mesh2', theme.mesh2);
+  // Nav active color
+  document.documentElement.style.setProperty('--nav-tab-active', primary+'25');
+  // Save
+  localStorage.setItem('skillswap-accent', name);
+  localStorage.setItem('skillswap-accent-p', primary);
+  localStorage.setItem('skillswap-accent-t', secondary);
   const m=document.getElementById('theme-modal');if(m)m.remove();
   toast('Theme applied! 🎨','t');
 }
 function loadSavedAccentTheme(){
-  const p=localStorage.getItem('skillswap-accent-p');
-  const t2=localStorage.getItem('skillswap-accent-t');
-  if(p&&t2){
-    document.documentElement.style.setProperty('--p',p);
-    document.documentElement.style.setProperty('--p2',p+'cc');
-    document.documentElement.style.setProperty('--p3',p+'30');
-    document.documentElement.style.setProperty('--t2',t2);
-    document.documentElement.style.setProperty('--t3',t2+'25');
+  const name = localStorage.getItem('skillswap-accent');
+  const p = localStorage.getItem('skillswap-accent-p');
+  const t2 = localStorage.getItem('skillswap-accent-t');
+  if(p && t2){
+    applyAccentTheme(name||'Purple', p, t2);
   }
 }
 
