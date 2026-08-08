@@ -47,5 +47,41 @@ async def remove_learn(skill: str, user=Depends(get_current_user)):
     return await user_service.remove_learn_skill(user["uid"], skill)
 
 @router.get("/", response_model=list[UserProfile])
-async def list_users(user=Depends(get_current_user)):
-    return await user_service.get_all_users()
+async def list_users(user=Depends(get_current_user), search: str = ""):
+    users_list = await user_service.get_all_users()
+    if search:
+        q = search.lower()
+        users_list = [u for u in users_list if
+            q in (u.display_name or "").lower() or
+            q in (u.college or "").lower() or
+            any(q in (s.skill if hasattr(s,"skill") else str(s)).lower() for s in u.skills_teach) or
+            any(q in str(s).lower() for s in u.skills_learn)]
+    return users_list
+
+@router.get("/feed/activity")
+async def get_activity_feed(user=Depends(get_current_user)):
+    """Get recent platform activity feed"""
+    from app.firebase import get_firestore
+    from google.cloud.firestore_v1 import Query
+    db = get_firestore()
+    results = []
+    try:
+        snaps = list(db.collection("users").order_by("createdAt", direction=Query.DESCENDING).limit(5).stream())
+        for snap in snaps:
+            if snap.id == user["uid"]: continue
+            d = snap.to_dict()
+            results.append({"icon":"🎉","text":f"{d.get('displayName','Someone')} joined SkillSwap","time":""})
+    except: pass
+    try:
+        snaps = list(db.collection("matches").where("status","==","accepted").limit(5).stream())
+        for snap in snaps:
+            d = snap.to_dict()
+            parts = d.get("participants",[])
+            if len(parts)>=2:
+                u1 = db.collection("users").document(parts[0]).get()
+                u2 = db.collection("users").document(parts[1]).get()
+                n1 = u1.to_dict().get("displayName","Someone") if u1.exists else "Someone"
+                n2 = u2.to_dict().get("displayName","Someone") if u2.exists else "Someone"
+                results.append({"icon":"🤝","text":f"{n1} and {n2} connected","time":""})
+    except: pass
+    return results[:8]
