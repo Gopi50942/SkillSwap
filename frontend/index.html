@@ -1510,7 +1510,44 @@ async function loadAnalytics() {
 }
 
 // ── THEME PICKER ─────────────────────────────────────────────
-const THEMES=[{name:'Purple',p:'#5856d6',t:'#34c759',label:'Default'},{name:'Blue',p:'#007aff',t:'#34c759',label:'Ocean'},{name:'Rose',p:'#f43f5e',t:'#fb923c',label:'Sunset'},{name:'Teal',p:'#0d9488',t:'#84cc16',label:'Forest'},{name:'Amber',p:'#d97706',t:'#059669',label:'Desert'},{name:'Indigo',p:'#6366f1',t:'#8b5cf6',label:'Galaxy'}];
+const THEMES=[
+  {
+    name:'Purple', label:'Default', emoji:'🟣',
+    p:'#5856d6', t:'#34c759',
+    light:{bga:'#e8edf5',bgb:'#dce4f0',bgc:'#d0daea',mesh1:'rgba(120,100,255,0.18)',mesh2:'rgba(52,199,89,0.14)',mesh3:'rgba(0,122,255,0.12)'},
+    dark:{bga:'#0a0b14',bgb:'#0d0f1e',bgc:'#10132a',mesh1:'rgba(120,80,255,0.22)',mesh2:'rgba(20,180,100,0.16)',mesh3:'rgba(30,100,255,0.14)'}
+  },
+  {
+    name:'Ocean', label:'Ocean', emoji:'🔵',
+    p:'#007aff', t:'#34c759',
+    light:{bga:'#e0eeff',bgb:'#cce0ff',bgc:'#b8d4ff',mesh1:'rgba(0,122,255,0.22)',mesh2:'rgba(52,199,89,0.14)',mesh3:'rgba(0,200,255,0.12)'},
+    dark:{bga:'#000d1a',bgb:'#001433',bgc:'#001a40',mesh1:'rgba(0,122,255,0.28)',mesh2:'rgba(0,200,150,0.16)',mesh3:'rgba(0,150,255,0.18)'}
+  },
+  {
+    name:'Sunset', label:'Sunset', emoji:'🌅',
+    p:'#f43f5e', t:'#fb923c',
+    light:{bga:'#fff0f0',bgb:'#ffe0e4',bgc:'#ffd0d8',mesh1:'rgba(244,63,94,0.22)',mesh2:'rgba(251,146,60,0.18)',mesh3:'rgba(255,100,100,0.12)'},
+    dark:{bga:'#1a0008',bgb:'#200010',bgc:'#280018',mesh1:'rgba(244,63,94,0.28)',mesh2:'rgba(251,146,60,0.20)',mesh3:'rgba(200,50,80,0.18)'}
+  },
+  {
+    name:'Forest', label:'Forest', emoji:'🌿',
+    p:'#0d9488', t:'#84cc16',
+    light:{bga:'#e0f5f4',bgb:'#cceeec',bgc:'#b8e8e5',mesh1:'rgba(13,148,136,0.22)',mesh2:'rgba(132,204,22,0.18)',mesh3:'rgba(0,200,180,0.12)'},
+    dark:{bga:'#000f0e',bgb:'#001614',bgc:'#001c1a',mesh1:'rgba(13,148,136,0.28)',mesh2:'rgba(132,204,22,0.20)',mesh3:'rgba(0,180,160,0.16)'}
+  },
+  {
+    name:'Desert', label:'Desert', emoji:'🏜️',
+    p:'#d97706', t:'#059669',
+    light:{bga:'#fff8e8',bgb:'#fef3d0',bgc:'#fdedc0',mesh1:'rgba(217,119,6,0.22)',mesh2:'rgba(5,150,105,0.16)',mesh3:'rgba(255,180,0,0.12)'},
+    dark:{bga:'#1a1000',bgb:'#201500',bgc:'#281a00',mesh1:'rgba(217,119,6,0.28)',mesh2:'rgba(5,150,105,0.18)',mesh3:'rgba(200,150,0,0.16)'}
+  },
+  {
+    name:'Galaxy', label:'Galaxy', emoji:'🌌',
+    p:'#6366f1', t:'#8b5cf6',
+    light:{bga:'#eeeeff',bgb:'#e0e0ff',bgc:'#d4d4ff',mesh1:'rgba(99,102,241,0.22)',mesh2:'rgba(139,92,246,0.18)',mesh3:'rgba(180,100,255,0.14)'},
+    dark:{bga:'#05050f',bgb:'#080820',bgc:'#0a0a2a',mesh1:'rgba(99,102,241,0.28)',mesh2:'rgba(139,92,246,0.22)',mesh3:'rgba(160,80,255,0.18)'}
+  },
+];
 // Per-theme background palettes for light/dark mode
 const THEME_BG={
   Purple:{
@@ -1549,56 +1586,82 @@ function applyThemeBackground(name, mode){
   root.setProperty('--mesh2',bg.m2);
   root.setProperty('--mesh3',bg.m3);
 }
-function openThemePicker(){
-  const existing=document.getElementById('theme-modal');if(existing)existing.remove();
-  const saved=localStorage.getItem('skillswap-accent')||'Purple';
-  const modal=document.createElement('div');modal.id='theme-modal';
-  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;box-sizing:border-box';
-  modal.innerHTML=`<div style="background:var(--card);border-radius:18px;padding:24px;width:100%;max-width:360px;border:1px solid var(--border2);box-shadow:var(--shadow2)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:15px;font-weight:600">🎨 Choose theme</h2>
-      <button class="btn-icon btn" onclick="document.getElementById('theme-modal').remove()"><i class="ti ti-x"></i></button>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
-      ${THEMES.map(t=>`<div onclick="applyAccentTheme('${t.name}','${t.p}','${t.t}')"
-        style="padding:12px;border-radius:14px;cursor:pointer;text-align:center;
-        border:2px solid ${t.name===saved?t.p:'var(--border2)'};background:var(--glass2);transition:all .2s">
-        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,${t.p},${t.t});margin:0 auto 6px"></div>
-        <div style="font-size:11px;font-weight:500;color:var(--text)">${t.label}</div>
-      </div>`).join('')}
-    </div>
-    <button class="btn btn-o btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('theme-modal').remove()">Close</button>
-  </div>`;
+function openThemePicker() {
+  const existing = document.getElementById('theme-modal');
+  if (existing) existing.remove();
+  const saved = localStorage.getItem('skillswap-accent') || 'Purple';
+  const modal = document.createElement('div');
+  modal.id = 'theme-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;box-sizing:border-box;backdrop-filter:blur(4px)';
+  modal.innerHTML = `
+    <div style="background:var(--card);border-radius:22px;padding:24px;width:100%;max-width:400px;border:1px solid var(--border2);box-shadow:var(--shadow2)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h2 style="font-size:16px;font-weight:700">🎨 App Theme</h2>
+        <button class="btn-icon btn" onclick="document.getElementById('theme-modal').remove()"><i class="ti ti-x"></i></button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+        ${THEMES.map(th => {
+          const isSaved = th.name === saved;
+          return `<div onclick="applyAccentTheme('${th.name}','${th.p}','${th.t}')"
+            style="border-radius:16px;cursor:pointer;overflow:hidden;
+            border:3px solid ${isSaved ? th.p : 'transparent'};
+            box-shadow:${isSaved ? '0 0 0 2px ' + th.p + '44' : 'none'};
+            transition:all .25s;position:relative">
+            <div style="height:52px;background:linear-gradient(135deg,${th.light.bga},${th.light.bgb},${th.light.bgc});position:relative;overflow:hidden">
+              <div style="position:absolute;top:6px;left:8px;width:18px;height:18px;border-radius:50%;background:${th.p};opacity:.9"></div>
+              <div style="position:absolute;top:6px;left:30px;width:30px;height:6px;border-radius:3px;background:${th.p};opacity:.5;margin-top:6px"></div>
+              <div style="position:absolute;bottom:6px;right:8px;width:22px;height:8px;border-radius:4px;background:${th.p}"></div>
+            </div>
+            <div style="padding:8px 10px;background:var(--glass2)">
+              <div style="font-size:11px;font-weight:600;color:var(--text)">${th.emoji} ${th.label}</div>
+              <div style="display:flex;gap:4px;margin-top:4px">
+                <div style="width:12px;height:12px;border-radius:50%;background:${th.p}"></div>
+                <div style="width:12px;height:12px;border-radius:50%;background:${th.t}"></div>
+              </div>
+            </div>
+            ${isSaved ? `<div style="position:absolute;top:6px;right:6px;width:18px;height:18px;background:${th.p};border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px">✓</div>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+      <button class="btn btn-o btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('theme-modal').remove()">Close</button>
+    </div>`;
   document.body.appendChild(modal);
 }
-function applyAccentTheme(name,primary,secondary){
-  document.documentElement.style.setProperty('--p',primary);
-  document.documentElement.style.setProperty('--p2',primary+'cc');
-  document.documentElement.style.setProperty('--p3',primary+'30');
-  document.documentElement.style.setProperty('--t2',secondary);
-  document.documentElement.style.setProperty('--t3',secondary+'25');
-  localStorage.setItem('skillswap-accent',name);
-  localStorage.setItem('skillswap-accent-p',primary);
-  localStorage.setItem('skillswap-accent-t',secondary);
-  applyThemeBackground(name, isDark?'dark':'light');
-  const m=document.getElementById('theme-modal');if(m)m.remove();
+function applyAccentTheme(name, primary, secondary) {
+  const theme = THEMES.find(t => t.name === name) || THEMES[0];
+  const dark = document.body.classList.contains('dark');
+  const bg = dark ? theme.dark : theme.light;
+  document.documentElement.style.setProperty('--p', primary);
+  document.documentElement.style.setProperty('--p2', primary+'cc');
+  document.documentElement.style.setProperty('--p3', primary+'30');
+  document.documentElement.style.setProperty('--t2', secondary);
+  document.documentElement.style.setProperty('--t3', secondary+'25');
+  document.documentElement.style.setProperty('--nav-tab-active', primary+'22');
+  if(bg) {
+    document.documentElement.style.setProperty('--bg-a', bg.bga);
+    document.documentElement.style.setProperty('--bg-b', bg.bgb);
+    document.documentElement.style.setProperty('--bg-c', bg.bgc);
+    document.documentElement.style.setProperty('--mesh1', bg.mesh1);
+    document.documentElement.style.setProperty('--mesh2', bg.mesh2);
+    document.documentElement.style.setProperty('--mesh3', bg.mesh3||bg.mesh2);
+  }
+  document.querySelectorAll('.logo-gem').forEach(el => {
+    el.style.background = `linear-gradient(135deg,${primary},${secondary})`;
+  });
+  localStorage.setItem('skillswap-accent', name);
+  localStorage.setItem('skillswap-accent-p', primary);
+  localStorage.setItem('skillswap-accent-t', secondary);
+  const m = document.getElementById('theme-modal');
+  if(m) m.remove();
   toast('Theme applied! 🎨','t');
 }
-function loadSavedAccentTheme(){
-  const p=localStorage.getItem('skillswap-accent-p');
-  const t2=localStorage.getItem('skillswap-accent-t');
-  const name=localStorage.getItem('skillswap-accent')||'Purple';
-  if(p&&t2){
-    document.documentElement.style.setProperty('--p',p);
-    document.documentElement.style.setProperty('--p2',p+'cc');
-    document.documentElement.style.setProperty('--p3',p+'30');
-    document.documentElement.style.setProperty('--t2',t2);
-    document.documentElement.style.setProperty('--t3',t2+'25');
-  }
-  applyThemeBackground(name, isDark?'dark':'light');
+
+function loadSavedAccentTheme() {
+  const name = localStorage.getItem('skillswap-accent') || 'Purple';
+  const theme = THEMES.find(t => t.name === name) || THEMES[0];
+  applyAccentTheme(theme.name, theme.p, theme.t);
 }
 
-// ── SHARE PROFILE ────────────────────────────────────────────
 function shareProfile(){
   if(!currentUser)return;
   const url=window.location.origin+'?uid='+currentUser.uid;
@@ -2081,34 +2144,39 @@ async function openChat(chatId, partnerName){
     });
 }
 async function loadChatList() {
-    const chats = await apiCall("/chat/my");
     const list = document.getElementById("chat-list");
     list.innerHTML = "";
-    if (!chats || chats.length === 0) {
+    // Load contacts from accepted matches — no separate /chat/my endpoint needed
+    const matches = await apiCall("/matches/");
+    if (!matches) return;
+    const active = matches.filter(m => m.status === "accepted" || m.status === "active");
+    if (active.length === 0) {
         list.innerHTML = `<div style="padding:16px;text-align:center;font-size:11px;color:var(--text3)">
             <i class="ti ti-message-circle" style="font-size:22px;display:block;margin-bottom:6px;opacity:.4"></i>
             No chats yet.<br>Accept a connection to start!</div>`;
         return;
     }
-    chats.forEach(chat => {
-        const ini = initials(chat.partner_name);
-        const bg = avatarBg(chat.partner_name);
-        const isActive = currentChatId === chat.chat_id;
+    active.forEach(match => {
+        const name = match.partner_name || match.partner_uid;
+        const ini = initials(name);
+        const bg = avatarBg(name);
+        // Chat ID is sorted UIDs joined by __
+        const chatId = [currentUser.uid, match.partner_uid].sort().join("__");
+        const isActive = currentChatId === chatId;
         list.innerHTML += `
         <div class="ci${isActive?' active':''}"
-             onclick="openChat('${chat.chat_id}','${chat.partner_name}')">
+             onclick="openChat('${chatId}','${name}')">
             <div style="position:relative">
                 <div class="av av-sm" style="background:${bg};color:#fff">${ini}</div>
                 <div class="odot" style="position:absolute;bottom:0;right:0"></div>
             </div>
             <div style="flex:1;min-width:0">
                 <div style="display:flex;justify-content:space-between;align-items:center">
-                    <span style="font-size:12px;font-weight:600">${chat.partner_name}</span>
-                    <span style="font-size:9px;color:var(--text4)">${chat.last_time ? new Date(chat.last_time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                    <span style="font-size:12px;font-weight:600">${name}</span>
+                    <span style="font-size:9px;color:var(--text4)">Now</span>
                 </div>
-                <div class="cprev">${chat.last_message || 'Tap to chat'}</div>
+                <div class="cprev">${match.partner_college || 'Tap to chat'}</div>
             </div>
-            ${chat.unread > 0 && !isActive ? `<div class="unread" style="background:var(--p);color:#fff;font-size:9px;width:16px;height:16px;display:flex;align-items:center;justify-content:center;border-radius:50%">${chat.unread}</div>` : ''}
         </div>`;
     });
 }
