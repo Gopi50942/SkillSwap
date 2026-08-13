@@ -1497,32 +1497,81 @@ async function loadAnalytics() {
 // ── THEME PICKER ─────────────────────────────────────────────
 const THEMES=[{name:'Purple',p:'#5856d6',t:'#34c759',label:'Default'},{name:'Blue',p:'#007aff',t:'#34c759',label:'Ocean'},{name:'Rose',p:'#f43f5e',t:'#fb923c',label:'Sunset'},{name:'Teal',p:'#0d9488',t:'#84cc16',label:'Forest'},{name:'Amber',p:'#d97706',t:'#059669',label:'Desert'},{name:'Indigo',p:'#6366f1',t:'#8b5cf6',label:'Galaxy'}];
 // Per-theme background palettes for light/dark mode
+// ── THEME SYSTEM ─────────────────────────────────────────────
+// Helper: hex to rgb components
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return {r,g,b};
+}
+// Helper: lighten a hex color for backgrounds
+function lightenHex(hex, amount){
+  const {r,g,b}=hexToRgb(hex);
+  return `rgb(${Math.min(255,r+amount)},${Math.min(255,g+amount)},${Math.min(255,b+amount)})`;
+}
+function darkenHex(hex, amount){
+  const {r,g,b}=hexToRgb(hex);
+  return `rgb(${Math.max(0,r-amount)},${Math.max(0,g-amount)},${Math.max(0,b-amount)})`;
+}
+
 const THEME_BG={
   Purple:{
     light:{a:'#e8edf5',b:'#dce4f0',c:'#d0daea',m1:'rgba(120,100,255,0.18)',m2:'rgba(52,199,89,0.14)',m3:'rgba(0,122,255,0.12)'},
     dark:{a:'#0a0b14',b:'#0d0f1e',c:'#10132a',m1:'rgba(120,80,255,0.22)',m2:'rgba(20,180,100,0.16)',m3:'rgba(30,100,255,0.14)'}
   },
   Blue:{
-    light:{a:'#e6f0fb',b:'#d7e8f7',c:'#c7dcf2',m1:'rgba(0,122,255,0.20)',m2:'rgba(0,180,220,0.14)',m3:'rgba(52,199,89,0.10)'},
-    dark:{a:'#050b16',b:'#071021',c:'#081633',m1:'rgba(0,122,255,0.26)',m2:'rgba(0,200,220,0.16)',m3:'rgba(30,140,255,0.14)'}
+    light:{a:'#e0eeff',b:'#cce0ff',c:'#b8d4ff',m1:'rgba(0,122,255,0.22)',m2:'rgba(0,200,220,0.14)',m3:'rgba(52,199,89,0.10)'},
+    dark:{a:'#000d1a',b:'#001433',c:'#001a40',m1:'rgba(0,122,255,0.28)',m2:'rgba(0,200,220,0.16)',m3:'rgba(0,150,255,0.14)'}
   },
   Rose:{
-    light:{a:'#fdeef1',b:'#fbe3e8',c:'#f8d6dd',m1:'rgba(244,63,94,0.16)',m2:'rgba(251,146,60,0.16)',m3:'rgba(255,150,180,0.12)'},
-    dark:{a:'#160a0e',b:'#1e0c12',c:'#280f18',m1:'rgba(244,63,94,0.22)',m2:'rgba(251,146,60,0.18)',m3:'rgba(255,120,160,0.14)'}
+    light:{a:'#fff0f0',b:'#ffe0e4',c:'#ffd0d8',m1:'rgba(244,63,94,0.20)',m2:'rgba(251,146,60,0.16)',m3:'rgba(255,100,120,0.12)'},
+    dark:{a:'#1a0008',b:'#200010',c:'#280018',m1:'rgba(244,63,94,0.28)',m2:'rgba(251,146,60,0.18)',m3:'rgba(200,50,80,0.16)'}
   },
   Teal:{
-    light:{a:'#e6f5f2',b:'#d9f0e6',c:'#cbe9da',m1:'rgba(13,148,136,0.18)',m2:'rgba(132,204,22,0.14)',m3:'rgba(20,180,140,0.10)'},
-    dark:{a:'#05130f',b:'#071a15',c:'#0a2119',m1:'rgba(13,180,160,0.22)',m2:'rgba(140,220,30,0.14)',m3:'rgba(20,200,150,0.14)'}
+    light:{a:'#e0f5f4',b:'#cceeec',c:'#b8e8e5',m1:'rgba(13,148,136,0.22)',m2:'rgba(132,204,22,0.16)',m3:'rgba(0,200,180,0.12)'},
+    dark:{a:'#000f0e',b:'#001614',c:'#001c1a',m1:'rgba(13,148,136,0.28)',m2:'rgba(132,204,22,0.18)',m3:'rgba(0,180,160,0.16)'}
   },
   Amber:{
-    light:{a:'#fbf1e2',b:'#f7e6cc',c:'#f2dab3',m1:'rgba(217,119,6,0.18)',m2:'rgba(5,150,105,0.12)',m3:'rgba(250,180,80,0.14)'},
-    dark:{a:'#170f04',b:'#1f1405',c:'#291a06',m1:'rgba(217,140,6,0.24)',m2:'rgba(5,180,120,0.14)',m3:'rgba(250,190,80,0.16)'}
+    light:{a:'#fff8e8',b:'#fef3d0',c:'#fdedc0',m1:'rgba(217,119,6,0.22)',m2:'rgba(5,150,105,0.16)',m3:'rgba(255,180,0,0.12)'},
+    dark:{a:'#1a1000',b:'#201500',c:'#281a00',m1:'rgba(217,119,6,0.28)',m2:'rgba(5,150,105,0.18)',m3:'rgba(200,150,0,0.16)'}
   },
   Indigo:{
-    light:{a:'#eceafc',b:'#e0defa',c:'#d3d0f5',m1:'rgba(99,102,241,0.20)',m2:'rgba(139,92,246,0.16)',m3:'rgba(80,90,255,0.12)'},
-    dark:{a:'#08071a',b:'#0b0a24',c:'#0f0d30',m1:'rgba(99,102,241,0.26)',m2:'rgba(139,92,246,0.20)',m3:'rgba(90,100,255,0.16)'}
+    light:{a:'#eeeeff',b:'#e0e0ff',c:'#d4d4ff',m1:'rgba(99,102,241,0.22)',m2:'rgba(139,92,246,0.18)',m3:'rgba(180,100,255,0.14)'},
+    dark:{a:'#05050f',b:'#080820',c:'#0a0a2a',m1:'rgba(99,102,241,0.28)',m2:'rgba(139,92,246,0.22)',m3:'rgba(160,80,255,0.18)'}
+  },
+  Midnight:{
+    light:{a:'#e8e8f0',b:'#d8d8ec',c:'#c8c8e4',m1:'rgba(30,30,80,0.18)',m2:'rgba(80,80,180,0.14)',m3:'rgba(120,120,220,0.12)'},
+    dark:{a:'#050508',b:'#080810',c:'#0a0a18',m1:'rgba(80,80,200,0.30)',m2:'rgba(40,40,120,0.22)',m3:'rgba(100,100,255,0.18)'}
+  },
+  Sakura:{
+    light:{a:'#fff0f8',b:'#ffe8f4',c:'#ffd8ec',m1:'rgba(255,100,180,0.18)',m2:'rgba(255,150,200,0.14)',m3:'rgba(200,80,160,0.10)'},
+    dark:{a:'#1a0010',b:'#220016',c:'#2a001e',m1:'rgba(255,100,180,0.26)',m2:'rgba(255,150,200,0.18)',m3:'rgba(200,80,160,0.16)'}
+  },
+  Emerald:{
+    light:{a:'#e8f8f0',b:'#d4f0e4',c:'#c0e8d8',m1:'rgba(16,185,129,0.22)',m2:'rgba(52,211,153,0.16)',m3:'rgba(0,200,100,0.12)'},
+    dark:{a:'#000f08',b:'#001410',c:'#001a14',m1:'rgba(16,185,129,0.28)',m2:'rgba(52,211,153,0.20)',m3:'rgba(0,180,100,0.16)'}
+  },
+  Crimson:{
+    light:{a:'#fff0ee',b:'#ffe4e0',c:'#ffd8d2',m1:'rgba(220,38,38,0.20)',m2:'rgba(239,68,68,0.14)',m3:'rgba(255,100,80,0.12)'},
+    dark:{a:'#180402',b:'#200604',c:'#280806',m1:'rgba(220,38,38,0.30)',m2:'rgba(239,68,68,0.20)',m3:'rgba(255,80,60,0.18)'}
+  },
+  Custom:{
+    light:{a:'#e8edf5',b:'#dce4f0',c:'#d0daea',m1:'rgba(120,100,255,0.18)',m2:'rgba(52,199,89,0.14)',m3:'rgba(0,122,255,0.12)'},
+    dark:{a:'#0a0b14',b:'#0d0f1e',c:'#10132a',m1:'rgba(120,80,255,0.22)',m2:'rgba(20,180,100,0.16)',m3:'rgba(30,100,255,0.14)'}
   }
 };
+
+const THEMES=[
+  {name:'Purple', label:'Default',   emoji:'🟣', p:'#5856d6', t:'#34c759'},
+  {name:'Blue',   label:'Ocean',     emoji:'🔵', p:'#007aff', t:'#34c759'},
+  {name:'Rose',   label:'Sunset',    emoji:'🌅', p:'#f43f5e', t:'#fb923c'},
+  {name:'Teal',   label:'Forest',    emoji:'🌿', p:'#0d9488', t:'#84cc16'},
+  {name:'Amber',  label:'Desert',    emoji:'🏜️', p:'#d97706', t:'#059669'},
+  {name:'Indigo', label:'Galaxy',    emoji:'🌌', p:'#6366f1', t:'#8b5cf6'},
+  {name:'Midnight',label:'Midnight', emoji:'🌙', p:'#3730a3', t:'#6366f1'},
+  {name:'Sakura', label:'Sakura',    emoji:'🌸', p:'#ec4899', t:'#f43f5e'},
+  {name:'Emerald',label:'Emerald',   emoji:'💚', p:'#10b981', t:'#34d399'},
+  {name:'Crimson',label:'Crimson',   emoji:'❤️', p:'#dc2626', t:'#ef4444'},
+];
 function applyThemeBackground(name, mode){
   const set = THEME_BG[name] || THEME_BG.Purple;
   const bg = mode==='dark' ? set.dark : set.light;
@@ -1562,23 +1611,105 @@ function openThemePicker(){
   const existing=document.getElementById('theme-modal');if(existing)existing.remove();
   const saved=localStorage.getItem('skillswap-accent')||'Purple';
   const modal=document.createElement('div');modal.id='theme-modal';
-  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;box-sizing:border-box';
-  modal.innerHTML=`<div style="background:var(--card);border-radius:18px;padding:24px;width:100%;max-width:360px;border:1px solid var(--border2);box-shadow:var(--shadow2)">
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px;box-sizing:border-box;backdrop-filter:blur(4px)';
+  modal.innerHTML=`
+  <div style="background:var(--card);border-radius:22px;padding:20px;width:100%;max-width:440px;border:1px solid var(--border2);box-shadow:var(--shadow2);max-height:90vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:15px;font-weight:600">🎨 Choose theme</h2>
+      <h2 style="font-size:15px;font-weight:700">🎨 App Theme</h2>
       <button class="btn-icon btn" onclick="document.getElementById('theme-modal').remove()"><i class="ti ti-x"></i></button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
-      ${THEMES.map(t=>`<div onclick="applyAccentTheme('${t.name}','${t.p}','${t.t}')"
-        style="padding:12px;border-radius:14px;cursor:pointer;text-align:center;
-        border:2px solid ${t.name===saved?t.p:'var(--border2)'};background:var(--glass2);transition:all .2s">
-        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,${t.p},${t.t});margin:0 auto 6px"></div>
-        <div style="font-size:11px;font-weight:500;color:var(--text)">${t.label}</div>
-      </div>`).join('')}
+
+    <!-- Preset themes grid -->
+    <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Preset themes</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px">
+      ${THEMES.map(th=>{
+        const isSaved = th.name===saved;
+        return \`<div onclick="applyAccentTheme('\${th.name}','\${th.p}','\${th.t}')"
+          style="border-radius:12px;cursor:pointer;overflow:hidden;
+          border:2px solid \${isSaved?th.p:'var(--border2)'};
+          transition:all .2s;position:relative"
+          onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          <div style="height:36px;background:linear-gradient(135deg,\${th.p}22,\${th.t}22);
+            display:flex;align-items:center;justify-content:center;font-size:18px">\${th.emoji}</div>
+          <div style="padding:4px 6px;background:var(--glass2);text-align:center">
+            <div style="font-size:9px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden">\${th.label}</div>
+            <div style="display:flex;gap:3px;justify-content:center;margin-top:3px">
+              <div style="width:8px;height:8px;border-radius:50%;background:\${th.p}"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:\${th.t}"></div>
+            </div>
+          </div>
+          \${isSaved?\`<div style="position:absolute;top:3px;right:3px;width:14px;height:14px;background:\${th.p};border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px">✓</div>\`:''}
+        </div>\`;
+      }).join('')}
     </div>
-    <button class="btn btn-o btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('theme-modal').remove()">Close</button>
+
+    <!-- Custom color picker -->
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
+      <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Custom color</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+        <div>
+          <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Primary</div>
+          <input type="color" id="custom-primary" value="${localStorage.getItem('skillswap-accent-p')||'#5856d6'}"
+            style="width:48px;height:36px;border:2px solid var(--border2);border-radius:10px;cursor:pointer;padding:2px;background:var(--glass2)">
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Secondary</div>
+          <input type="color" id="custom-secondary" value="${localStorage.getItem('skillswap-accent-t')||'#34c759'}"
+            style="width:48px;height:36px;border:2px solid var(--border2);border-radius:10px;cursor:pointer;padding:2px;background:var(--glass2)">
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Preview</div>
+          <div id="custom-preview" style="height:36px;border-radius:10px;border:2px solid var(--border2);
+            background:linear-gradient(135deg,${localStorage.getItem('skillswap-accent-p')||'#5856d6'},${localStorage.getItem('skillswap-accent-t')||'#34c759'})"></div>
+        </div>
+        <button class="btn btn-p btn-sm" onclick="applyCustomTheme()" style="margin-top:14px">Apply</button>
+      </div>
+
+      <!-- Quick color presets -->
+      <div style="font-size:10px;color:var(--text3);margin-bottom:6px">Quick picks</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#f43f5e','#84cc16','#6366f1','#a855f7','#0ea5e9','#10b981','#fb923c'].map(col=>
+          `<div onclick="document.getElementById('custom-primary').value='${col}';updateCustomPreview()"
+            style="width:22px;height:22px;border-radius:50%;background:${col};cursor:pointer;
+            border:2px solid transparent;transition:all .15s"
+            onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></div>`
+        ).join('')}
+      </div>
+    </div>
+
+    <button class="btn btn-o btn-sm" style="width:100%;justify-content:center;margin-top:14px" onclick="document.getElementById('theme-modal').remove()">Close</button>
   </div>`;
   document.body.appendChild(modal);
+  // Live preview on color change
+  document.getElementById('custom-primary').addEventListener('input', updateCustomPreview);
+  document.getElementById('custom-secondary').addEventListener('input', updateCustomPreview);
+}
+function updateCustomPreview(){
+  const p = document.getElementById('custom-primary').value;
+  const s = document.getElementById('custom-secondary').value;
+  const preview = document.getElementById('custom-preview');
+  if(preview) preview.style.background = `linear-gradient(135deg,${p},${s})`;
+}
+function applyCustomTheme(){
+  const p = document.getElementById('custom-primary').value;
+  const s = document.getElementById('custom-secondary').value;
+  // Generate background colors from primary
+  const {r,g,b} = hexToRgb(p);
+  const lightBg = {
+    a:`rgb(${Math.min(255,r+160)},${Math.min(255,g+160)},${Math.min(255,b+160)})`,
+    b:`rgb(${Math.min(255,r+145)},${Math.min(255,g+145)},${Math.min(255,b+145)})`,
+    c:`rgb(${Math.min(255,r+130)},${Math.min(255,g+130)},${Math.min(255,b+130)})`,
+    m1:`rgba(${r},${g},${b},0.20)`,m2:`rgba(${r},${g},${b},0.12)`,m3:`rgba(${r},${g},${b},0.08)`
+  };
+  const darkBg = {
+    a:`rgb(${Math.max(0,Math.floor(r*0.08))},${Math.max(0,Math.floor(g*0.08))},${Math.max(0,Math.floor(b*0.08))})`,
+    b:`rgb(${Math.max(0,Math.floor(r*0.12))},${Math.max(0,Math.floor(g*0.12))},${Math.max(0,Math.floor(b*0.12))})`,
+    c:`rgb(${Math.max(0,Math.floor(r*0.16))},${Math.max(0,Math.floor(g*0.16))},${Math.max(0,Math.floor(b*0.16))})`,
+    m1:`rgba(${r},${g},${b},0.28)`,m2:`rgba(${r},${g},${b},0.18)`,m3:`rgba(${r},${g},${b},0.14)`
+  };
+  THEME_BG['Custom'] = {light: lightBg, dark: darkBg};
+  applyAccentTheme('Custom', p, s);
+  toast('Custom theme applied! 🎨','t');
 }
 function applyAccentTheme(name,primary,secondary){
   document.documentElement.style.setProperty('--p',primary);
