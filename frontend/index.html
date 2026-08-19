@@ -226,12 +226,33 @@ select.finp{cursor:pointer;appearance:none}
 .loading{text-align:center;padding:30px;color:var(--text3);font-size:12px}
 .skill-row{display:flex;align-items:center;gap:7px;margin-bottom:7px}
 /* ── MOBILE RESPONSIVE ─────────────────────────────────────── */
-@media (max-width: 768px) {
+/* ── MOBILE BOTTOM NAV ────────────────────────────────────── */
+.mob-nav {
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:60px;
+  background:var(--glass-nav);
+  backdrop-filter:var(--blur-heavy);
+  border-top:1px solid var(--border);
+  z-index:100;
+  padding:0 4px;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.mob-nav-item {
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:2px;cursor:pointer;
+  padding:6px 4px;border-radius:12px;transition:all .2s;
+  font-size:9px;font-weight:500;color:var(--text3);
+}
+.mob-nav-item i { font-size:20px; }
+.mob-nav-item.active { color:var(--p); background:var(--p3); }
 
-  /* Nav — hide text labels, show only icons */
-  .logo { font-size:13px; margin-right:8px; }
-  .nt { padding:0 7px; font-size:10px; gap:3px; }
-  .nt span { display:none; }
+/* ── TABLET (768px) ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Top nav adjustments */
+  .logo { font-size:13px; margin-right:6px; }
+  .nt { padding:0 8px; font-size:11px; gap:3px; }
   .switch-lbl { display:none; }
   .theme-switch-wrap { gap:4px; }
   .switch-track { width:44px; height:24px; }
@@ -239,84 +260,152 @@ select.finp{cursor:pointer;appearance:none}
   .switch-thumb.right { transform:translateX(20px); }
 
   /* Pages */
-  .page { padding:12px; gap:10px; }
+  .page { padding:14px; gap:12px; }
 
-  /* Grids collapse to single column */
-  .g2, .g3, .g4 { grid-template-columns:1fr; gap:10px; }
+  /* Grids */
+  .g2, .g3 { grid-template-columns:1fr; gap:10px; }
+  .g4 { grid-template-columns:1fr 1fr; gap:10px; }
 
-  /* Home stats — 2 columns on mobile */
-  #home-stats { grid-template-columns:1fr 1fr !important; }
+  /* Home stats — 2x2 grid */
+  #home-stats { grid-template-columns:1fr 1fr !important; gap:10px; }
+  .stat-pill { padding:14px; border-radius:16px; }
+  .stat-v { font-size:22px; }
 
-  /* Profile page — stack columns */
+  /* Profile */
   #page-profile .g2 { grid-template-columns:1fr; }
 
   /* Auth card */
-  .auth-card { padding:20px; border-radius:20px; }
+  .auth-card { padding:22px; border-radius:22px; }
 
-  /* Chat — hide sidebar, show full chat body */
+  /* Chat */
   .chat-wrap { flex-direction:column; }
-  .csb {
-    width:100%;
-    height:220px;
-    border-right:none;
-    border-bottom:1px solid var(--border);
-    flex-shrink:0;
-  }
+  .csb { width:100%; height:200px; border-right:none; border-bottom:1px solid var(--border); flex-shrink:0; }
 
   /* Cards */
-  .gc, .gc2 { padding:12px; border-radius:16px; }
+  .gc, .gc2 { padding:14px; border-radius:18px; }
+  .gc-inner { padding:10px; border-radius:12px; }
 
-  /* Avatar sizes */
-  .av-xl { width:56px; height:56px; font-size:18px; }
-
-  /* Session card */
-  .sess { padding:10px; gap:8px; }
+  /* Discover grid — 1 col */
+  #disc-grid { grid-template-columns:1fr !important; }
 
   /* Leaderboard */
   #page-leaderboard .g2 { grid-template-columns:1fr; }
 
-  /* Discover grid */
-  #disc-grid { grid-template-columns:1fr !important; }
+  /* Session card */
+  .sess { padding:10px; gap:8px; }
+
+  /* Avatar */
+  .av-xl { width:60px; height:60px; font-size:20px; }
+
+  /* Home page cards side by side on tablet */
+  #page-home .g2 { grid-template-columns:1fr 1fr; }
 }
 
+/* ── MOBILE (480px) ──────────────────────────────────────── */
 @media (max-width: 480px) {
+  /* Hide top nav on mobile — use bottom nav instead */
+  #app-nav { display:none !important; }
+  .mob-nav { display:flex; }
 
-  /* Very small screens */
-  nav { padding:0 8px; height:48px; }
-  .nt { padding:0 5px; }
-  .nt i { font-size:16px; }
+  /* Add bottom padding so content not behind bottom nav */
+  main { padding-bottom:60px; }
 
-  /* Hide nav text completely */
-  .nt { font-size:0; }
-  .nt i { font-size:18px; }
+  /* Pages */
+  .page { padding:10px; gap:10px; }
 
-  /* Logo smaller */
-  .logo-gem { width:22px; height:22px; font-size:11px; }
-  .logo { font-size:0; margin-right:4px; }
-  .logo-gem { margin-right:8px; }
+  /* Stats — 2x2 grid, bigger numbers */
+  #home-stats { grid-template-columns:1fr 1fr !important; gap:8px; }
+  .stat-pill { padding:12px 10px; border-radius:16px; text-align:center; }
+  .stat-v { font-size:24px; font-weight:800; }
+  .stat-l { font-size:9px; }
 
-  /* Stats 2 col */
-  #home-stats { grid-template-columns:1fr 1fr !important; }
-  .stat-v { font-size:18px; }
-
-  /* Page padding */
-  .page { padding:8px; }
+  /* Home page — stack all cards */
+  #page-home .g2 { grid-template-columns:1fr; gap:10px; }
 
   /* Cards */
-  .gc, .gc2 { padding:10px; border-radius:14px; }
+  .gc, .gc2 { padding:12px; border-radius:16px; }
+  .gc-inner { padding:9px; border-radius:11px; }
 
-  /* Chat input */
-  .cinp-row { padding:8px; }
+  /* Avatar */
+  .av-xl { width:56px; height:56px; font-size:18px; }
+  .av-md { width:36px; height:36px; font-size:12px; }
 
-  /* Notif panel full width */
+  /* Profile buttons wrap */
+  #page-profile .btn { padding:6px 10px; font-size:11px; }
+
+  /* Discover — 1 col full width cards */
+  #disc-grid { grid-template-columns:1fr !important; }
+
+  /* Match list items */
+  .lbr { padding:8px 10px; border-radius:12px; }
+
+  /* Session cards */
+  .sess { padding:10px; gap:8px; border-radius:14px; }
+  .sess-t { min-width:42px; padding:6px 7px; }
+  .sd { font-size:16px; }
+
+  /* Chat */
+  .csb { height:180px; }
+  .msg { max-width:82%; }
+  .cinp-row { padding:8px 10px; }
+  .cinp { font-size:13px; }
+  .chdr { padding:8px 12px; }
+
+  /* Leaderboard */
+  #page-leaderboard .g2 { grid-template-columns:1fr; }
+  #page-leaderboard .g3 { grid-template-columns:1fr 1fr 1fr; gap:6px; }
+
+  /* Notif panel */
   #notif-panel { right:4px; left:4px; width:auto; }
 
-  /* Modal full screen */
-  #edit-modal > div, #skill-modal > div {
+  /* Modals full screen */
+  #edit-modal > div,
+  #skill-modal > div,
+  #theme-modal > div,
+  #lang-modal > div,
+  #rating-modal > div {
     max-width:100% !important;
-    border-radius:14px !important;
+    border-radius:18px !important;
+    max-height:90vh;
+    overflow-y:auto;
   }
+
+  /* Badges grid */
+  #badges-list { grid-template-columns:repeat(3,1fr) !important; gap:6px; }
+  .bdg { padding:9px 6px; border-radius:12px; }
+  .bicon { font-size:18px; }
+  .bname { font-size:10px; }
+
+  /* Calendar grid */
+  .cday { font-size:10px; border-radius:7px; }
+
+  /* Schedule form */
+  #ns-form .g2 { grid-template-columns:1fr; }
+
+  /* Search bar */
+  .sbar { border-radius:10px; padding:6px 10px; }
+
+  /* Pills */
+  .pill { font-size:9px; padding:2px 7px; }
+
+  /* Challenges card */
+  #challenges-card .prog { height:4px; }
+
+  /* Hide nav search on mobile */
+  #nav-search-wrap { display:none !important; }
 }
+
+/* ── SMOOTH SCROLL ───────────────────────────────────────── */
+.page { scroll-behavior:smooth; }
+
+/* ── TOUCH TARGETS ───────────────────────────────────────── */
+@media (hover:none) {
+  .btn { min-height:36px; }
+  .nt { min-height:44px; }
+  .mob-nav-item { min-height:44px; }
+  .ci { min-height:52px; }
+}
+
 .level-btn.selected{background:var(--p)!important;color:#fff!important;border-color:var(--p)!important;}
 </style>
 </head>
@@ -394,6 +483,31 @@ select.finp{cursor:pointer;appearance:none}
     <div id="nav-av" class="nav-av" onclick="goto('profile')">?</div>
   </div>
 </nav>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mob-nav" id="mob-nav">
+  <div class="mob-nav-item active" data-p="home" onclick="goto('home')">
+    <i class="ti ti-home"></i><span>Home</span>
+  </div>
+  <div class="mob-nav-item" data-p="discover" onclick="goto('discover')">
+    <i class="ti ti-search"></i><span>Discover</span>
+  </div>
+  <div class="mob-nav-item" data-p="matches" onclick="goto('matches')">
+    <i class="ti ti-arrows-exchange"></i><span>Matches</span>
+  </div>
+  <div class="mob-nav-item" data-p="chat" onclick="goto('chat')">
+    <i class="ti ti-message-2"></i><span>Chat</span>
+  </div>
+  <div class="mob-nav-item" data-p="schedule" onclick="goto('schedule')">
+    <i class="ti ti-calendar"></i><span>Schedule</span>
+  </div>
+  <div class="mob-nav-item" data-p="leaderboard" onclick="goto('leaderboard')">
+    <i class="ti ti-trophy"></i><span>Board</span>
+  </div>
+  <div class="mob-nav-item" data-p="profile" onclick="goto('profile')">
+    <i class="ti ti-user"></i><span>Profile</span>
+  </div>
+</div>
 
 <main id="app-main" style="display:none">
 
@@ -719,6 +833,7 @@ async function enterApp(user) {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-nav').style.display = 'flex';
   document.getElementById('app-main').style.display = 'flex';
+  document.getElementById('mob-nav').style.display = 'flex';
   const name = user.displayName || user.email.split('@')[0];
   const ini = initials(name);
   document.getElementById('nav-av').textContent = ini;
@@ -2314,7 +2429,11 @@ function handleTyping() {
     db.ref(`chats/${currentChatId}/typing/${currentUser.uid}`).set(false);
   }, 2000);
 }
-function doLogout() { auth.signOut(); }
+function doLogout() {
+  const mob = document.getElementById('mob-nav');
+  if(mob) mob.style.display = 'none';
+  auth.signOut();
+}
 function sat(t) {
   document.getElementById('al').style.display=t==='l'?'':'none';
   document.getElementById('ar').style.display=t==='r'?'':'none';
