@@ -94,14 +94,12 @@ body.dark{
 html,body{height:100%;overflow:hidden;transition:background var(--transition)}
 body{font-family:var(--font);font-size:13px;line-height:1.5;color:var(--text);
   display:flex;flex-direction:column;position:relative;
-  background:linear-gradient(135deg,var(--bg-a),var(--bg-b) 50%,var(--bg-c));}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 70% 60% at 15% 15%,var(--mesh1) 0%,transparent 60%),
-    radial-gradient(ellipse 55% 70% at 85% 80%,var(--mesh2) 0%,transparent 60%),
-    radial-gradient(ellipse 45% 45% at 55% 45%,var(--mesh3) 0%,transparent 70%);
-  transition:background var(--transition)}
+  background:#080a13;}
+body.light{
+  background:linear-gradient(135deg, #dce4f2, #c8d8ee 50%, #b8cde8);
+}
 
-/* ── AMBIENT GLOW ORBS FOR REFRACTIVE GLASSMORPHISM ─────────── */
+/* ── AMBIENT VIVID GLOWING SHAPES FOR AUTHENTIC GLASSMORPHISM REFRACTION ── */
 .ambient-glow-container {
   position: fixed;
   inset: 0;
@@ -109,65 +107,96 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   z-index: 0;
   overflow: hidden;
 }
-.ambient-orb {
+.ambient-shape {
   position: absolute;
-  filter: blur(80px);
-  opacity: 0.68;
   pointer-events: none;
   will-change: transform;
-  animation: orbFloat 22s ease-in-out infinite alternate;
 }
-.orb-orange {
-  width: 380px;
-  height: 380px;
-  top: 10%;
-  left: 8%;
-  background: linear-gradient(135deg, #ff3838, #ff8e1a 70%, #ff2d55);
-  opacity: 0.72;
-  border-radius: 44px;
-  animation-duration: 18s;
+.shape-orange-squircle {
+  width: 290px;
+  height: 290px;
+  top: 14%;
+  left: 14%;
+  background: linear-gradient(135deg, #ff3b30 0%, #ff8c00 100%);
+  border-radius: 46px;
+  box-shadow: 0 0 80px rgba(255, 60, 0, 0.85), 0 0 160px rgba(255, 140, 0, 0.55);
+  opacity: 0.95;
+  animation: floatSquircle 20s ease-in-out infinite alternate;
 }
-.orb-purple {
-  width: 440px;
-  height: 440px;
-  bottom: 6%;
-  right: 8%;
-  background: radial-gradient(circle, #7928ca 0%, #4338ca 65%, transparent 80%);
-  opacity: 0.65;
-  border-radius: 50%;
-  animation-duration: 25s;
-  animation-delay: -5s;
+.shape-purple-blob {
+  width: 360px;
+  height: 360px;
+  bottom: 8%;
+  right: 12%;
+  background: linear-gradient(135deg, #7928ca 0%, #4338ca 100%);
+  border-radius: 54px;
+  box-shadow: 0 0 100px rgba(121, 40, 202, 0.85), 0 0 180px rgba(67, 56, 202, 0.5);
+  opacity: 0.90;
+  animation: floatBlob 24s ease-in-out infinite alternate;
 }
-.orb-cyan {
-  width: 320px;
-  height: 320px;
-  top: 45%;
-  right: 22%;
-  background: radial-gradient(circle, #00d2ff 0%, #3a7bd5 65%, transparent 80%);
-  opacity: 0.55;
-  border-radius: 40% 60% 60% 40%;
-  animation-duration: 20s;
-  animation-delay: -10s;
-}
-.orb-pink {
+.shape-cyan-pill {
   width: 300px;
-  height: 300px;
-  bottom: 25%;
-  left: 22%;
-  background: radial-gradient(circle, #ff007f 0%, #ff4b2b 60%, transparent 80%);
-  opacity: 0.50;
-  border-radius: 50%;
-  animation-duration: 22s;
-  animation-delay: -15s;
+  height: 180px;
+  top: 46%;
+  right: 24%;
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  border-radius: 60px;
+  box-shadow: 0 0 80px rgba(0, 242, 254, 0.75), 0 0 150px rgba(79, 172, 254, 0.45);
+  opacity: 0.85;
+  animation: floatPill 22s ease-in-out infinite alternate;
 }
-@keyframes orbFloat {
+.shape-rose-circle {
+  width: 250px;
+  height: 250px;
+  bottom: 24%;
+  left: 30%;
+  background: linear-gradient(135deg, #ff0844 0%, #ff4b2b 100%);
+  border-radius: 40px;
+  box-shadow: 0 0 90px rgba(255, 8, 68, 0.8), 0 0 160px rgba(255, 75, 43, 0.45);
+  opacity: 0.85;
+  animation: floatRose 21s ease-in-out infinite alternate;
+}
+.shape-amber-orb {
+  width: 200px;
+  height: 200px;
+  top: 7%;
+  right: 9%;
+  background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  border-radius: 36px;
+  box-shadow: 0 0 70px rgba(247, 151, 30, 0.75), 0 0 130px rgba(255, 210, 0, 0.45);
+  opacity: 0.85;
+  animation: floatAmber 19s ease-in-out infinite alternate;
+}
+
+@keyframes floatSquircle {
   0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-  50% { transform: translate(35px, -25px) rotate(12deg) scale(1.06); }
-  100% { transform: translate(-25px, 30px) rotate(-8deg) scale(0.96); }
+  50% { transform: translate(40px, -30px) rotate(14deg) scale(1.08); }
+  100% { transform: translate(-30px, 35px) rotate(-10deg) scale(0.96); }
 }
-body.light .ambient-orb {
-  opacity: 0.25;
-  filter: blur(90px);
+@keyframes floatBlob {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate(-45px, -35px) rotate(-12deg) scale(1.06); }
+  100% { transform: translate(30px, 25px) rotate(15deg) scale(0.95); }
+}
+@keyframes floatPill {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-30px, 40px) rotate(-15deg); }
+  100% { transform: translate(25px, -20px) rotate(10deg); }
+}
+@keyframes floatRose {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(35px, 25px) scale(1.1); }
+  100% { transform: translate(-25px, -30px) scale(0.92); }
+}
+@keyframes floatAmber {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-20px, 30px); }
+  100% { transform: translate(30px, -15px); }
+}
+
+body.light .ambient-shape {
+  opacity: 0.55 !important;
+  filter: blur(16px) !important;
 }
 
 /* ── APP CONTAINER & PHONE LOOK SIMULATOR ─────────────────── */
@@ -309,26 +338,98 @@ main{flex:1;overflow:hidden;display:flex;position:relative;z-index:1}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
-/* ── FROSTED GLASS COMPONENTS ──────────────────────────────── */
-.gc{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--border);
-  border-radius:var(--radius-card);padding:18px;box-shadow:var(--glass-glow),var(--glass-specular);
-  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;position:relative}
-.gc:hover{transform:translateY(-2px);border-color:var(--border2);box-shadow:0 26px 56px -10px rgba(0,0,0,0.35),var(--glass-specular)}
-.gc2{background:var(--glass2);backdrop-filter:var(--blur-heavy);-webkit-backdrop-filter:var(--blur-heavy);border:1px solid var(--border2);
-  border-radius:var(--radius-card);padding:18px;box-shadow:var(--glass-glow),var(--glass-specular);
-  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;position:relative}
-.gc2:hover{transform:translateY(-2px);border-color:var(--border3);box-shadow:0 26px 56px -10px rgba(0,0,0,0.4),var(--glass-specular)}
-.gc-inner{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--border);
-  border-radius:var(--radius-inner);padding:12px;box-shadow:var(--glass-specular)}
-.stat-pill{background:var(--glass2);backdrop-filter:var(--blur-heavy);-webkit-backdrop-filter:var(--blur-heavy);border:1px solid var(--border2);
-  border-radius:20px;padding:15px 18px;box-shadow:var(--glass-glow),var(--glass-specular);position:relative;overflow:hidden;
-  transition:transform .25s ease,border-color .25s ease}
-.stat-pill:hover{transform:translateY(-2px);border-color:var(--border3)}
-.stat-pill::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent)}
+/* ── FROSTED GLASS COMPONENTS (AUTHENTIC GLASSMORPHISM) ────── */
+.gc {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(28px) saturate(210%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(210%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: var(--radius-card) !important;
+  padding: 20px !important;
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.70), 
+              inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.38), 
+              inset 0 -1px 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  position: relative;
+}
+.gc:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.32) !important;
+  box-shadow: 0 32px 70px -10px rgba(0, 0, 0, 0.8), 
+              inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.48) !important;
+}
+.gc2 {
+  background: rgba(255, 255, 255, 0.11) !important;
+  backdrop-filter: blur(34px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(34px) saturate(220%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: var(--radius-card) !important;
+  padding: 20px !important;
+  box-shadow: 0 30px 70px -10px rgba(0, 0, 0, 0.75), 
+              inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.42), 
+              inset 0 -1px 1px 0 rgba(255, 255, 255, 0.06) !important;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  position: relative;
+}
+.gc2:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 36px 80px -10px rgba(0, 0, 0, 0.85), 
+              inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.52) !important;
+}
+.gc-inner {
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: var(--radius-inner) !important;
+  padding: 12px !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+.stat-pill {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(26px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 20px !important;
+  padding: 16px 18px !important;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6), 
+              inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.35) !important;
+  position: relative;
+  overflow: hidden;
+  transition: transform .25s ease, border-color .25s ease;
+}
+.stat-pill:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.28) !important;
+}
+.stat-pill::after {
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);
+}
 .stat-v{font-size:22px;font-weight:800;margin-bottom:2px}
 .stat-l{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px}
 .stat-s{font-size:10px;margin-top:2px}
+
+/* Light mode overrides for crisp crystal glass */
+body.light .gc, body.light .gc2 {
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(26px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 20px 50px -10px rgba(40, 60, 110, 0.18), 
+              inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.95) !important;
+}
+body.light .stat-pill {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 16px 40px -10px rgba(40, 60, 110, 0.15), 
+              inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.95) !important;
+}
+body.light nav {
+  background: rgba(240, 244, 250, 0.82) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.75) !important;
+}
 
 .glass-badge-orange{
   background:linear-gradient(135deg,#ff3838,#ff8e1a);
@@ -788,14 +889,15 @@ body.dark .wa-enc-pill{background:rgba(254,241,180,0.12);color:#e9edef;border-co
 .level-btn.selected{background:var(--p)!important;color:#fff!important;border-color:var(--p)!important;}
 </style>
 </head>
-<body class="light">
+<body class="dark">
 
-<!-- AMBIENT GLOW ORBS FOR REFRACTIVE GLASSMORPHISM -->
+<!-- AMBIENT VIVID GLOWING SHAPES FOR AUTHENTIC GLASSMORPHISM REFRACTION -->
 <div class="ambient-glow-container" aria-hidden="true">
-  <div class="ambient-orb orb-orange"></div>
-  <div class="ambient-orb orb-purple"></div>
-  <div class="ambient-orb orb-cyan"></div>
-  <div class="ambient-orb orb-pink"></div>
+  <div class="ambient-shape shape-orange-squircle"></div>
+  <div class="ambient-shape shape-purple-blob"></div>
+  <div class="ambient-shape shape-cyan-pill"></div>
+  <div class="ambient-shape shape-rose-circle"></div>
+  <div class="ambient-shape shape-amber-orb"></div>
 </div>
 
 <!-- AUTH -->
@@ -879,13 +981,13 @@ body.dark .wa-enc-pill{background:rgba(254,241,180,0.12);color:#e9edef;border-co
   <div class="nav-r">
     <button class="btn-icon" id="btn-phone-frame" onclick="togglePhoneMode()" title="Toggle Phone Look / Mobile Layout"><i class="ti ti-device-mobile"></i></button>
     <div class="theme-switch-wrap">
-      <span class="switch-lbl" id="sw-lbl">Light</span>
+      <span class="switch-lbl" id="sw-lbl">Dark</span>
       <div class="switch-track" onclick="toggleTheme()">
         <div class="switch-icons">
-          <i class="ti ti-sun" id="sw-sun" style="color:var(--a)"></i>
-          <i class="ti ti-moon" id="sw-moon" style="color:var(--text4)"></i>
+          <i class="ti ti-sun" id="sw-sun" style="color:var(--text4)"></i>
+          <i class="ti ti-moon" id="sw-moon" style="color:var(--p2)"></i>
         </div>
-        <div class="switch-thumb" id="sw-thumb"></div>
+        <div class="switch-thumb right" id="sw-thumb"></div>
       </div>
     </div>
     <div class="notif-btn" onclick="toggleNotifPanel()" id="notif-btn"><i class="ti ti-bell"></i><div class="ndot" id="notif-dot"></div></div>
@@ -2356,8 +2458,8 @@ function applyThemeBackground(name, mode){
   root.setProperty('--mesh1', bg.m1);
   root.setProperty('--mesh2', bg.m2);
   root.setProperty('--mesh3', bg.m3);
-  // Also apply directly to body and ::before (since vars may be scoped to .light/.dark)
-  document.body.style.background = `linear-gradient(135deg,${bg.a},${bg.b} 50%,${bg.c})`;
+  // In dark mode keep clean dark space so glowing shapes refract through glass cards
+  document.body.style.background = mode==='dark' ? '#080a13' : `linear-gradient(135deg,${bg.a},${bg.b} 50%,${bg.c})`;
   // Update the ::before pseudo-element via a dynamic style tag
   let styleTag = document.getElementById('dynamic-mesh-style');
   if(!styleTag){
@@ -2367,17 +2469,10 @@ function applyThemeBackground(name, mode){
   }
   styleTag.textContent = `
     body::before {
-      background:
-        radial-gradient(ellipse 70% 60% at 15% 15%, ${bg.m1} 0%, transparent 60%),
-        radial-gradient(ellipse 55% 70% at 85% 80%, ${bg.m2} 0%, transparent 60%),
-        radial-gradient(ellipse 45% 45% at 55% 45%, ${bg.m3} 0%, transparent 70%) !important;
+      display: none !important;
     }
-    .auth-screen { background: linear-gradient(135deg,${bg.a},${bg.b} 50%,${bg.c}) !important; }
-    .auth-screen::before {
-      background:
-        radial-gradient(ellipse 70% 60% at 15% 15%, ${bg.m1}, transparent 60%),
-        radial-gradient(ellipse 55% 70% at 85% 80%, ${bg.m2}, transparent 60%) !important;
-    }
+    .auth-screen { background: ${mode==='dark' ? '#080a13' : 'linear-gradient(135deg,'+bg.a+','+bg.b+' 50%,'+bg.c+')'} !important; }
+    .auth-screen::before { display: none !important; }
     .wa-wallpaper.wp-theme {
       background-color: ${bg.a} !important;
       background-image:
@@ -2870,9 +2965,12 @@ function clearNotifs() {
 <script>
 // Load saved theme immediately on page load
 (function(){
-  const isDarkSaved = localStorage.getItem('skillswap-theme') === 'dark';
-  if(isDarkSaved) document.body.className = 'dark';
+  const savedTheme = localStorage.getItem('skillswap-theme');
+  // Default to DARK mode so the authentic glassmorphism from the image is immediately active
+  const isDarkSaved = savedTheme !== 'light';
+  document.body.className = isDarkSaved ? 'dark' : 'light';
   isDark = isDarkSaved;
+  localStorage.setItem('skillswap-theme', isDarkSaved ? 'dark' : 'light');
   const p = localStorage.getItem('skillswap-accent-p');
   const t2 = localStorage.getItem('skillswap-accent-t');
   if(p && t2){
