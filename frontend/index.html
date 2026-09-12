@@ -108,9 +108,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .switch-icons i{font-size:11px;transition:color var(--transition)}
 nav{position:relative;z-index:20;height:52px;display:flex;align-items:center;padding:0 16px;flex-shrink:0;
   background:var(--glass-nav);backdrop-filter:var(--blur-heavy);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
-.logo{font-size:15px;font-weight:700;margin-right:20px;display:flex;align-items:center;gap:7px;color:var(--p)}
-.logo-gem{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--p),var(--t2));
-  display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:var(--shadow)}
+.logo{font-size:16px;font-weight:800;margin-right:20px;display:flex;align-items:center;gap:8px;color:var(--text);cursor:pointer;user-select:none;text-decoration:none;transition:opacity .2s}
+.logo:hover{opacity:.9}
+.logo-icon-wrap{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--p),var(--t2));
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px var(--p3);transition:transform .3s ease}
+.logo:hover .logo-icon-wrap{transform:scale(1.08) rotate(15deg)}
+.logo-text{font-size:16px;font-weight:800;letter-spacing:-.3px;color:var(--text)}
+.logo-swap-txt{background:linear-gradient(135deg,var(--p),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+.logo-dot{width:5px;height:5px;border-radius:50%;background:var(--t);display:inline-block;margin-left:2px;box-shadow:0 0 8px var(--t)}
 .nt{height:52px;padding:0 11px;display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;
   color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;user-select:none}
 .nt:hover{color:var(--text2)}
@@ -239,10 +244,17 @@ select.finp{cursor:pointer;appearance:none}
 .wa-inchat-search-bar input{border:none;background:transparent;outline:none;font-size:12px;color:var(--text);flex:1;font-family:var(--font)}
 
 .wa-wallpaper{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:5px;position:relative;
-  background-color:var(--wa-bg);
+  background-color:var(--bg-a);
+  background-image:radial-gradient(ellipse 70% 60% at 15% 15%,var(--mesh1) 0%,transparent 60%),
+    radial-gradient(ellipse 55% 70% at 85% 80%,var(--mesh2) 0%,transparent 60%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.06' fill-rule='evenodd'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
+  transition:background .4s ease;scroll-behavior:smooth}
+.wa-wallpaper.wp-doodle{background-color:var(--wa-bg);
   background-image:radial-gradient(circle at 50% 50%, rgba(0,0,0,0.02) 0%, transparent 100%),
-    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.07' fill-rule='evenodd'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
-  scroll-behavior:smooth}
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.08' fill-rule='evenodd'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E")}
+.wa-wallpaper.wp-cosmic{background:radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%)}
+.wa-wallpaper.wp-glass{background:var(--glass);backdrop-filter:var(--blur)}
+
 .wa-date-pill{align-self:center;margin:8px auto;background:var(--wa-date-bg);color:var(--wa-date-text);
   font-size:10.5px;font-weight:600;text-transform:uppercase;padding:4px 12px;border-radius:7.5px;
   box-shadow:0 1px .5px rgba(0,0,0,0.12);border:1px solid var(--border);letter-spacing:.3px;user-select:none;z-index:1}
@@ -348,27 +360,6 @@ body.dark .wa-enc-pill{background:rgba(254,241,180,0.12);color:#e9edef;border-co
 .loading{text-align:center;padding:30px;color:var(--text3);font-size:12px}
 .skill-row{display:flex;align-items:center;gap:7px;margin-bottom:7px}
 /* ── MOBILE RESPONSIVE ─────────────────────────────────────── */
-/* ── MOBILE BOTTOM NAV ────────────────────────────────────── */
-.mob-nav {
-  display:none;
-  position:fixed;
-  bottom:0;left:0;right:0;
-  height:60px;
-  background:var(--glass-nav);
-  backdrop-filter:var(--blur-heavy);
-  border-top:1px solid var(--border);
-  z-index:100;
-  padding:0 4px;
-  padding-bottom:env(safe-area-inset-bottom);
-}
-.mob-nav-item {
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:2px;cursor:pointer;
-  padding:6px 4px;border-radius:12px;transition:all .2s;
-  font-size:9px;font-weight:500;color:var(--text3);
-}
-.mob-nav-item i { font-size:20px; }
-.mob-nav-item.active { color:var(--p); background:var(--p3); }
 
 /* ── TABLET (768px) ──────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -429,12 +420,9 @@ body.dark .wa-enc-pill{background:rgba(254,241,180,0.12);color:#e9edef;border-co
 
 /* ── MOBILE (480px) ──────────────────────────────────────── */
 @media (max-width: 480px) {
-  /* Hide top nav on mobile — use bottom nav instead */
-  #app-nav { display:none !important; }
-  .mob-nav { display:flex; }
-
-  /* Add bottom padding so content not behind bottom nav */
-  main { padding-bottom:60px; }
+  nav { overflow-x:auto; padding:0 8px; gap:2px; }
+  .nt { padding:0 8px; font-size:11px; }
+  main { padding-bottom:0; }
 
   /* Pages */
   .page { padding:10px; gap:10px; }
@@ -539,10 +527,18 @@ body.dark .wa-enc-pill{background:rgba(254,241,180,0.12);color:#e9edef;border-co
 <div id="auth-screen" class="auth-screen">
   <div class="auth-card">
     <div style="text-align:center;margin-bottom:20px;position:relative;z-index:1">
-      <div style="width:52px;height:52px;background:linear-gradient(135deg,var(--p),var(--t2));border-radius:16px;
-        display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px;box-shadow:var(--shadow2)">⟳</div>
-      <div style="font-size:22px;font-weight:700;color:var(--p)">SkillSwap</div>
-      <p style="margin-top:3px;font-size:12px">Exchange knowledge. No money. Just skills.</p>
+      <div style="width:64px;height:64px;background:linear-gradient(135deg,var(--p),var(--t2));border-radius:20px;
+        display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 8px 24px var(--p3);transition:transform .3s"
+        onmouseover="this.style.transform='scale(1.06) rotate(10deg)'" onmouseout="this.style.transform='scale(1)'">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 8C4 5.79086 5.79086 4 8 4H16C18.2091 4 20 5.79086 20 8C20 10.2091 18.2091 12 16 12H8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M20 16C20 18.2091 18.2091 20 16 20H8C5.79086 20 4 18.2091 4 16C4 13.7909 5.79086 12 8 12H16" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="16" cy="4" r="2.4" fill="#fff"/>
+          <circle cx="8" cy="20" r="2.4" fill="#fff"/>
+        </svg>
+      </div>
+      <div style="font-size:24px;font-weight:800;letter-spacing:-.4px;color:var(--text)">Skill<span class="logo-swap-txt">Swap</span><span class="logo-dot" style="width:6px;height:6px"></span></div>
+      <p style="margin-top:4px;font-size:12px;color:var(--text3)">Peer knowledge exchange. No money. Just skills.</p>
     </div>
     <div style="position:relative;z-index:1">
       <div class="atab-row">
@@ -584,7 +580,17 @@ body.dark .wa-enc-pill{background:rgba(254,241,180,0.12);color:#e9edef;border-co
 
 <!-- NAV -->
 <nav id="app-nav" style="display:none">
-  <div class="logo"><div class="logo-gem">⟳</div>SkillSwap</div>
+  <div class="logo" onclick="goto('home')">
+    <div class="logo-icon-wrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 8C4 5.79086 5.79086 4 8 4H16C18.2091 4 20 5.79086 20 8C20 10.2091 18.2091 12 16 12H8" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>
+        <path d="M20 16C20 18.2091 18.2091 20 16 20H8C5.79086 20 4 18.2091 4 16C4 13.7909 5.79086 12 8 12H16" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>
+        <circle cx="16" cy="4" r="2.2" fill="#fff"/>
+        <circle cx="8" cy="20" r="2.2" fill="#fff"/>
+      </svg>
+    </div>
+    <div class="logo-text">Skill<span class="logo-swap-txt">Swap</span><span class="logo-dot"></span></div>
+  </div>
   <div class="nt active" data-p="home"><i class="ti ti-home"></i>Home</div>
   <div class="nt" data-p="discover"><i class="ti ti-search"></i>Discover</div>
   <div class="nt" data-p="matches"><i class="ti ti-arrows-exchange"></i>Matches</div>
@@ -607,31 +613,6 @@ body.dark .wa-enc-pill{background:rgba(254,241,180,0.12);color:#e9edef;border-co
     <div id="nav-av" class="nav-av" onclick="goto('profile')">?</div>
   </div>
 </nav>
-
-<!-- MOBILE BOTTOM NAV -->
-<div class="mob-nav" id="mob-nav">
-  <div class="mob-nav-item active" data-p="home" onclick="goto('home')">
-    <i class="ti ti-home"></i><span>Home</span>
-  </div>
-  <div class="mob-nav-item" data-p="discover" onclick="goto('discover')">
-    <i class="ti ti-search"></i><span>Discover</span>
-  </div>
-  <div class="mob-nav-item" data-p="matches" onclick="goto('matches')">
-    <i class="ti ti-arrows-exchange"></i><span>Matches</span>
-  </div>
-  <div class="mob-nav-item" data-p="chat" onclick="goto('chat')">
-    <i class="ti ti-message-2"></i><span>Chat</span>
-  </div>
-  <div class="mob-nav-item" data-p="schedule" onclick="goto('schedule')">
-    <i class="ti ti-calendar"></i><span>Schedule</span>
-  </div>
-  <div class="mob-nav-item" data-p="leaderboard" onclick="goto('leaderboard')">
-    <i class="ti ti-trophy"></i><span>Board</span>
-  </div>
-  <div class="mob-nav-item" data-p="profile" onclick="goto('profile')">
-    <i class="ti ti-user"></i><span>Profile</span>
-  </div>
-</div>
 
 <main id="app-main" style="display:none">
 
@@ -734,11 +715,26 @@ body.dark .wa-enc-pill{background:rgba(254,241,180,0.12);color:#e9edef;border-co
       <!-- Empty state when no conversation is active -->
       <div id="wa-empty-state" class="wa-empty-wrap">
         <div class="wa-empty-icon-circle">
-          <i class="ti ti-brand-whatsapp" style="font-size:42px;color:var(--t)"></i>
+          <svg width="44" height="44" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="ssChatGrad1" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                <stop stop-color="var(--p)"/>
+                <stop offset="1" stop-color="var(--t2)"/>
+              </linearGradient>
+              <linearGradient id="ssChatGrad2" x1="44" y1="44" x2="4" y2="4" gradientUnits="userSpaceOnUse">
+                <stop stop-color="var(--b)"/>
+                <stop offset="1" stop-color="var(--p2)"/>
+              </linearGradient>
+            </defs>
+            <path d="M12 11C7.58 11 4 14.58 4 19V28C4 32.42 7.58 36 12 36H16V42L23 36H32C36.42 36 40 32.42 40 28V19C40 14.58 36.42 11 32 11H12Z" fill="url(#ssChatGrad1)" fill-opacity="0.16" stroke="url(#ssChatGrad1)" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M17 21H27M27 21L24 18M27 21L24 24" stroke="url(#ssChatGrad1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M27 27H17M17 27L20 30M17 27L20 24" stroke="url(#ssChatGrad2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="35" cy="15" r="2.5" fill="var(--t)"/>
+          </svg>
         </div>
-        <h2 style="font-size:19px;font-weight:600;margin-bottom:8px;color:var(--text)">SkillSwap Web</h2>
-        <p style="font-size:12px;color:var(--text3);max-width:360px;line-height:1.6;margin-bottom:20px">
-          Send and receive messages with your skill exchange partners. Learn together, collaborate in real-time, and schedule 1-on-1 sessions.
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:8px;color:var(--text)">SkillSwap <span class="logo-swap-txt">Chat</span></h2>
+        <p style="font-size:12px;color:var(--text3);max-width:380px;line-height:1.6;margin-bottom:20px">
+          Real-time peer messaging, collaboration, and learning session coordination.
         </p>
         <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text4);background:var(--glass2);padding:6px 14px;border-radius:100px;border:1px solid var(--border)">
           <i class="ti ti-lock" style="font-size:12px"></i> End-to-end peer encrypted
@@ -750,6 +746,27 @@ body.dark .wa-enc-pill{background:rgba(254,241,180,0.12);color:#e9edef;border-co
         <!-- Header -->
         <div class="chdr" id="chat-header">
           <!-- Populated dynamically by openChat -->
+        </div>
+
+        <!-- Wallpaper Picker Popover Sheet -->
+        <div id="wa-wallpaper-menu" class="wa-attach-menu" style="display:none;right:14px;left:auto;top:56px;bottom:auto;width:240px">
+          <div style="font-size:10.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:4px 8px;margin-bottom:4px">Chat Wallpaper</div>
+          <button class="wa-attach-item" onclick="setChatWallpaper('theme')">
+            <div class="wa-attach-icon" style="background:linear-gradient(135deg,var(--p),var(--t2))"><i class="ti ti-palette"></i></div>
+            <div style="flex:1"><div style="font-weight:600;font-size:12px">Match Web Theme</div><div style="font-size:10px;color:var(--text3)">Syncs with site theme</div></div>
+          </button>
+          <button class="wa-attach-item" onclick="setChatWallpaper('doodle')">
+            <div class="wa-attach-icon" style="background:linear-gradient(135deg,#25d366,#128c7e)"><i class="ti ti-brand-whatsapp"></i></div>
+            <div style="flex:1"><div style="font-weight:600;font-size:12px">Classic Mint</div><div style="font-size:10px;color:var(--text3)">Warm doodle pattern</div></div>
+          </button>
+          <button class="wa-attach-item" onclick="setChatWallpaper('cosmic')">
+            <div class="wa-attach-icon" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)"><i class="ti ti-sparkles"></i></div>
+            <div style="flex:1"><div style="font-weight:600;font-size:12px">Cosmic Aura</div><div style="font-size:10px;color:var(--text3)">Deep ambient glow</div></div>
+          </button>
+          <button class="wa-attach-item" onclick="setChatWallpaper('glass')">
+            <div class="wa-attach-icon" style="background:linear-gradient(135deg,#64748b,#475569)"><i class="ti ti-circle"></i></div>
+            <div style="flex:1"><div style="font-weight:600;font-size:12px">Frosted Clean</div><div style="font-size:10px;color:var(--text3)">Translucent glass</div></div>
+          </button>
         </div>
 
         <!-- In-Chat Search Bar (collapsible) -->
@@ -1060,7 +1077,6 @@ async function enterApp(user) {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-nav').style.display = 'flex';
   document.getElementById('app-main').style.display = 'flex';
-  document.getElementById('mob-nav').style.display = 'flex';
   const name = user.displayName || user.email.split('@')[0];
   const ini = initials(name);
   document.getElementById('nav-av').textContent = ini;
@@ -2004,6 +2020,14 @@ function applyThemeBackground(name, mode){
         radial-gradient(ellipse 70% 60% at 15% 15%, ${bg.m1}, transparent 60%),
         radial-gradient(ellipse 55% 70% at 85% 80%, ${bg.m2}, transparent 60%) !important;
     }
+    .wa-wallpaper.wp-theme {
+      background-color: ${bg.a} !important;
+      background-image:
+        radial-gradient(ellipse 70% 60% at 15% 15%, ${bg.m1} 0%, transparent 60%),
+        radial-gradient(ellipse 55% 70% at 85% 80%, ${bg.m2} 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.06' fill-rule='evenodd'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E") !important;
+    }
+    .cbody { background-color: ${bg.a} !important; }
   `;
 }
 function openThemePicker(){
@@ -2625,6 +2649,9 @@ async function openChat(chatId, partnerName, partnerUid = '') {
       <div id="wa-header-status" style="font-size:11px;color:var(--text3);line-height:1.2">online</div>
     </div>
     <div style="display:flex;align-items:center;gap:4px">
+      <button class="wa-icon-btn" onclick="toggleWallpaperMenu()" title="Chat Wallpaper">
+        <i class="ti ti-palette"></i>
+      </button>
       <button class="wa-icon-btn" onclick="toggleInChatSearch()" title="Search in conversation">
         <i class="ti ti-search"></i>
       </button>
@@ -2635,6 +2662,8 @@ async function openChat(chatId, partnerName, partnerUid = '') {
   `;
 
   const msgsContainer = document.getElementById("chat-msgs");
+  const savedWp = localStorage.getItem('skillswap-chat-wallpaper') || 'theme';
+  msgsContainer.className = 'cmsgs wa-wallpaper wp-' + savedWp;
   msgsContainer.innerHTML = `<div class="loading" style="padding:40px;font-size:12px"><i class="ti ti-loader"></i> Loading messages…</div>`;
 
   // Detach previous listeners
@@ -2658,11 +2687,16 @@ async function openChat(chatId, partnerName, partnerUid = '') {
       const welcome = document.createElement('div');
       welcome.style.cssText = 'text-align:center;padding:36px 20px;color:var(--text3);font-size:12px;margin:auto';
       welcome.innerHTML = `
-        <div style="width:52px;height:52px;border-radius:50%;background:var(--t3);color:var(--t);display:inline-flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:12px">
-          <i class="ti ti-brand-whatsapp"></i>
+        <div style="width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,var(--p),var(--t2));color:#fff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;box-shadow:0 6px 16px var(--p3)">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 8C4 5.79086 5.79086 4 8 4H16C18.2091 4 20 5.79086 20 8C20 10.2091 18.2091 12 16 12H8" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>
+            <path d="M20 16C20 18.2091 18.2091 20 16 20H8C5.79086 20 4 18.2091 4 16C4 13.7909 5.79086 12 8 12H16" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>
+            <circle cx="16" cy="4" r="2.2" fill="#fff"/>
+            <circle cx="8" cy="20" r="2.2" fill="#fff"/>
+          </svg>
         </div>
-        <div style="font-weight:600;color:var(--text);font-size:14px;margin-bottom:4px">Start chatting with ${escapeHtml(currentPartnerName)}</div>
-        <div>Say hello, share learning goals, or schedule your first session! 👋</div>
+        <div style="font-weight:700;color:var(--text);font-size:15px;margin-bottom:4px">Connected with ${escapeHtml(currentPartnerName)}</div>
+        <div style="font-size:12px;color:var(--text3);max-width:320px;margin:0 auto">Exchange knowledge, collaborate on skills, or schedule your first session! 👋</div>
       `;
       msgsContainer.appendChild(welcome);
       return;
@@ -3031,6 +3065,29 @@ function handleInChatSearch(query) {
   }
 }
 
+// ── WALLPAPER CONTROLLER ─────────────────────────────────────
+function toggleWallpaperMenu() {
+  const menu = document.getElementById('wa-wallpaper-menu');
+  if (!menu) return;
+  const isHidden = menu.style.display === 'none';
+  menu.style.display = isHidden ? 'flex' : 'none';
+  const attach = document.getElementById('wa-attach-sheet');
+  if (attach) attach.style.display = 'none';
+  const emoji = document.getElementById('wa-emoji-shelf');
+  if (emoji) emoji.style.display = 'none';
+}
+
+function setChatWallpaper(mode) {
+  localStorage.setItem('skillswap-chat-wallpaper', mode);
+  const msgs = document.getElementById("chat-msgs");
+  if (msgs) {
+    msgs.className = 'cmsgs wa-wallpaper wp-' + mode;
+  }
+  const menu = document.getElementById('wa-wallpaper-menu');
+  if (menu) menu.style.display = 'none';
+  toast(`Chat wallpaper set to ${mode === 'theme' ? 'Web Theme Match' : mode}`, 'p');
+}
+
 // ── INPUT HANDLER ────────────────────────────────────────────
 function handleChatInput(inputEl) {
   const hasVal = inputEl && inputEl.value.trim().length > 0;
@@ -3116,8 +3173,6 @@ function handleTyping() {
   }, 2000);
 }
 function doLogout() {
-  const mob = document.getElementById('mob-nav');
-  if(mob) mob.style.display = 'none';
   auth.signOut();
 }
 function sat(t) {
@@ -3157,6 +3212,13 @@ document.addEventListener('click', function(e) {
   if (attachSheet && attachSheet.style.display !== 'none') {
     if (!attachSheet.contains(e.target) && !attachToggle?.contains(e.target)) {
       attachSheet.style.display = 'none';
+    }
+  }
+
+  const wallpaperMenu = document.getElementById('wa-wallpaper-menu');
+  if (wallpaperMenu && wallpaperMenu.style.display !== 'none') {
+    if (!wallpaperMenu.contains(e.target) && !e.target.closest('[title="Chat Wallpaper"]')) {
+      wallpaperMenu.style.display = 'none';
     }
   }
 });
