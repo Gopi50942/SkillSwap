@@ -33,6 +33,21 @@ body.light{
   --nav-tab-active:rgba(88,86,214,0.14);
   --shadow:0 2px 24px rgba(100,120,180,0.10);--shadow2:0 8px 40px rgba(80,100,160,0.15);
   --card:rgba(255,255,255,0.9);
+  --wa-bg:#efeae2;
+  --wa-bubble-me:#d9fdd3;
+  --wa-bubble-them:#ffffff;
+  --wa-bubble-me-text:#111b21;
+  --wa-bubble-them-text:#111b21;
+  --wa-header-bg:#f0f2f5;
+  --wa-sidebar-bg:rgba(255,255,255,0.88);
+  --wa-item-hover:rgba(245,246,246,0.95);
+  --wa-item-active:rgba(235,235,235,0.95);
+  --wa-ticks:#53bdeb;
+  --wa-input-bg:#ffffff;
+  --wa-footer-bg:#f0f2f5;
+  --wa-date-bg:rgba(255,255,255,0.92);
+  --wa-date-text:#54656f;
+  --wa-search-bg:#f0f2f5;
 }
 @keyframes bounce {
   0%,60%,100%{transform:translateY(0)}
@@ -56,6 +71,21 @@ body.dark{
   --nav-tab-active:rgba(167,139,250,0.16);
   --shadow:0 2px 24px rgba(0,0,0,0.40);--shadow2:0 8px 40px rgba(0,0,0,0.60);
   --card:rgba(20,22,40,0.95);
+  --wa-bg:#0b141a;
+  --wa-bubble-me:#005c4b;
+  --wa-bubble-them:#202c33;
+  --wa-bubble-me-text:#e9edef;
+  --wa-bubble-them-text:#e9edef;
+  --wa-header-bg:#202c33;
+  --wa-sidebar-bg:rgba(17,27,33,0.92);
+  --wa-item-hover:rgba(32,44,51,0.85);
+  --wa-item-active:rgba(42,57,66,0.95);
+  --wa-ticks:#53bdeb;
+  --wa-input-bg:#2a3942;
+  --wa-footer-bg:#202c33;
+  --wa-date-bg:rgba(24,34,41,0.92);
+  --wa-date-text:#8696a0;
+  --wa-search-bg:#202c33;
 }
 html,body{height:100%;overflow:hidden;transition:background var(--transition)}
 body{font-family:var(--font);font-size:13px;line-height:1.5;color:var(--text);
@@ -161,27 +191,119 @@ select.finp{cursor:pointer;appearance:none}
   display:flex;align-items:center;gap:7px;backdrop-filter:var(--blur)}
 .sbar input{background:transparent;border:none;outline:none;color:var(--text);font-size:12px;flex:1;font-family:var(--font)}
 .sbar input::placeholder{color:var(--text4)}
-.chat-wrap{display:flex;flex:1;min-height:0;overflow:hidden}
-.csb{width:210px;flex-shrink:0;border-right:1px solid var(--border);overflow-y:auto;
-  background:var(--glass-nav);backdrop-filter:var(--blur-heavy)}
-.cbody{flex:1;display:flex;flex-direction:column;min-width:0}
-.ci{padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;gap:8px;align-items:center;transition:background .15s}
-.ci:hover,.ci.active{background:var(--glass2)}
-.cprev{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chdr{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;
-  background:var(--glass-nav);backdrop-filter:var(--blur);flex-shrink:0}
-.cmsgs{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:8px}
-.msg{max-width:66%;padding:9px 13px;border-radius:18px;font-size:12px;line-height:1.5}
-.msg-them{background:var(--glass3);border:1px solid var(--border2);color:var(--text);border-bottom-left-radius:5px;align-self:flex-start}
-.msg-me{background:var(--p);color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
-.msg-time{font-size:9px;margin-top:2px;opacity:0.65}
-.cinp-row{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:7px;
-  background:var(--glass-nav);backdrop-filter:var(--blur);flex-shrink:0}
-.cinp{flex:1;background:var(--glass2);border:1px solid var(--border2);border-radius:20px;
-  padding:7px 13px;color:var(--text);font-size:12px;outline:none;font-family:var(--font)}
-.cinp:focus{border-color:var(--p)}
-.cinp::placeholder{color:var(--text4)}
-.unread{width:7px;height:7px;background:var(--p);border-radius:50%;flex-shrink:0;margin-left:auto}
+/* WhatsApp Chat Styling */
+.chat-wrap{display:flex;flex:1;min-height:0;height:100%;overflow:hidden;position:relative;background:var(--wa-bg)}
+.csb{width:330px;min-width:280px;max-width:380px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;
+  background:var(--wa-sidebar-bg);backdrop-filter:var(--blur-heavy);z-index:2;height:100%;overflow:hidden}
+.wa-sb-header{height:54px;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;
+  background:var(--wa-header-bg);border-bottom:1px solid var(--border);flex-shrink:0}
+.wa-icon-btn{width:34px;height:34px;border-radius:50%;border:none;background:transparent;color:var(--text3);
+  display:inline-flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .15s}
+.wa-icon-btn:hover{background:var(--glass2);color:var(--text)}
+.wa-sb-search-wrap{padding:8px 12px 10px;border-bottom:1px solid var(--border);background:var(--wa-sidebar-bg);
+  display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.wa-search-bar{display:flex;align-items:center;gap:8px;background:var(--wa-search-bg);border:1px solid var(--border2);
+  border-radius:10px;padding:6px 12px}
+.wa-search-bar input{border:none;background:transparent;outline:none;font-size:12px;color:var(--text);flex:1;font-family:var(--font)}
+.wa-search-bar input::placeholder{color:var(--text4)}
+.wa-clear-btn{border:none;background:transparent;color:var(--text4);cursor:pointer;font-size:12px;display:flex;align-items:center}
+.wa-filter-tabs{display:flex;gap:6px}
+.wa-chip{border:1px solid var(--border2);background:transparent;color:var(--text3);border-radius:16px;
+  padding:3px 12px;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--font)}
+.wa-chip.active{background:var(--t3);color:var(--t2);border-color:var(--t);font-weight:600}
+.wa-chat-list{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.ci{padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;gap:11px;align-items:center;
+  transition:background .15s;position:relative;user-select:none}
+.ci:hover{background:var(--wa-item-hover)}
+.ci.active{background:var(--wa-item-active);border-left:3px solid var(--t)}
+.ci .cname{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci .ctime{font-size:10px;color:var(--text4);margin-left:auto;white-space:nowrap}
+.ci .cprev{font-size:11.5px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:3px;margin-top:2px}
+.ci .wa-badge{min-width:18px;height:18px;padding:0 5px;background:var(--t);color:#fff;border-radius:9px;
+  font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:auto}
+.wa-online-dot{width:9px;height:9px;background:var(--t);border-radius:50%;position:absolute;bottom:0;right:0;border:2px solid var(--wa-sidebar-bg)}
+
+.cbody{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;height:100%;overflow:hidden;background:var(--wa-bg)}
+.wa-empty-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:32px;background:var(--wa-bg);border-bottom:6px solid var(--t);user-select:none}
+.wa-empty-icon-circle{width:80px;height:80px;border-radius:50%;background:var(--t3);display:flex;align-items:center;
+  justify-content:center;margin-bottom:18px;box-shadow:var(--shadow)}
+
+.chdr{height:56px;padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;
+  background:var(--wa-header-bg);backdrop-filter:var(--blur);flex-shrink:0;z-index:5}
+.wa-back-btn{display:none;width:32px;height:32px;border-radius:50%;border:none;background:transparent;color:var(--text);
+  align-items:center;justify-content:center;font-size:18px;cursor:pointer;margin-right:2px}
+
+.wa-inchat-search-bar{height:46px;padding:0 14px;background:var(--wa-header-bg);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;z-index:4;flex-shrink:0;animation:waSlideDown .15s ease}
+.wa-inchat-search-bar input{border:none;background:transparent;outline:none;font-size:12px;color:var(--text);flex:1;font-family:var(--font)}
+
+.wa-wallpaper{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:5px;position:relative;
+  background-color:var(--wa-bg);
+  background-image:radial-gradient(circle at 50% 50%, rgba(0,0,0,0.02) 0%, transparent 100%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.07' fill-rule='evenodd'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
+  scroll-behavior:smooth}
+.wa-date-pill{align-self:center;margin:8px auto;background:var(--wa-date-bg);color:var(--wa-date-text);
+  font-size:10.5px;font-weight:600;text-transform:uppercase;padding:4px 12px;border-radius:7.5px;
+  box-shadow:0 1px .5px rgba(0,0,0,0.12);border:1px solid var(--border);letter-spacing:.3px;user-select:none;z-index:1}
+.wa-enc-pill{align-self:center;margin:4px auto 10px;max-width:85%;text-align:center;
+  background:rgba(254,241,180,0.85);color:#54656f;font-size:10.5px;padding:6px 14px;border-radius:8px;
+  box-shadow:0 1px .5px rgba(0,0,0,0.06);border:1px solid rgba(220,195,110,0.3);line-height:1.4;user-select:none}
+body.dark .wa-enc-pill{background:rgba(254,241,180,0.12);color:#e9edef;border-color:rgba(254,241,180,0.22)}
+
+.wa-bubble-row{display:flex;margin:2px 0;align-items:flex-end;width:100%;position:relative}
+.wa-bubble-row.mine{justify-content:flex-end}
+.wa-bubble-row.them{justify-content:flex-start}
+.wa-bubble{max-width:72%;min-width:70px;padding:6px 9px 5px 10px;border-radius:8px;font-size:12.5px;
+  line-height:1.45;word-break:break-word;position:relative;box-shadow:0 1px .5px rgba(11,20,26,0.13);animation:waMsgPop .12s ease-out}
+@keyframes waMsgPop{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.wa-bubble-row.mine .wa-bubble{background:var(--wa-bubble-me);color:var(--wa-bubble-me-text);border-top-right-radius:0}
+.wa-bubble-row.mine .wa-bubble::after{content:'';position:absolute;top:0;right:-8px;width:0;height:0;
+  border-top:8px solid var(--wa-bubble-me);border-right:8px solid transparent}
+.wa-bubble-row.them .wa-bubble{background:var(--wa-bubble-them);color:var(--wa-bubble-them-text);border-top-left-radius:0;border:1px solid var(--border)}
+.wa-bubble-row.them .wa-bubble::before{content:'';position:absolute;top:0;left:-8px;width:0;height:0;
+  border-top:8px solid var(--wa-bubble-them);border-left:8px solid transparent}
+.wa-bubble.has-tail-none{border-radius:8px !important}
+.wa-bubble.has-tail-none::after,.wa-bubble.has-tail-none::before{display:none !important}
+.wa-meta{float:right;margin-left:9px;margin-top:4px;display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;opacity:.7;vertical-align:bottom;user-select:none}
+.wa-ticks{color:var(--wa-ticks);font-size:12px;font-weight:700;line-height:1}
+
+.wa-input-footer{padding:8px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;
+  background:var(--wa-footer-bg);flex-shrink:0;z-index:5;position:relative}
+.wa-footer-btn{width:36px;height:36px;border-radius:50%;border:none;background:transparent;color:var(--text3);
+  display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .15s;flex-shrink:0}
+.wa-footer-btn:hover{background:var(--glass2);color:var(--text)}
+.wa-input-pill{flex:1;background:var(--wa-input-bg);border:1px solid var(--border2);border-radius:20px;
+  padding:4px 14px;display:flex;align-items:center;min-height:38px;box-shadow:0 1px 1px rgba(0,0,0,0.03)}
+.wa-inp{width:100%;background:transparent;border:none;outline:none;font-size:13px;color:var(--text);font-family:var(--font)}
+.wa-send-btn{width:38px;height:38px;border-radius:50%;border:none;background:var(--t);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);flex-shrink:0}
+.wa-send-btn:hover{transform:scale(1.05);filter:brightness(1.08)}
+
+.wa-attach-menu{position:absolute;bottom:56px;left:44px;background:var(--glass2);backdrop-filter:var(--blur-heavy);
+  border:1px solid var(--border2);border-radius:14px;padding:8px;box-shadow:var(--shadow2);display:flex;flex-direction:column;gap:4px;z-index:20;min-width:210px;animation:waFadeIn .15s ease}
+.wa-attach-item{display:flex;align-items:center;gap:11px;padding:8px 12px;border-radius:10px;border:none;
+  background:transparent;color:var(--text);font-size:12.5px;font-weight:500;cursor:pointer;transition:background .15s;text-align:left;font-family:var(--font)}
+.wa-attach-item:hover{background:var(--glass3)}
+.wa-attach-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+
+.wa-emoji-popover{position:absolute;bottom:56px;left:12px;background:var(--glass2);backdrop-filter:var(--blur-heavy);
+  border:1px solid var(--border2);border-radius:16px;padding:12px;box-shadow:var(--shadow2);width:320px;max-width:92vw;z-index:20;max-height:240px;display:flex;flex-direction:column;gap:8px;animation:waFadeIn .15s ease}
+.wa-emoji-header{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px}
+.wa-emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;overflow-y:auto;max-height:190px;padding:2px}
+.wa-emoji-item{font-size:19px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;border:none;background:transparent;transition:all .1s}
+.wa-emoji-item:hover{background:var(--glass3);transform:scale(1.15)}
+
+.wa-scroll-down{position:absolute;bottom:64px;right:22px;width:38px;height:38px;border-radius:50%;
+  background:var(--glass2);backdrop-filter:var(--blur);border:1px solid var(--border2);color:var(--text);box-shadow:var(--shadow2);
+  display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;z-index:10;transition:all .2s}
+.wa-scroll-down:hover{background:var(--glass3);transform:translateY(-2px)}
+.wa-scroll-badge{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:8px;background:var(--t);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 3px}
+
+@keyframes waFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes waSlideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
 .cday{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:9px;
   font-size:11px;cursor:pointer;position:relative;transition:background .15s}
@@ -277,9 +399,13 @@ select.finp{cursor:pointer;appearance:none}
   /* Auth card */
   .auth-card { padding:22px; border-radius:22px; }
 
-  /* Chat */
-  .chat-wrap { flex-direction:column; }
-  .csb { width:100%; height:200px; border-right:none; border-bottom:1px solid var(--border); flex-shrink:0; }
+  /* Chat Mobile Responsive */
+  .chat-wrap { flex-direction:row; position:relative; }
+  .chat-wrap .csb { width:100%; height:100%; border-right:none; display:flex; flex-shrink:0; }
+  .chat-wrap .cbody { display:none; width:100%; height:100%; }
+  .chat-wrap.mobile-active .csb { display:none !important; }
+  .chat-wrap.mobile-active .cbody { display:flex !important; width:100% !important; }
+  .wa-back-btn { display:inline-flex !important; }
 
   /* Cards */
   .gc, .gc2 { padding:14px; border-radius:18px; }
@@ -568,25 +694,128 @@ select.finp{cursor:pointer;appearance:none}
 
 <!-- CHAT -->
 <div class="page page-chat-pg" id="page-chat">
-  <div class="chat-wrap">
-    <div class="csb">
-      <div style="padding:9px 11px;border-bottom:1px solid var(--border)">
-        <div class="sbar"><i class="ti ti-search" style="color:var(--text4);font-size:12px"></i><input placeholder="Search…"></div>
+  <div class="chat-wrap" id="chat-wrap">
+    
+    <!-- WhatsApp Sidebar -->
+    <div class="csb" id="wa-sidebar">
+      <!-- Sidebar Top Bar -->
+      <div class="wa-sb-header">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="av av-sm" id="wa-my-av" style="background:linear-gradient(135deg,var(--p),var(--t2));color:#fff;font-weight:600">Me</div>
+          <span style="font-size:14px;font-weight:700;color:var(--text);letter-spacing:.2px">Chats</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button class="wa-icon-btn" title="Refresh chats" onclick="loadChatList()"><i class="ti ti-rotate-clockwise"></i></button>
+          <button class="wa-icon-btn" title="Discover peers" onclick="goto('discover')"><i class="ti ti-user-plus"></i></button>
+        </div>
       </div>
-      <div id="chat-list"><div class="loading" style="font-size:11px">No chats yet</div></div>
+
+      <!-- Search & Filter Tabs -->
+      <div class="wa-sb-search-wrap">
+        <div class="wa-search-bar">
+          <i class="ti ti-search" style="color:var(--text4);font-size:13px;flex-shrink:0"></i>
+          <input id="wa-chat-search-input" placeholder="Search or start new chat" oninput="filterChatList(this.value)">
+          <button id="wa-search-clear-btn" class="wa-clear-btn" style="display:none" onclick="clearChatSearch()"><i class="ti ti-x"></i></button>
+        </div>
+        <div class="wa-filter-tabs">
+          <button class="wa-chip active" id="filter-chip-all" onclick="setChatFilter('all')">All</button>
+          <button class="wa-chip" id="filter-chip-unread" onclick="setChatFilter('unread')">Unread</button>
+        </div>
+      </div>
+
+      <!-- Chat list container -->
+      <div id="chat-list" class="wa-chat-list">
+        <div class="loading" style="font-size:11px;padding:24px"><i class="ti ti-loader"></i> Loading chats…</div>
+      </div>
     </div>
-    <div class="cbody">
-      <div class="chdr" id="chat-header">
-        <div style="flex:1;color:var(--text3);font-size:12px">Select a conversation</div>
+
+    <!-- WhatsApp Main Chat Area -->
+    <div class="cbody" id="wa-chat-panel">
+      <!-- Empty state when no conversation is active -->
+      <div id="wa-empty-state" class="wa-empty-wrap">
+        <div class="wa-empty-icon-circle">
+          <i class="ti ti-brand-whatsapp" style="font-size:42px;color:var(--t)"></i>
+        </div>
+        <h2 style="font-size:19px;font-weight:600;margin-bottom:8px;color:var(--text)">SkillSwap Web</h2>
+        <p style="font-size:12px;color:var(--text3);max-width:360px;line-height:1.6;margin-bottom:20px">
+          Send and receive messages with your skill exchange partners. Learn together, collaborate in real-time, and schedule 1-on-1 sessions.
+        </p>
+        <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text4);background:var(--glass2);padding:6px 14px;border-radius:100px;border:1px solid var(--border)">
+          <i class="ti ti-lock" style="font-size:12px"></i> End-to-end peer encrypted
+        </div>
       </div>
-      <div class="cmsgs" id="chat-msgs"></div>
-      <div class="cinp-row">
-        <input class="cinp" placeholder="Message…" id="chat-inp" onkeydown="if(event.key==='Enter')sendMsg()" oninput="handleTyping()">
-        <button class="btn btn-p btn-sm" onclick="sendMsg()"><i class="ti ti-send"></i></button>
+
+      <!-- Active Chat View -->
+      <div id="wa-active-chat" style="display:none;flex-direction:column;height:100%;width:100%">
+        <!-- Header -->
+        <div class="chdr" id="chat-header">
+          <!-- Populated dynamically by openChat -->
+        </div>
+
+        <!-- In-Chat Search Bar (collapsible) -->
+        <div id="wa-inchat-search" class="wa-inchat-search-bar" style="display:none">
+          <i class="ti ti-search" style="font-size:14px;color:var(--text3)"></i>
+          <input id="wa-inchat-search-inp" placeholder="Search in this conversation…" oninput="handleInChatSearch(this.value)">
+          <span id="wa-search-match-count" style="font-size:11px;color:var(--text4);margin:0 4px"></span>
+          <button class="wa-icon-btn" onclick="toggleInChatSearch()"><i class="ti ti-x"></i></button>
+        </div>
+
+        <!-- Messages stream with WhatsApp wallpaper -->
+        <div class="cmsgs wa-wallpaper" id="chat-msgs" onscroll="handleChatScroll()"></div>
+
+        <!-- Scroll-to-bottom Floating Button -->
+        <button id="wa-scroll-btn" class="wa-scroll-down" onclick="scrollChatToBottom(true)" style="display:none">
+          <i class="ti ti-chevron-down"></i>
+          <span id="wa-scroll-badge" class="wa-scroll-badge" style="display:none"></span>
+        </button>
+
+        <!-- Attachment Popover Sheet -->
+        <div id="wa-attach-sheet" class="wa-attach-menu" style="display:none">
+          <button class="wa-attach-item" onclick="quickShareSession()">
+            <div class="wa-attach-icon" style="background:linear-gradient(135deg,#5856d6,#7b79e8)"><i class="ti ti-calendar-event"></i></div>
+            <span>Schedule Session</span>
+          </button>
+          <button class="wa-attach-item" onclick="quickShareMeet()">
+            <div class="wa-attach-icon" style="background:linear-gradient(135deg,#34c759,#30d158)"><i class="ti ti-video"></i></div>
+            <span>Share Google Meet</span>
+          </button>
+          <button class="wa-attach-item" onclick="quickShareSkill()">
+            <div class="wa-attach-icon" style="background:linear-gradient(135deg,#ff9500,#ffad33)"><i class="ti ti-bulb"></i></div>
+            <span>Share My Skills</span>
+          </button>
+        </div>
+
+        <!-- Emoji Picker Popover Shelf -->
+        <div id="wa-emoji-shelf" class="wa-emoji-popover" style="display:none">
+          <div class="wa-emoji-header">
+            <span>Popular Emojis</span>
+            <button class="wa-icon-btn" onclick="toggleEmojiShelf()"><i class="ti ti-x"></i></button>
+          </div>
+          <div class="wa-emoji-grid" id="wa-emoji-list"></div>
+        </div>
+
+        <!-- WhatsApp Input Footer -->
+        <div class="cinp-row wa-input-footer">
+          <button class="wa-footer-btn" id="wa-emoji-toggle" onclick="toggleEmojiShelf()" title="Emojis">
+            <i class="ti ti-mood-smile"></i>
+          </button>
+          <button class="wa-footer-btn" id="wa-attach-toggle" onclick="toggleAttachMenu()" title="Attach / Quick Actions">
+            <i class="ti ti-paperclip"></i>
+          </button>
+          <div class="wa-input-pill">
+            <input class="cinp wa-inp" placeholder="Type a message…" id="chat-inp"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"
+              oninput="handleChatInput(this)">
+          </div>
+          <button class="wa-send-btn" id="wa-action-btn" onclick="handleActionBtnClick()" title="Send">
+            <i class="ti ti-microphone" id="wa-action-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- SCHEDULE -->
 <div class="page" id="page-schedule">
@@ -1527,25 +1756,83 @@ function applyPhoto(url) {
     }
   });
 }
-// ── CHAT (UI only — real chat needs Firebase Realtime DB) ────
-async function sendMsg(){
-    const inp = document.getElementById("chat-inp");
-    const txt = inp.value.trim();
-    if(!txt || !currentChatId) return;
-    inp.value = "";
-    try {
-        const msgRef = db.ref("chats/" + currentChatId + "/messages").push();
-        await msgRef.set({
-            text: txt,
-            senderUid: currentUser.uid,
-            timestamp: firebase.database.ServerValue.TIMESTAMP
-        });
-    } catch(e) {
-        console.error("Send failed:", e);
-        toast("Failed to send message", "a");
-        inp.value = txt; // restore text
+// ── CHAT AUDIO & MESSAGING ──────────────────────────────────
+function playChatSound(type = 'send') {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    if (type === 'send') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(540, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.08);
+    } else {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(840, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(580, ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.12);
     }
+  } catch(e) {}
 }
+
+async function sendMsg(){
+  const inp = document.getElementById("chat-inp");
+  if (!inp) return;
+  const txt = inp.value.trim();
+  if(!txt || !currentChatId || !currentUser) return;
+  inp.value = "";
+  handleChatInput(inp);
+  
+  // Close any popovers
+  const emojiShelf = document.getElementById('wa-emoji-shelf');
+  if (emojiShelf) emojiShelf.style.display = 'none';
+  const attachSheet = document.getElementById('wa-attach-sheet');
+  if (attachSheet) attachSheet.style.display = 'none';
+
+  try {
+    const nowTs = firebase.database.ServerValue.TIMESTAMP;
+    const msgRef = db.ref("chats/" + currentChatId + "/messages").push();
+    await msgRef.set({
+      text: txt,
+      senderUid: currentUser.uid,
+      timestamp: nowTs
+    });
+
+    // Update conversation metadata for sidebar previews
+    try {
+      db.ref("chats/" + currentChatId + "/meta").update({
+        lastMessage: txt.slice(0, 60),
+        lastSender: currentUser.uid,
+        lastTimestamp: nowTs
+      });
+    } catch(err) { console.warn("Meta update:", err); }
+
+    // Clear typing status
+    try {
+      db.ref(`chats/${currentChatId}/typing/${currentUser.uid}`).set(false);
+    } catch(err) {}
+
+    playChatSound('send');
+    scrollChatToBottom(true);
+  } catch(e) {
+    console.error("Send failed:", e);
+    toast("Failed to send message", "a");
+    inp.value = txt; // restore text
+    handleChatInput(inp);
+  }
+}
+
 
 // ── ACTIVITY FEED ────────────────────────────────────────────
 async function loadActivityFeed() {
@@ -2243,127 +2530,528 @@ auth.onAuthStateChanged(user => {
     document.getElementById('app-main').style.display = 'none';
   }
 });
-async function openChat(chatId, partnerName){
-    currentChatId = chatId;
-    const ini = initials(partnerName);
-    const bg = avatarBg(partnerName);
-    document.getElementById("chat-header").innerHTML = `
-        <div class="av av-sm" style="background:${bg};color:#fff;position:relative">
-            ${ini}
-            <div class="odot" style="position:absolute;bottom:0;right:0"></div>
-        </div>
-        <div style="flex:1">
-            <div style="font-weight:600;font-size:13px">${partnerName}</div>
-            <div style="font-size:10px;color:var(--t2)">● Online</div>
-        </div>
-        <button class="btn btn-p btn-sm" onclick="goto('schedule')">
-            <i class="ti ti-calendar"></i>Schedule
-        </button>
-    `;
-    const msgs=document.getElementById("chat-msgs");
-    msgs.innerHTML="";
-    firebase.database().ref("chats/"+chatId+"/messages").off();
-    firebase.database().ref("chats/"+chatId+"/messages")
-    .orderByChild("timestamp")
-    .on("value",(snap)=>{
-        msgs.innerHTML="";
-        const data=snap.val();
-        if(!data){
-            msgs.innerHTML=`<div style="text-align:center;padding:30px;color:var(--text3);font-size:12px">
-                <i class="ti ti-message-circle" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4"></i>
-                Say hello to ${partnerName}! 👋</div>`;
-            return;
-        }
-        const msgList = Object.entries(data).sort((a,b)=>a[1].timestamp-b[1].timestamp);
-        let lastDate = '';
-        msgList.forEach(([key, msg])=>{
-            const mine=msg.senderUid===currentUser.uid;
-            const d = new Date(msg.timestamp);
-            const dateStr = d.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'});
-            const timeStr = d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-            if(dateStr !== lastDate){
-                msgs.innerHTML+=`<div style="text-align:center;margin:8px 0">
-                    <span style="font-size:9px;color:var(--text4);background:var(--glass2);
-                    padding:3px 12px;border-radius:100px;border:1px solid var(--border)">${dateStr}</span></div>`;
-                lastDate = dateStr;
-            }
-            msgs.innerHTML+=`
-            <div style="display:flex;justify-content:${mine?"flex-end":"flex-start"};margin:3px 8px;align-items:flex-end;gap:6px">
-                ${!mine?`<div class="av av-xs" style="background:${bg};color:#fff;flex-shrink:0">${ini}</div>`:''}
-                <div style="max-width:68%">
-                    <div style="background:${mine?"var(--p)":"var(--glass3)"};
-                        color:${mine?"#fff":"var(--text)"};
-                        padding:9px 13px;border-radius:18px;
-                        ${mine?"border-bottom-right-radius:4px":"border-bottom-left-radius:4px"};
-                        border:${mine?"none":"1px solid var(--border2)"};
-                        word-break:break-word;font-size:12px;line-height:1.5">
-                        ${msg.text}
-                    </div>
-                    <div style="font-size:9px;color:var(--text4);margin-top:2px;
-                        text-align:${mine?"right":"left"};padding:0 4px">
-                        ${timeStr}${mine?' · <span style="color:var(--t2)">✓✓</span>':''}
-                    </div>
-                </div>
-                ${mine?`<div class="av av-xs" style="background:linear-gradient(135deg,var(--p),var(--t2));color:#fff;flex-shrink:0">${initials(currentUser.displayName||'Me')}</div>`:''}
-            </div>`;
-        });
-        msgs.scrollTop=msgs.scrollHeight;
-    });
-    // Typing indicator — outside message listener
-    db.ref(`chats/${chatId}/typing`).off();
-    db.ref(`chats/${chatId}/typing`).on('value', snap => {
-      const tdata = snap.val() || {};
-      const someoneTyping = Object.entries(tdata).some(([uid, val]) => uid !== currentUser.uid && val === true);
-      let typingEl = document.getElementById('typing-indicator');
-      if (someoneTyping) {
-        if (!typingEl) {
-          typingEl = document.createElement('div');
-          typingEl.id = 'typing-indicator';
-          typingEl.style.cssText = 'padding:4px 13px;font-size:11px;color:var(--text3);font-style:italic;display:flex;align-items:center;gap:6px';
-          typingEl.innerHTML = `<div style="display:flex;gap:3px">
-            <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite"></span>
-            <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite .2s"></span>
-            <span style="width:5px;height:5px;background:var(--text3);border-radius:50%;display:inline-block;animation:bounce 1s infinite .4s"></span>
-          </div> ${partnerName} is typing...`;
-          document.getElementById('chat-msgs').after(typingEl);
-        }
-      } else {
-        if (typingEl) typingEl.remove();
-      }
-    });
+// ── WHATSAPP CHAT CONTROLLER ─────────────────────────────────
+let cachedChatList = [];
+let activeChatFilter = 'all';
+let currentPartnerName = '';
+let currentPartnerUid = '';
+let currentChatMessages = [];
+let activeMsgListener = null;
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-async function loadChatList() {
-    const chats = await apiCall("/chat/my");
-    const list = document.getElementById("chat-list");
-    list.innerHTML = "";
-    if (!chats || chats.length === 0) {
-        list.innerHTML = `<div style="padding:16px;text-align:center;font-size:11px;color:var(--text3)">
-            <i class="ti ti-message-circle" style="font-size:22px;display:block;margin-bottom:6px;opacity:.4"></i>
-            No chats yet.<br>Accept a connection to start!</div>`;
-        return;
+
+function urlify(text) {
+  if (!text) return '';
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return escapeHtml(text).replace(urlRegex, function(url) {
+    const isMeet = url.includes('meet.google.com') || url.includes('zoom.us') || url.includes('teams.microsoft.com');
+    const icon = isMeet ? '<i class="ti ti-video" style="margin-right:3px"></i>' : '<i class="ti ti-link" style="margin-right:3px"></i>';
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color:var(--b);text-decoration:underline;word-break:break-all;font-weight:500">${icon}${url}</a>`;
+  });
+}
+
+function formatChatDate(ts) {
+  if (!ts) return 'Today';
+  const d = new Date(ts);
+  const now = new Date();
+  const isToday = d.toDateString() === now.toDateString();
+  if (isToday) return 'TODAY';
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (d.toDateString() === yesterday.toDateString()) return 'YESTERDAY';
+  const diffDays = Math.round((now - d) / (1000 * 60 * 60 * 24));
+  if (diffDays < 7) {
+    return d.toLocaleDateString([], { weekday: 'long' }).toUpperCase();
+  }
+  return d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+}
+
+function formatChatTime(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatListTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const now = new Date();
+  if (d.toDateString() === now.toDateString()) {
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+  return d.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: '2-digit' });
+}
+
+async function openChat(chatId, partnerName, partnerUid = '') {
+  currentChatId = chatId;
+  currentPartnerName = partnerName || 'Partner';
+  currentPartnerUid = partnerUid;
+
+  // On mobile, show chat panel
+  const wrap = document.getElementById('chat-wrap');
+  if (wrap) wrap.classList.add('mobile-active');
+
+  // Hide empty state, show active chat view
+  const emptyState = document.getElementById('wa-empty-state');
+  if (emptyState) emptyState.style.display = 'none';
+  const activeChat = document.getElementById('wa-active-chat');
+  if (activeChat) activeChat.style.display = 'flex';
+
+  // Highlight active in chat list
+  document.querySelectorAll('.ci').forEach(el => {
+    el.classList.toggle('active', el.dataset.chatId === chatId);
+  });
+
+  const ini = initials(currentPartnerName);
+  const bg = avatarBg(currentPartnerName);
+
+  // Render WhatsApp header
+  const header = document.getElementById("chat-header");
+  header.innerHTML = `
+    <button class="wa-back-btn" onclick="closeMobileChat()" title="Back to chats">
+      <i class="ti ti-arrow-left"></i>
+    </button>
+    <div style="position:relative;cursor:pointer" onclick="goto('discover')">
+      <div class="av av-sm" style="background:${bg};color:#fff;font-weight:600">${ini}</div>
+      <div class="wa-online-dot"></div>
+    </div>
+    <div style="flex:1;min-width:0;cursor:pointer" onclick="goto('discover')">
+      <div style="font-weight:600;font-size:13.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(currentPartnerName)}</div>
+      <div id="wa-header-status" style="font-size:11px;color:var(--text3);line-height:1.2">online</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <button class="wa-icon-btn" onclick="toggleInChatSearch()" title="Search in conversation">
+        <i class="ti ti-search"></i>
+      </button>
+      <button class="btn btn-t btn-sm" onclick="goto('schedule')" style="padding:4px 10px;font-size:11px;border-radius:14px;gap:4px">
+        <i class="ti ti-calendar"></i>Schedule
+      </button>
+    </div>
+  `;
+
+  const msgsContainer = document.getElementById("chat-msgs");
+  msgsContainer.innerHTML = `<div class="loading" style="padding:40px;font-size:12px"><i class="ti ti-loader"></i> Loading messages…</div>`;
+
+  // Detach previous listeners
+  if (activeMsgListener) {
+    try { activeMsgListener.off(); } catch(e) {}
+  }
+
+  activeMsgListener = db.ref("chats/" + chatId + "/messages");
+  activeMsgListener.orderByChild("timestamp").on("value", (snap) => {
+    const data = snap.val();
+    msgsContainer.innerHTML = "";
+    currentChatMessages = [];
+
+    // WhatsApp Encryption Notice
+    const encPill = document.createElement('div');
+    encPill.className = 'wa-enc-pill';
+    encPill.innerHTML = `<i class="ti ti-lock" style="margin-right:4px"></i> Messages are end-to-end peer encrypted. Only you and <strong>${escapeHtml(currentPartnerName)}</strong> can read them.`;
+    msgsContainer.appendChild(encPill);
+
+    if (!data) {
+      const welcome = document.createElement('div');
+      welcome.style.cssText = 'text-align:center;padding:36px 20px;color:var(--text3);font-size:12px;margin:auto';
+      welcome.innerHTML = `
+        <div style="width:52px;height:52px;border-radius:50%;background:var(--t3);color:var(--t);display:inline-flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:12px">
+          <i class="ti ti-brand-whatsapp"></i>
+        </div>
+        <div style="font-weight:600;color:var(--text);font-size:14px;margin-bottom:4px">Start chatting with ${escapeHtml(currentPartnerName)}</div>
+        <div>Say hello, share learning goals, or schedule your first session! 👋</div>
+      `;
+      msgsContainer.appendChild(welcome);
+      return;
     }
-    chats.forEach(chat => {
-        const ini = initials(chat.partner_name);
-        const bg = avatarBg(chat.partner_name);
-        const isActive = currentChatId === chat.chat_id;
-        list.innerHTML += `
-        <div class="ci${isActive?' active':''}"
-             onclick="openChat('${chat.chat_id}','${chat.partner_name}')">
-            <div style="position:relative">
-                <div class="av av-sm" style="background:${bg};color:#fff">${ini}</div>
-                <div class="odot" style="position:absolute;bottom:0;right:0"></div>
-            </div>
-            <div style="flex:1;min-width:0">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                    <span style="font-size:12px;font-weight:600">${chat.partner_name}</span>
-                    <span style="font-size:9px;color:var(--text4)">${chat.last_time ? new Date(chat.last_time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : ''}</span>
-                </div>
-                <div class="cprev">${chat.last_message || 'Tap to chat'}</div>
-            </div>
-            ${chat.unread > 0 && !isActive ? `<div class="unread" style="background:var(--p);color:#fff;font-size:9px;width:16px;height:16px;display:flex;align-items:center;justify-content:center;border-radius:50%">${chat.unread}</div>` : ''}
-        </div>`;
+
+    const msgList = Object.entries(data).sort((a,b) => (a[1].timestamp || 0) - (b[1].timestamp || 0));
+    currentChatMessages = msgList.map(([k, v]) => ({ id: k, ...v }));
+
+    let lastDateStr = '';
+    let lastSenderUid = null;
+
+    msgList.forEach(([key, msg]) => {
+      const mine = msg.senderUid === currentUser.uid;
+      const dateStr = formatChatDate(msg.timestamp);
+      const timeStr = formatChatTime(msg.timestamp);
+
+      // Floating Date Separator
+      if (dateStr !== lastDateStr) {
+        const datePill = document.createElement('div');
+        datePill.className = 'wa-date-pill';
+        datePill.textContent = dateStr;
+        msgsContainer.appendChild(datePill);
+        lastDateStr = dateStr;
+        lastSenderUid = null; // reset tail after date break
+      }
+
+      const isConsecutive = lastSenderUid === msg.senderUid;
+      lastSenderUid = msg.senderUid;
+
+      const row = document.createElement('div');
+      row.className = `wa-bubble-row ${mine ? 'mine' : 'them'}`;
+      row.dataset.msgId = key;
+
+      const bubble = document.createElement('div');
+      bubble.className = `wa-bubble ${isConsecutive ? 'has-tail-none' : ''}`;
+
+      const textHtml = urlify(msg.text || '');
+      const checkTicks = mine ? `<span class="wa-ticks" title="Delivered & Read">✓✓</span>` : '';
+
+      bubble.innerHTML = `
+        <span class="wa-text">${textHtml}</span>
+        <span class="wa-meta">${timeStr}${checkTicks ? ' ' + checkTicks : ''}</span>
+      `;
+
+      row.appendChild(bubble);
+      msgsContainer.appendChild(row);
     });
+
+    scrollChatToBottom(false);
+  });
+
+  // Real-time Typing indicator listener
+  db.ref(`chats/${chatId}/typing`).off();
+  db.ref(`chats/${chatId}/typing`).on('value', snap => {
+    const tdata = snap.val() || {};
+    const someoneTyping = Object.entries(tdata).some(([uid, val]) => uid !== currentUser.uid && val === true);
+    
+    const statusEl = document.getElementById('wa-header-status');
+    if (statusEl) {
+      statusEl.innerHTML = someoneTyping 
+        ? `<span style="color:var(--t2);font-weight:600;font-style:italic">typing…</span>` 
+        : `online`;
+    }
+
+    let typingEl = document.getElementById('wa-typing-bubble');
+    if (someoneTyping) {
+      if (!typingEl) {
+        typingEl = document.createElement('div');
+        typingEl.id = 'wa-typing-bubble';
+        typingEl.className = 'wa-bubble-row them';
+        typingEl.innerHTML = `
+          <div class="wa-bubble" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px">
+            <span style="font-size:11px;color:var(--text3);font-style:italic">${escapeHtml(currentPartnerName)} is typing</span>
+            <div style="display:inline-flex;gap:3px;align-items:center">
+              <span style="width:5px;height:5px;background:var(--t);border-radius:50%;display:inline-block;animation:bounce 1s infinite"></span>
+              <span style="width:5px;height:5px;background:var(--t);border-radius:50%;display:inline-block;animation:bounce 1s infinite .2s"></span>
+              <span style="width:5px;height:5px;background:var(--t);border-radius:50%;display:inline-block;animation:bounce 1s infinite .4s"></span>
+            </div>
+          </div>
+        `;
+        msgsContainer.appendChild(typingEl);
+        scrollChatToBottom(true);
+      }
+    } else {
+      if (typingEl) typingEl.remove();
+    }
+  });
+
+  // Mark unread as read in RTDB and backend
+  try {
+    db.ref(`chats/${chatId}/unread/${currentUser.uid}`).set(0);
+    apiCall(`/chat/${chatId}/read`, 'POST');
+  } catch(e) {}
 }
+
+async function loadChatList() {
+  const list = document.getElementById("chat-list");
+  if (!list) return;
+
+  // Update current user avatar in sidebar
+  const myAv = document.getElementById('wa-my-av');
+  if (myAv && currentUser) {
+    myAv.textContent = initials(currentUser.displayName || currentUser.email || 'Me');
+  }
+
+  try {
+    const chats = await apiCall("/chat/my");
+    cachedChatList = chats || [];
+    renderChatList();
+  } catch(e) {
+    list.innerHTML = `<div style="padding:20px;text-align:center;font-size:11px;color:var(--text3)">Failed to load conversations</div>`;
+  }
+}
+
+function renderChatList() {
+  const list = document.getElementById("chat-list");
+  if (!list) return;
+
+  const searchVal = (document.getElementById("wa-chat-search-input")?.value || '').toLowerCase().trim();
+
+  let filtered = cachedChatList.filter(c => {
+    if (activeChatFilter === 'unread' && !(c.unread > 0)) return false;
+    if (searchVal) {
+      const matchName = (c.partner_name || '').toLowerCase().includes(searchVal);
+      const matchMsg = (c.last_message || '').toLowerCase().includes(searchVal);
+      return matchName || matchMsg;
+    }
+    return true;
+  });
+
+  list.innerHTML = "";
+
+  if (filtered.length === 0) {
+    list.innerHTML = `
+      <div style="padding:32px 16px;text-align:center;font-size:11.5px;color:var(--text3)">
+        <i class="ti ti-message-circle" style="font-size:28px;display:block;margin-bottom:8px;opacity:.35"></i>
+        ${searchVal ? 'No chats found matching "' + escapeHtml(searchVal) + '"' : 'No chats yet.<br>Accept a connection request to chat!'}
+      </div>
+    `;
+    return;
+  }
+
+  filtered.forEach(chat => {
+    const ini = initials(chat.partner_name);
+    const bg = avatarBg(chat.partner_name);
+    const isActive = currentChatId === chat.chat_id;
+    const timeStr = formatListTime(chat.last_time);
+    const hasUnread = (chat.unread || 0) > 0;
+
+    list.innerHTML += `
+      <div class="ci${isActive ? ' active' : ''}" data-chat-id="${chat.chat_id}"
+           onclick="openChat('${chat.chat_id}','${escapeHtml(chat.partner_name).replace(/'/g, "\\'")}','${chat.partner_uid || ''}')">
+        <div style="position:relative;flex-shrink:0">
+          <div class="av av-sm" style="background:${bg};color:#fff;font-weight:600">${ini}</div>
+          <div class="wa-online-dot"></div>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span class="cname">${escapeHtml(chat.partner_name)}</span>
+            <span class="ctime">${timeStr}</span>
+          </div>
+          <div class="cprev">
+            <span style="color:var(--wa-ticks);font-size:11px;font-weight:700">✓✓</span>
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(chat.last_message || 'Tap to chat')}</span>
+          </div>
+        </div>
+        ${hasUnread && !isActive ? `<div class="wa-badge">${chat.unread}</div>` : ''}
+      </div>
+    `;
+  });
+}
+
+function filterChatList(query) {
+  const clearBtn = document.getElementById("wa-search-clear-btn");
+  if (clearBtn) clearBtn.style.display = query ? "block" : "none";
+  renderChatList();
+}
+
+function clearChatSearch() {
+  const inp = document.getElementById("wa-chat-search-input");
+  if (inp) inp.value = "";
+  const clearBtn = document.getElementById("wa-search-clear-btn");
+  if (clearBtn) clearBtn.style.display = "none";
+  renderChatList();
+}
+
+function setChatFilter(filter) {
+  activeChatFilter = filter;
+  const btnAll = document.getElementById('filter-chip-all');
+  const btnUnread = document.getElementById('filter-chip-unread');
+  if (btnAll) btnAll.classList.toggle('active', filter === 'all');
+  if (btnUnread) btnUnread.classList.toggle('active', filter === 'unread');
+  renderChatList();
+}
+
+function closeMobileChat() {
+  const wrap = document.getElementById('chat-wrap');
+  if (wrap) wrap.classList.remove('mobile-active');
+  currentChatId = null;
+  document.querySelectorAll('.ci').forEach(el => el.classList.remove('active'));
+  const emptyState = document.getElementById('wa-empty-state');
+  if (emptyState) emptyState.style.display = 'flex';
+  const activeChat = document.getElementById('wa-active-chat');
+  if (activeChat) activeChat.style.display = 'none';
+}
+
+
+function scrollChatToBottom(smooth = false) {
+  const msgs = document.getElementById("chat-msgs");
+  if (!msgs) return;
+  if (smooth) {
+    msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' });
+  } else {
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  const scrollBtn = document.getElementById("wa-scroll-btn");
+  if (scrollBtn) scrollBtn.style.display = 'none';
+}
+
+function handleChatScroll() {
+  const msgs = document.getElementById("chat-msgs");
+  const scrollBtn = document.getElementById("wa-scroll-btn");
+  if (!msgs || !scrollBtn) return;
+  const distFromBottom = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight;
+  if (distFromBottom > 150) {
+    scrollBtn.style.display = 'flex';
+  } else {
+    scrollBtn.style.display = 'none';
+  }
+}
+
+// ── EMOJI PICKER ─────────────────────────────────────────────
+const WA_EMOJIS = [
+  '😀','😂','🤣','😍','🥰','😎','🥳','🤩','😊','😇','🙂','🙃',
+  '😉','😏','🤔','🤫','🤗','🫡','😋','😛','😜','🤪','🥺','😢',
+  '😭','😤','😠','🤯','😱','😴','🤤','🤮','🤠','🥳','🥸','🤓',
+  '👍','👎','👏','🙌','🤝','🙏','💪','✍️','🎉','✨','🔥','💡',
+  '❤️','🧡','💛','💚','💙','💜','🖤','🤍','📚','💻','🎯','🚀',
+  '💯','⭐','✅','⚠️','☕','🍕','🧁','🎸','🏆','🥇','👀','🙌'
+];
+
+function toggleEmojiShelf() {
+  const shelf = document.getElementById('wa-emoji-shelf');
+  if (!shelf) return;
+  const attach = document.getElementById('wa-attach-sheet');
+  if (attach) attach.style.display = 'none';
+
+  const isHidden = shelf.style.display === 'none';
+  shelf.style.display = isHidden ? 'flex' : 'none';
+
+  if (isHidden) {
+    const grid = document.getElementById('wa-emoji-list');
+    if (grid && grid.children.length === 0) {
+      grid.innerHTML = WA_EMOJIS.map(e => `
+        <button class="wa-emoji-item" onclick="selectEmoji('${e}')">${e}</button>
+      `).join('');
+    }
+  }
+}
+
+function selectEmoji(char) {
+  const inp = document.getElementById('chat-inp');
+  if (!inp) return;
+  inp.value += char;
+  handleChatInput(inp);
+  inp.focus();
+}
+
+// ── ATTACHMENTS & QUICK ACTIONS ──────────────────────────────
+function toggleAttachMenu() {
+  const sheet = document.getElementById('wa-attach-sheet');
+  if (!sheet) return;
+  const emoji = document.getElementById('wa-emoji-shelf');
+  if (emoji) emoji.style.display = 'none';
+
+  sheet.style.display = sheet.style.display === 'none' ? 'flex' : 'none';
+}
+
+function quickShareSession() {
+  toggleAttachMenu();
+  const inp = document.getElementById('chat-inp');
+  if (!inp) return;
+  inp.value = `Hey! Let's schedule a 1-on-1 session to swap skills. What time works best for you?`;
+  handleChatInput(inp);
+  inp.focus();
+}
+
+function quickShareMeet() {
+  toggleAttachMenu();
+  const inp = document.getElementById('chat-inp');
+  if (!inp) return;
+  inp.value = `Here is our Google Meet room for our session: https://meet.google.com/new`;
+  handleChatInput(inp);
+  inp.focus();
+}
+
+async function quickShareSkill() {
+  toggleAttachMenu();
+  const inp = document.getElementById('chat-inp');
+  if (!inp) return;
+  let text = "I'd love to share my knowledge in my skills! What would you like to focus on?";
+  try {
+    const prof = await apiCall('/users/me');
+    if (prof && prof.skills_teach && prof.skills_teach.length > 0) {
+      const skills = prof.skills_teach.map(s => typeof s === 'object' ? s.skill : s).join(', ');
+      text = `I can teach you: ${skills}. Let me know what you'd like to learn!`;
+    }
+  } catch(e) {}
+  inp.value = text;
+  handleChatInput(inp);
+  inp.focus();
+}
+
+// ── IN-CHAT SEARCH ───────────────────────────────────────────
+function toggleInChatSearch() {
+  const bar = document.getElementById('wa-inchat-search');
+  if (!bar) return;
+  const isHidden = bar.style.display === 'none';
+  bar.style.display = isHidden ? 'flex' : 'none';
+  if (isHidden) {
+    const inp = document.getElementById('wa-inchat-search-inp');
+    if (inp) { inp.value = ''; inp.focus(); }
+    document.getElementById('wa-search-match-count').textContent = '';
+  } else {
+    // Reset highlights
+    document.querySelectorAll('.wa-bubble').forEach(b => {
+      b.style.outline = 'none';
+    });
+  }
+}
+
+function handleInChatSearch(query) {
+  const q = (query || '').toLowerCase().trim();
+  const countEl = document.getElementById('wa-search-match-count');
+  const rows = document.querySelectorAll('.wa-bubble-row');
+  if (!q) {
+    if (countEl) countEl.textContent = '';
+    rows.forEach(r => {
+      const b = r.querySelector('.wa-bubble');
+      if (b) b.style.outline = 'none';
+      r.style.opacity = '1';
+    });
+    return;
+  }
+
+  let matches = 0;
+  rows.forEach(r => {
+    const txtEl = r.querySelector('.wa-text');
+    const b = r.querySelector('.wa-bubble');
+    if (!txtEl || !b) return;
+    const hasMatch = txtEl.textContent.toLowerCase().includes(q);
+    if (hasMatch) {
+      matches++;
+      b.style.outline = '2px solid var(--t)';
+      r.style.opacity = '1';
+      // scroll first match into view
+      if (matches === 1) r.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      b.style.outline = 'none';
+      r.style.opacity = '0.35';
+    }
+  });
+
+  if (countEl) {
+    countEl.textContent = matches > 0 ? `${matches} found` : 'No matches';
+  }
+}
+
+// ── INPUT HANDLER ────────────────────────────────────────────
+function handleChatInput(inputEl) {
+  const hasVal = inputEl && inputEl.value.trim().length > 0;
+  const icon = document.getElementById('wa-action-icon');
+  if (icon) {
+    icon.className = hasVal ? 'ti ti-send' : 'ti ti-microphone';
+  }
+  if (hasVal) {
+    handleTyping();
+  }
+}
+
+function handleActionBtnClick() {
+  const inp = document.getElementById('chat-inp');
+  if (inp && inp.value.trim().length > 0) {
+    sendMsg();
+  } else {
+    toast("Type a message to send 👋", "p");
+  }
+}
+
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
@@ -2451,6 +3139,25 @@ document.addEventListener('input', function(e) {
     if (lvl) lvl.style.display = e.target.value.trim() ? 'block' : 'none';
     // Auto-select Intermediate by default
     selectLevel('Intermediate');
+  }
+});
+
+// Auto-close WhatsApp popovers when clicking outside
+document.addEventListener('click', function(e) {
+  const emojiShelf = document.getElementById('wa-emoji-shelf');
+  const emojiToggle = document.getElementById('wa-emoji-toggle');
+  if (emojiShelf && emojiShelf.style.display !== 'none') {
+    if (!emojiShelf.contains(e.target) && !emojiToggle?.contains(e.target)) {
+      emojiShelf.style.display = 'none';
+    }
+  }
+
+  const attachSheet = document.getElementById('wa-attach-sheet');
+  const attachToggle = document.getElementById('wa-attach-toggle');
+  if (attachSheet && attachSheet.style.display !== 'none') {
+    if (!attachSheet.contains(e.target) && !attachToggle?.contains(e.target)) {
+      attachSheet.style.display = 'none';
+    }
   }
 });
 </script>
